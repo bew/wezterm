@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js navy">
+<html lang="en" class="sidebar-visible no-js ayu">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -7,22 +7,36 @@
         
         <meta name="robots" content="noindex" />
         
+        
+
+
+        <!-- Custom HTML head -->
+        
+
 
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
+        
+        <link rel="icon" href="favicon.svg">
+        
+        
         <link rel="shortcut icon" href="favicon.png">
+        
         <link rel="stylesheet" href="css/variables.css">
         <link rel="stylesheet" href="css/general.css">
         <link rel="stylesheet" href="css/chrome.css">
+        
         <link rel="stylesheet" href="css/print.css" media="print">
+        
 
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
-        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+        
+        <link rel="stylesheet" href="fonts/fonts.css">
+        
 
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
@@ -40,7 +54,7 @@
         <!-- Provide site root to javascript -->
         <script type="text/javascript">
             var path_to_root = "";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "navy";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "ayu" : "ayu";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
@@ -66,7 +80,7 @@
             if (theme === null || theme === undefined) { theme = default_theme; }
             var html = document.querySelector('html');
             html.classList.remove('no-js')
-            html.classList.remove('navy')
+            html.classList.remove('ayu')
             html.classList.add(theme);
             html.classList.add('js');
         </script>
@@ -85,7 +99,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">wezterm</a></li><li class="chapter-item expanded "><a href="installation.html"><strong aria-hidden="true">1.</strong> Install</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="install/windows.html"><strong aria-hidden="true">1.1.</strong> Windows</a></li><li class="chapter-item expanded "><a href="install/macos.html"><strong aria-hidden="true">1.2.</strong> macOS</a></li><li class="chapter-item expanded "><a href="install/linux.html"><strong aria-hidden="true">1.3.</strong> Linux</a></li><li class="chapter-item expanded "><a href="install/source.html"><strong aria-hidden="true">1.4.</strong> Build from source</a></li></ol></li><li class="chapter-item expanded "><a href="features.html"><strong aria-hidden="true">2.</strong> Features</a></li><li class="chapter-item expanded "><a href="changelog.html"><strong aria-hidden="true">3.</strong> Change Log</a></li><li class="chapter-item expanded "><a href="config/files.html"><strong aria-hidden="true">4.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="config/launch.html"><strong aria-hidden="true">4.1.</strong> Launching Programs</a></li><li class="chapter-item expanded "><a href="config/fonts.html"><strong aria-hidden="true">4.2.</strong> Fonts</a></li><li class="chapter-item expanded "><a href="config/font-shaping.html"><strong aria-hidden="true">4.3.</strong> Font Shaping</a></li><li class="chapter-item expanded "><a href="config/misc.html"><strong aria-hidden="true">4.4.</strong> Misc</a></li><li class="chapter-item expanded "><a href="config/keys.html"><strong aria-hidden="true">4.5.</strong> Key &amp; Mouse Binding</a></li><li class="chapter-item expanded "><a href="config/appearance.html"><strong aria-hidden="true">4.6.</strong> Colors &amp; Appearance</a></li></ol></li><li class="chapter-item expanded "><a href="scrollback.html"><strong aria-hidden="true">5.</strong> Scrollback</a></li><li class="chapter-item expanded "><a href="copymode.html"><strong aria-hidden="true">6.</strong> Copy Mode</a></li><li class="chapter-item expanded "><a href="hyperlinks.html"><strong aria-hidden="true">7.</strong> Hyperlinks</a></li><li class="chapter-item expanded "><a href="shell-integration.html"><strong aria-hidden="true">8.</strong> Shell Integration</a></li><li class="chapter-item expanded "><a href="imgcat.html"><strong aria-hidden="true">9.</strong> iTerm Image Protocol</a></li><li class="chapter-item expanded "><a href="ssh.html"><strong aria-hidden="true">10.</strong> SSH</a></li><li class="chapter-item expanded "><a href="serial.html"><strong aria-hidden="true">11.</strong> Serial Ports &amp; Arduino</a></li><li class="chapter-item expanded "><a href="multiplexing.html"><strong aria-hidden="true">12.</strong> Mulitplexing</a></li><li class="chapter-item expanded "><a href="faq.html"><strong aria-hidden="true">13.</strong> F.A.Q.</a></li><li class="chapter-item expanded "><a href="help.html"><strong aria-hidden="true">14.</strong> Getting Help</a></li><li class="chapter-item expanded "><a href="contributing.html"><strong aria-hidden="true">15.</strong> Contributing</a></li><li class="chapter-item expanded "><a href="colorschemes/index.html"><strong aria-hidden="true">16.</strong> Color Schemes</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="colorschemes/3/index.html"><strong aria-hidden="true">16.1.</strong> 3</a></li><li class="chapter-item expanded "><a href="colorschemes/a/index.html"><strong aria-hidden="true">16.2.</strong> a</a></li><li class="chapter-item expanded "><a href="colorschemes/b/index.html"><strong aria-hidden="true">16.3.</strong> b</a></li><li class="chapter-item expanded "><a href="colorschemes/c/index.html"><strong aria-hidden="true">16.4.</strong> c</a></li><li class="chapter-item expanded "><a href="colorschemes/d/index.html"><strong aria-hidden="true">16.5.</strong> d</a></li><li class="chapter-item expanded "><a href="colorschemes/e/index.html"><strong aria-hidden="true">16.6.</strong> e</a></li><li class="chapter-item expanded "><a href="colorschemes/f/index.html"><strong aria-hidden="true">16.7.</strong> f</a></li><li class="chapter-item expanded "><a href="colorschemes/g/index.html"><strong aria-hidden="true">16.8.</strong> g</a></li><li class="chapter-item expanded "><a href="colorschemes/h/index.html"><strong aria-hidden="true">16.9.</strong> h</a></li><li class="chapter-item expanded "><a href="colorschemes/i/index.html"><strong aria-hidden="true">16.10.</strong> i</a></li><li class="chapter-item expanded "><a href="colorschemes/j/index.html"><strong aria-hidden="true">16.11.</strong> j</a></li><li class="chapter-item expanded "><a href="colorschemes/k/index.html"><strong aria-hidden="true">16.12.</strong> k</a></li><li class="chapter-item expanded "><a href="colorschemes/l/index.html"><strong aria-hidden="true">16.13.</strong> l</a></li><li class="chapter-item expanded "><a href="colorschemes/m/index.html"><strong aria-hidden="true">16.14.</strong> m</a></li><li class="chapter-item expanded "><a href="colorschemes/n/index.html"><strong aria-hidden="true">16.15.</strong> n</a></li><li class="chapter-item expanded "><a href="colorschemes/o/index.html"><strong aria-hidden="true">16.16.</strong> o</a></li><li class="chapter-item expanded "><a href="colorschemes/p/index.html"><strong aria-hidden="true">16.17.</strong> p</a></li><li class="chapter-item expanded "><a href="colorschemes/r/index.html"><strong aria-hidden="true">16.18.</strong> r</a></li><li class="chapter-item expanded "><a href="colorschemes/s/index.html"><strong aria-hidden="true">16.19.</strong> s</a></li><li class="chapter-item expanded "><a href="colorschemes/t/index.html"><strong aria-hidden="true">16.20.</strong> t</a></li><li class="chapter-item expanded "><a href="colorschemes/u/index.html"><strong aria-hidden="true">16.21.</strong> u</a></li><li class="chapter-item expanded "><a href="colorschemes/v/index.html"><strong aria-hidden="true">16.22.</strong> v</a></li><li class="chapter-item expanded "><a href="colorschemes/w/index.html"><strong aria-hidden="true">16.23.</strong> w</a></li><li class="chapter-item expanded "><a href="colorschemes/z/index.html"><strong aria-hidden="true">16.24.</strong> z</a></li></ol></li><li class="chapter-item expanded "><a href="config/lua/general.html"><strong aria-hidden="true">17.</strong> Lua Reference</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="config/lua/wezterm/index.html"><strong aria-hidden="true">17.1.</strong> module: wezterm</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="config/lua/wezterm/action.html"><strong aria-hidden="true">17.1.1.</strong> action</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/config_dir.html"><strong aria-hidden="true">17.1.2.</strong> config_dir</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/emit.html"><strong aria-hidden="true">17.1.3.</strong> emit</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/executable_dir.html"><strong aria-hidden="true">17.1.4.</strong> executable_dir</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/font.html"><strong aria-hidden="true">17.1.5.</strong> font</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/font_with_fallback.html"><strong aria-hidden="true">17.1.6.</strong> font_with_fallback</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/glob.html"><strong aria-hidden="true">17.1.7.</strong> glob</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/home_dir.html"><strong aria-hidden="true">17.1.8.</strong> home_dir</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/hostname.html"><strong aria-hidden="true">17.1.9.</strong> hostname</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/log_error.html"><strong aria-hidden="true">17.1.10.</strong> log_error</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/on.html"><strong aria-hidden="true">17.1.11.</strong> on</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/permute_any_mods.html"><strong aria-hidden="true">17.1.12.</strong> permute_any_mods</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/permute_any_or_no_mods.html"><strong aria-hidden="true">17.1.13.</strong> permute_any_or_no_mods</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/read_dir.html"><strong aria-hidden="true">17.1.14.</strong> read_dir</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/run_child_process.html"><strong aria-hidden="true">17.1.15.</strong> run_child_process</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/running_under_wsl.html"><strong aria-hidden="true">17.1.16.</strong> running_under_wsl</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/sleep_ms.html"><strong aria-hidden="true">17.1.17.</strong> sleep_ms</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/split_by_newlines.html"><strong aria-hidden="true">17.1.18.</strong> split_by_newlines</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/target_triple.html"><strong aria-hidden="true">17.1.19.</strong> target_triple</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/utf16_to_utf8.html"><strong aria-hidden="true">17.1.20.</strong> utf16_to_utf8</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/version.html"><strong aria-hidden="true">17.1.21.</strong> version</a></li></ol></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/index.html"><strong aria-hidden="true">17.2.</strong> enum: KeyAssignment</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="config/lua/keyassignment/ActivateCopyMode.html"><strong aria-hidden="true">17.2.1.</strong> ActivateCopyMode</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/ActivatePaneDirection.html"><strong aria-hidden="true">17.2.2.</strong> ActivatePaneDirection</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/ActivateTab.html"><strong aria-hidden="true">17.2.3.</strong> ActivateTab</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/ActivateTabRelative.html"><strong aria-hidden="true">17.2.4.</strong> ActivateTabRelative</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/AdjustPaneSize.html"><strong aria-hidden="true">17.2.5.</strong> AdjustPaneSize</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/ClearScrollback.html"><strong aria-hidden="true">17.2.6.</strong> ClearScrollback</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/CloseCurrentPane.html"><strong aria-hidden="true">17.2.7.</strong> CloseCurrentPane</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/CloseCurrentTab.html"><strong aria-hidden="true">17.2.8.</strong> CloseCurrentTab</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/CompleteSelection.html"><strong aria-hidden="true">17.2.9.</strong> CompleteSelection</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/CompleteSelectionOrOpenLinkAtMouseCursor.html"><strong aria-hidden="true">17.2.10.</strong> CompleteSelectionOrOpenLinkAtMouseCursor</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/Copy.html"><strong aria-hidden="true">17.2.11.</strong> Copy</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/DecreaseFontSize.html"><strong aria-hidden="true">17.2.12.</strong> DecreaseFontSize</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/DisableDefaultAssignment.html"><strong aria-hidden="true">17.2.13.</strong> DisableDefaultAssignment</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/EmitEvent.html"><strong aria-hidden="true">17.2.14.</strong> EmitEvent</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/ExtendSelectionToMouseCursor.html"><strong aria-hidden="true">17.2.15.</strong> ExtendSelectionToMouseCursor</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/Hide.html"><strong aria-hidden="true">17.2.16.</strong> Hide</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/HideApplication.html"><strong aria-hidden="true">17.2.17.</strong> HideApplication</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/IncreaseFontSize.html"><strong aria-hidden="true">17.2.18.</strong> IncreaseFontSize</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/MoveTab.html"><strong aria-hidden="true">17.2.19.</strong> MoveTab</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/MoveTabRelative.html"><strong aria-hidden="true">17.2.20.</strong> MoveTabRelative</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/Nop.html"><strong aria-hidden="true">17.2.21.</strong> Nop</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/OpenLinkAtMouseCursor.html"><strong aria-hidden="true">17.2.22.</strong> OpenLinkAtMouseCursor</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/Paste.html"><strong aria-hidden="true">17.2.23.</strong> Paste</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/PastePrimarySelection.html"><strong aria-hidden="true">17.2.24.</strong> PastePrimarySelection</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/QuitApplication.html"><strong aria-hidden="true">17.2.25.</strong> QuitApplication</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/ReloadConfiguration.html"><strong aria-hidden="true">17.2.26.</strong> ReloadConfiguration</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/ResetFontSize.html"><strong aria-hidden="true">17.2.27.</strong> ResetFontSize</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/ScrollByPage.html"><strong aria-hidden="true">17.2.28.</strong> ScrollByPage</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/ScrollToPrompt.html"><strong aria-hidden="true">17.2.29.</strong> ScrollToPrompt</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/Search.html"><strong aria-hidden="true">17.2.30.</strong> Search</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/SelectTextAtMouseCursor.html"><strong aria-hidden="true">17.2.31.</strong> SelectTextAtMouseCursor</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/SendString.html"><strong aria-hidden="true">17.2.32.</strong> SendString</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/Show.html"><strong aria-hidden="true">17.2.33.</strong> Show</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/ShowLauncher.html"><strong aria-hidden="true">17.2.34.</strong> ShowLauncher</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/ShowTabNavigator.html"><strong aria-hidden="true">17.2.35.</strong> ShowTabNavigator</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/SpawnCommandInNewTab.html"><strong aria-hidden="true">17.2.36.</strong> SpawnCommandInNewTab</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/SpawnCommandInNewWindow.html"><strong aria-hidden="true">17.2.37.</strong> SpawnCommandInNewWindow</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/SpawnTab.html"><strong aria-hidden="true">17.2.38.</strong> SpawnTab</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/SpawnWindow.html"><strong aria-hidden="true">17.2.39.</strong> SpawnWindow</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/SplitHorizontal.html"><strong aria-hidden="true">17.2.40.</strong> SplitHorizontal</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/SplitVertical.html"><strong aria-hidden="true">17.2.41.</strong> SplitVertical</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/ToggleFullScreen.html"><strong aria-hidden="true">17.2.42.</strong> ToggleFullScreen</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/TogglePaneZoomState.html"><strong aria-hidden="true">17.2.43.</strong> TogglePaneZoomState</a></li></ol></li><li class="chapter-item expanded "><a href="config/lua/SpawnCommand.html"><strong aria-hidden="true">17.3.</strong> object: SpawnCommand</a></li><li class="chapter-item expanded "><a href="config/lua/pane/index.html"><strong aria-hidden="true">17.4.</strong> object: Pane</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="config/lua/pane/get_current_working_dir.html"><strong aria-hidden="true">17.4.1.</strong> get_current_working_dir</a></li><li class="chapter-item expanded "><a href="config/lua/pane/get_cursor_position.html"><strong aria-hidden="true">17.4.2.</strong> get_cursor_position</a></li><li class="chapter-item expanded "><a href="config/lua/pane/get_dimensions.html"><strong aria-hidden="true">17.4.3.</strong> get_dimensions</a></li><li class="chapter-item expanded "><a href="config/lua/pane/get_lines_as_text.html"><strong aria-hidden="true">17.4.4.</strong> get_lines_as_text</a></li><li class="chapter-item expanded "><a href="config/lua/pane/get_title.html"><strong aria-hidden="true">17.4.5.</strong> get_title</a></li><li class="chapter-item expanded "><a href="config/lua/pane/pane_id.html"><strong aria-hidden="true">17.4.6.</strong> pane_id</a></li><li class="chapter-item expanded "><a href="config/lua/pane/paste.html"><strong aria-hidden="true">17.4.7.</strong> paste</a></li></ol></li><li class="chapter-item expanded "><a href="config/lua/window/index.html"><strong aria-hidden="true">17.5.</strong> object: Window</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="config/lua/window/perform_action.html"><strong aria-hidden="true">17.5.1.</strong> perform_action</a></li><li class="chapter-item expanded "><a href="config/lua/window/window_id.html"><strong aria-hidden="true">17.5.2.</strong> window_id</a></li></ol></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">wezterm</a></li><li class="chapter-item expanded "><a href="installation.html"><strong aria-hidden="true">1.</strong> Install</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="install/windows.html"><strong aria-hidden="true">1.1.</strong> Windows</a></li><li class="chapter-item expanded "><a href="install/macos.html"><strong aria-hidden="true">1.2.</strong> macOS</a></li><li class="chapter-item expanded "><a href="install/linux.html"><strong aria-hidden="true">1.3.</strong> Linux</a></li><li class="chapter-item expanded "><a href="install/source.html"><strong aria-hidden="true">1.4.</strong> Build from source</a></li></ol></li><li class="chapter-item expanded "><a href="features.html"><strong aria-hidden="true">2.</strong> Features</a></li><li class="chapter-item expanded "><a href="changelog.html"><strong aria-hidden="true">3.</strong> Change Log</a></li><li class="chapter-item expanded "><a href="config/files.html"><strong aria-hidden="true">4.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="config/launch.html"><strong aria-hidden="true">4.1.</strong> Launching Programs</a></li><li class="chapter-item expanded "><a href="config/fonts.html"><strong aria-hidden="true">4.2.</strong> Fonts</a></li><li class="chapter-item expanded "><a href="config/font-shaping.html"><strong aria-hidden="true">4.3.</strong> Font Shaping</a></li><li class="chapter-item expanded "><a href="config/misc.html"><strong aria-hidden="true">4.4.</strong> Misc</a></li><li class="chapter-item expanded "><a href="config/keys.html"><strong aria-hidden="true">4.5.</strong> Key &amp; Mouse Binding</a></li><li class="chapter-item expanded "><a href="config/appearance.html"><strong aria-hidden="true">4.6.</strong> Colors &amp; Appearance</a></li></ol></li><li class="chapter-item expanded "><a href="scrollback.html"><strong aria-hidden="true">5.</strong> Scrollback</a></li><li class="chapter-item expanded "><a href="copymode.html"><strong aria-hidden="true">6.</strong> Copy Mode</a></li><li class="chapter-item expanded "><a href="hyperlinks.html"><strong aria-hidden="true">7.</strong> Hyperlinks</a></li><li class="chapter-item expanded "><a href="shell-integration.html"><strong aria-hidden="true">8.</strong> Shell Integration</a></li><li class="chapter-item expanded "><a href="imgcat.html"><strong aria-hidden="true">9.</strong> iTerm Image Protocol</a></li><li class="chapter-item expanded "><a href="ssh.html"><strong aria-hidden="true">10.</strong> SSH</a></li><li class="chapter-item expanded "><a href="serial.html"><strong aria-hidden="true">11.</strong> Serial Ports &amp; Arduino</a></li><li class="chapter-item expanded "><a href="multiplexing.html"><strong aria-hidden="true">12.</strong> Mulitplexing</a></li><li class="chapter-item expanded "><a href="escape-sequences.html"><strong aria-hidden="true">13.</strong> Escape Sequences</a></li><li class="chapter-item expanded "><a href="faq.html"><strong aria-hidden="true">14.</strong> F.A.Q.</a></li><li class="chapter-item expanded "><a href="help.html"><strong aria-hidden="true">15.</strong> Getting Help</a></li><li class="chapter-item expanded "><a href="contributing.html"><strong aria-hidden="true">16.</strong> Contributing</a></li><li class="chapter-item expanded "><a href="colorschemes/index.html"><strong aria-hidden="true">17.</strong> Color Schemes</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="colorschemes/3/index.html"><strong aria-hidden="true">17.1.</strong> 3</a></li><li class="chapter-item expanded "><a href="colorschemes/a/index.html"><strong aria-hidden="true">17.2.</strong> a</a></li><li class="chapter-item expanded "><a href="colorschemes/b/index.html"><strong aria-hidden="true">17.3.</strong> b</a></li><li class="chapter-item expanded "><a href="colorschemes/c/index.html"><strong aria-hidden="true">17.4.</strong> c</a></li><li class="chapter-item expanded "><a href="colorschemes/d/index.html"><strong aria-hidden="true">17.5.</strong> d</a></li><li class="chapter-item expanded "><a href="colorschemes/e/index.html"><strong aria-hidden="true">17.6.</strong> e</a></li><li class="chapter-item expanded "><a href="colorschemes/f/index.html"><strong aria-hidden="true">17.7.</strong> f</a></li><li class="chapter-item expanded "><a href="colorschemes/g/index.html"><strong aria-hidden="true">17.8.</strong> g</a></li><li class="chapter-item expanded "><a href="colorschemes/h/index.html"><strong aria-hidden="true">17.9.</strong> h</a></li><li class="chapter-item expanded "><a href="colorschemes/i/index.html"><strong aria-hidden="true">17.10.</strong> i</a></li><li class="chapter-item expanded "><a href="colorschemes/j/index.html"><strong aria-hidden="true">17.11.</strong> j</a></li><li class="chapter-item expanded "><a href="colorschemes/k/index.html"><strong aria-hidden="true">17.12.</strong> k</a></li><li class="chapter-item expanded "><a href="colorschemes/l/index.html"><strong aria-hidden="true">17.13.</strong> l</a></li><li class="chapter-item expanded "><a href="colorschemes/m/index.html"><strong aria-hidden="true">17.14.</strong> m</a></li><li class="chapter-item expanded "><a href="colorschemes/n/index.html"><strong aria-hidden="true">17.15.</strong> n</a></li><li class="chapter-item expanded "><a href="colorschemes/o/index.html"><strong aria-hidden="true">17.16.</strong> o</a></li><li class="chapter-item expanded "><a href="colorschemes/p/index.html"><strong aria-hidden="true">17.17.</strong> p</a></li><li class="chapter-item expanded "><a href="colorschemes/r/index.html"><strong aria-hidden="true">17.18.</strong> r</a></li><li class="chapter-item expanded "><a href="colorschemes/s/index.html"><strong aria-hidden="true">17.19.</strong> s</a></li><li class="chapter-item expanded "><a href="colorschemes/t/index.html"><strong aria-hidden="true">17.20.</strong> t</a></li><li class="chapter-item expanded "><a href="colorschemes/u/index.html"><strong aria-hidden="true">17.21.</strong> u</a></li><li class="chapter-item expanded "><a href="colorschemes/v/index.html"><strong aria-hidden="true">17.22.</strong> v</a></li><li class="chapter-item expanded "><a href="colorschemes/w/index.html"><strong aria-hidden="true">17.23.</strong> w</a></li><li class="chapter-item expanded "><a href="colorschemes/z/index.html"><strong aria-hidden="true">17.24.</strong> z</a></li></ol></li><li class="chapter-item expanded "><a href="config/lua/general.html"><strong aria-hidden="true">18.</strong> Lua Reference</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="config/lua/wezterm/index.html"><strong aria-hidden="true">18.1.</strong> module: wezterm</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="config/lua/wezterm/action.html"><strong aria-hidden="true">18.1.1.</strong> action</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/config_dir.html"><strong aria-hidden="true">18.1.2.</strong> config_dir</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/emit.html"><strong aria-hidden="true">18.1.3.</strong> emit</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/executable_dir.html"><strong aria-hidden="true">18.1.4.</strong> executable_dir</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/font.html"><strong aria-hidden="true">18.1.5.</strong> font</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/font_with_fallback.html"><strong aria-hidden="true">18.1.6.</strong> font_with_fallback</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/glob.html"><strong aria-hidden="true">18.1.7.</strong> glob</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/home_dir.html"><strong aria-hidden="true">18.1.8.</strong> home_dir</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/hostname.html"><strong aria-hidden="true">18.1.9.</strong> hostname</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/log_error.html"><strong aria-hidden="true">18.1.10.</strong> log_error</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/on.html"><strong aria-hidden="true">18.1.11.</strong> on</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/permute_any_mods.html"><strong aria-hidden="true">18.1.12.</strong> permute_any_mods</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/permute_any_or_no_mods.html"><strong aria-hidden="true">18.1.13.</strong> permute_any_or_no_mods</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/read_dir.html"><strong aria-hidden="true">18.1.14.</strong> read_dir</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/run_child_process.html"><strong aria-hidden="true">18.1.15.</strong> run_child_process</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/running_under_wsl.html"><strong aria-hidden="true">18.1.16.</strong> running_under_wsl</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/sleep_ms.html"><strong aria-hidden="true">18.1.17.</strong> sleep_ms</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/split_by_newlines.html"><strong aria-hidden="true">18.1.18.</strong> split_by_newlines</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/target_triple.html"><strong aria-hidden="true">18.1.19.</strong> target_triple</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/utf16_to_utf8.html"><strong aria-hidden="true">18.1.20.</strong> utf16_to_utf8</a></li><li class="chapter-item expanded "><a href="config/lua/wezterm/version.html"><strong aria-hidden="true">18.1.21.</strong> version</a></li></ol></li><li class="chapter-item expanded "><a href="config/lua/config/index.html"><strong aria-hidden="true">18.2.</strong> struct: Config</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="config/lua/config/alternate_buffer_wheel_scroll_speed.html"><strong aria-hidden="true">18.2.1.</strong> alternate_buffer_wheel_scroll_speed</a></li><li class="chapter-item expanded "><a href="config/lua/config/bold_brightens_ansi_colors.html"><strong aria-hidden="true">18.2.2.</strong> bold_brightens_ansi_colors</a></li><li class="chapter-item expanded "><a href="config/lua/config/color_schemes.html"><strong aria-hidden="true">18.2.3.</strong> color_schemes</a></li><li class="chapter-item expanded "><a href="config/lua/config/colors.html"><strong aria-hidden="true">18.2.4.</strong> colors</a></li><li class="chapter-item expanded "><a href="config/lua/config/default_cwd.html"><strong aria-hidden="true">18.2.5.</strong> default_cwd</a></li><li class="chapter-item expanded "><a href="config/lua/config/default_prog.html"><strong aria-hidden="true">18.2.6.</strong> default_prog</a></li><li class="chapter-item expanded "><a href="config/lua/config/font.html"><strong aria-hidden="true">18.2.7.</strong> font</a></li><li class="chapter-item expanded "><a href="config/lua/config/font_antialias.html"><strong aria-hidden="true">18.2.8.</strong> font_antialias</a></li><li class="chapter-item expanded "><a href="config/lua/config/font_hinting.html"><strong aria-hidden="true">18.2.9.</strong> font_hinting</a></li><li class="chapter-item expanded "><a href="config/lua/config/font_locator.html"><strong aria-hidden="true">18.2.10.</strong> font_locator</a></li><li class="chapter-item expanded "><a href="config/lua/config/font_rasterizer.html"><strong aria-hidden="true">18.2.11.</strong> font_rasterizer</a></li><li class="chapter-item expanded "><a href="config/lua/config/font_rules.html"><strong aria-hidden="true">18.2.12.</strong> font_rules</a></li><li class="chapter-item expanded "><a href="config/lua/config/font_shaper.html"><strong aria-hidden="true">18.2.13.</strong> font_shaper</a></li><li class="chapter-item expanded "><a href="config/lua/config/font_size.html"><strong aria-hidden="true">18.2.14.</strong> font_size</a></li><li class="chapter-item expanded "><a href="config/lua/config/freetype_interpreter_version.html"><strong aria-hidden="true">18.2.15.</strong> freetype_interpreter_version</a></li><li class="chapter-item expanded "><a href="config/lua/config/front_end.html"><strong aria-hidden="true">18.2.16.</strong> front_end</a></li><li class="chapter-item expanded "><a href="config/lua/config/harfbuzz_features.html"><strong aria-hidden="true">18.2.17.</strong> harfbuzz_features</a></li><li class="chapter-item expanded "><a href="config/lua/config/hyperlink_rules.html"><strong aria-hidden="true">18.2.18.</strong> hyperlink_rules</a></li><li class="chapter-item expanded "><a href="config/lua/config/initial_cols.html"><strong aria-hidden="true">18.2.19.</strong> initial_cols</a></li><li class="chapter-item expanded "><a href="config/lua/config/initial_rows.html"><strong aria-hidden="true">18.2.20.</strong> initial_rows</a></li><li class="chapter-item expanded "><a href="config/lua/config/line_height.html"><strong aria-hidden="true">18.2.21.</strong> line_height</a></li><li class="chapter-item expanded "><a href="config/lua/config/scrollback_lines.html"><strong aria-hidden="true">18.2.22.</strong> scrollback_lines</a></li><li class="chapter-item expanded "><a href="config/lua/config/set_environment_variables.html"><strong aria-hidden="true">18.2.23.</strong> set_environment_variables</a></li><li class="chapter-item expanded "><a href="config/lua/config/term.html"><strong aria-hidden="true">18.2.24.</strong> term</a></li><li class="chapter-item expanded "><a href="config/lua/config/unix_domains.html"><strong aria-hidden="true">18.2.25.</strong> unix_domains</a></li></ol></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/index.html"><strong aria-hidden="true">18.3.</strong> enum: KeyAssignment</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="config/lua/keyassignment/ActivateCopyMode.html"><strong aria-hidden="true">18.3.1.</strong> ActivateCopyMode</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/ActivatePaneDirection.html"><strong aria-hidden="true">18.3.2.</strong> ActivatePaneDirection</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/ActivateTab.html"><strong aria-hidden="true">18.3.3.</strong> ActivateTab</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/ActivateTabRelative.html"><strong aria-hidden="true">18.3.4.</strong> ActivateTabRelative</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/AdjustPaneSize.html"><strong aria-hidden="true">18.3.5.</strong> AdjustPaneSize</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/ClearScrollback.html"><strong aria-hidden="true">18.3.6.</strong> ClearScrollback</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/CloseCurrentPane.html"><strong aria-hidden="true">18.3.7.</strong> CloseCurrentPane</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/CloseCurrentTab.html"><strong aria-hidden="true">18.3.8.</strong> CloseCurrentTab</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/CompleteSelection.html"><strong aria-hidden="true">18.3.9.</strong> CompleteSelection</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/CompleteSelectionOrOpenLinkAtMouseCursor.html"><strong aria-hidden="true">18.3.10.</strong> CompleteSelectionOrOpenLinkAtMouseCursor</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/Copy.html"><strong aria-hidden="true">18.3.11.</strong> Copy</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/CopyTo.html"><strong aria-hidden="true">18.3.12.</strong> CopyTo</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/DecreaseFontSize.html"><strong aria-hidden="true">18.3.13.</strong> DecreaseFontSize</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/DisableDefaultAssignment.html"><strong aria-hidden="true">18.3.14.</strong> DisableDefaultAssignment</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/EmitEvent.html"><strong aria-hidden="true">18.3.15.</strong> EmitEvent</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/ExtendSelectionToMouseCursor.html"><strong aria-hidden="true">18.3.16.</strong> ExtendSelectionToMouseCursor</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/Hide.html"><strong aria-hidden="true">18.3.17.</strong> Hide</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/HideApplication.html"><strong aria-hidden="true">18.3.18.</strong> HideApplication</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/IncreaseFontSize.html"><strong aria-hidden="true">18.3.19.</strong> IncreaseFontSize</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/MoveTab.html"><strong aria-hidden="true">18.3.20.</strong> MoveTab</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/MoveTabRelative.html"><strong aria-hidden="true">18.3.21.</strong> MoveTabRelative</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/Nop.html"><strong aria-hidden="true">18.3.22.</strong> Nop</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/OpenLinkAtMouseCursor.html"><strong aria-hidden="true">18.3.23.</strong> OpenLinkAtMouseCursor</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/Paste.html"><strong aria-hidden="true">18.3.24.</strong> Paste</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/PasteFrom.html"><strong aria-hidden="true">18.3.25.</strong> PasteFrom</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/PastePrimarySelection.html"><strong aria-hidden="true">18.3.26.</strong> PastePrimarySelection</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/QuitApplication.html"><strong aria-hidden="true">18.3.27.</strong> QuitApplication</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/ReloadConfiguration.html"><strong aria-hidden="true">18.3.28.</strong> ReloadConfiguration</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/ResetFontSize.html"><strong aria-hidden="true">18.3.29.</strong> ResetFontSize</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/ScrollByPage.html"><strong aria-hidden="true">18.3.30.</strong> ScrollByPage</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/ScrollToPrompt.html"><strong aria-hidden="true">18.3.31.</strong> ScrollToPrompt</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/Search.html"><strong aria-hidden="true">18.3.32.</strong> Search</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/SelectTextAtMouseCursor.html"><strong aria-hidden="true">18.3.33.</strong> SelectTextAtMouseCursor</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/SendString.html"><strong aria-hidden="true">18.3.34.</strong> SendString</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/Show.html"><strong aria-hidden="true">18.3.35.</strong> Show</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/ShowLauncher.html"><strong aria-hidden="true">18.3.36.</strong> ShowLauncher</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/ShowTabNavigator.html"><strong aria-hidden="true">18.3.37.</strong> ShowTabNavigator</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/SpawnCommandInNewTab.html"><strong aria-hidden="true">18.3.38.</strong> SpawnCommandInNewTab</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/SpawnCommandInNewWindow.html"><strong aria-hidden="true">18.3.39.</strong> SpawnCommandInNewWindow</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/SpawnTab.html"><strong aria-hidden="true">18.3.40.</strong> SpawnTab</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/SpawnWindow.html"><strong aria-hidden="true">18.3.41.</strong> SpawnWindow</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/SplitHorizontal.html"><strong aria-hidden="true">18.3.42.</strong> SplitHorizontal</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/SplitVertical.html"><strong aria-hidden="true">18.3.43.</strong> SplitVertical</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/ToggleFullScreen.html"><strong aria-hidden="true">18.3.44.</strong> ToggleFullScreen</a></li><li class="chapter-item expanded "><a href="config/lua/keyassignment/TogglePaneZoomState.html"><strong aria-hidden="true">18.3.45.</strong> TogglePaneZoomState</a></li></ol></li><li class="chapter-item expanded "><a href="config/lua/SpawnCommand.html"><strong aria-hidden="true">18.4.</strong> object: SpawnCommand</a></li><li class="chapter-item expanded "><a href="config/lua/pane/index.html"><strong aria-hidden="true">18.5.</strong> object: Pane</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="config/lua/pane/get_current_working_dir.html"><strong aria-hidden="true">18.5.1.</strong> get_current_working_dir</a></li><li class="chapter-item expanded "><a href="config/lua/pane/get_cursor_position.html"><strong aria-hidden="true">18.5.2.</strong> get_cursor_position</a></li><li class="chapter-item expanded "><a href="config/lua/pane/get_dimensions.html"><strong aria-hidden="true">18.5.3.</strong> get_dimensions</a></li><li class="chapter-item expanded "><a href="config/lua/pane/get_lines_as_text.html"><strong aria-hidden="true">18.5.4.</strong> get_lines_as_text</a></li><li class="chapter-item expanded "><a href="config/lua/pane/get_title.html"><strong aria-hidden="true">18.5.5.</strong> get_title</a></li><li class="chapter-item expanded "><a href="config/lua/pane/pane_id.html"><strong aria-hidden="true">18.5.6.</strong> pane_id</a></li><li class="chapter-item expanded "><a href="config/lua/pane/paste.html"><strong aria-hidden="true">18.5.7.</strong> paste</a></li></ol></li><li class="chapter-item expanded "><a href="config/lua/window/index.html"><strong aria-hidden="true">18.6.</strong> object: Window</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="config/lua/window/perform_action.html"><strong aria-hidden="true">18.6.1.</strong> perform_action</a></li><li class="chapter-item expanded "><a href="config/lua/window/window_id.html"><strong aria-hidden="true">18.6.2.</strong> window_id</a></li></ol></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -107,8 +121,8 @@
                             <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy (default)</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
                         </ul>
                         
                         <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
@@ -120,8 +134,14 @@
                     <h1 class="menu-title">Wez&#x27;s Terminal Emulator</h1>
 
                     <div class="right-buttons">
+                        
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        
+                        
+                        <a href="https://github.com/wez/wezterm" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
                         
                     </div>
@@ -151,7 +171,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <p><em>WezTerm is a GPU-accelerated cross-platform terminal emulator and multiplexer written by <a href="https://github.com/wez/">@wez</a> and implemented in <a href="https://www.rust-lang.org/">Rust</a></em></p>
+                        <p><img alt="WezTerm Icon" src="https://raw.githubusercontent.com/wez/wezterm/master/assets/icon/terminal.png" align="left" style="padding-right: 1em"> <em>WezTerm is a GPU-accelerated cross-platform terminal emulator and multiplexer written by <a href="https://github.com/wez/">@wez</a> and implemented in <a href="https://www.rust-lang.org/">Rust</a></em></p>
 <p><a class="btn" href="installation.html">Download</a></p>
 <h2><a class="header" href="#features" id="features">Features</a></h2>
 <ul>
@@ -177,7 +197,7 @@ source, you may also build it for yourself.</p>
 a setup.exe style installer to guide the installation (requires admin privileges)
 or a simple zip file and manage the files for yourself (no special privileges
 required).</p>
-<p><a href="https://github.com/wez/wezterm/releases/download/20201101-103216-403d002d/WezTerm-20201101-103216-403d002d-setup.exe" class="btn">Windows (setup.exe)</a>
+<p><a href="https://github.com/wez/wezterm/releases/download/20210203-095643-70a364eb/WezTerm-20210203-095643-70a364eb-setup.exe" class="btn">Windows (setup.exe)</a>
 <a href="https://github.com/wez/wezterm/releases/download/nightly/WezTerm-nightly-setup.exe" class="btn">Nightly Windows (setup.exe)</a></p>
 <p>WezTerm is available in a setup.exe style installer; the installer is produced
 with Inno Setup and will install wezterm to your program files directory and
@@ -185,13 +205,13 @@ register that location in your PATH environment.  The installer can be run
 as a GUI to guide you through the install, but also offers the <a href="https://jrsoftware.org/ishelp/index.php?topic=setupcmdline">standard
 Inno Setup command line options</a>
 to configure/script the installation process.</p>
-<p><a href="https://github.com/wez/wezterm/releases/download/20201101-103216-403d002d/WezTerm-windows-20201101-103216-403d002d.zip" class="btn">Windows (zip)</a>
+<p><a href="https://github.com/wez/wezterm/releases/download/20210203-095643-70a364eb/WezTerm-windows-20210203-095643-70a364eb.zip" class="btn">Windows (zip)</a>
 <a href="https://github.com/wez/wezterm/releases/download/nightly/WezTerm-windows-nightly.zip" class="btn">Nightly Windows (zip)</a></p>
 <p>WezTerm is also available in a simple zip file that can be extracted and
 run from anywhere, including a flash drive for a portable/relocatable
 installation.</p>
 <ol>
-<li>Download <a href="https://github.com/wez/wezterm/releases/download/20201101-103216-403d002d/WezTerm-windows-20201101-103216-403d002d.zip">Release</a></li>
+<li>Download <a href="https://github.com/wez/wezterm/releases/download/20210203-095643-70a364eb/WezTerm-windows-20210203-095643-70a364eb.zip">Release</a></li>
 <li>Extract the zipfile and double-click <code>wezterm.exe</code> to run the UI</li>
 <li>Configuration instructions can be <a href="install/../config/files.html">found here</a></li>
 </ol>
@@ -204,12 +224,15 @@ scoop itself can be installed like so:</p>
 scoop install wezterm
 </code></pre>
 <h2><a class="header" href="#installing-on-macos" id="installing-on-macos">Installing on macOS</a></h2>
-<p>The CI system builds the package on macOS Mojave (10.14).  It may run on earlier
-versions of macOS, but that has not been tested.</p>
-<p><a href="https://github.com/wez/wezterm/releases/download/20201101-103216-403d002d/WezTerm-macos-20201101-103216-403d002d.zip" class="btn">Download for macOS</a>
+<p>The CI system builds the package on macOS Big Sur and should run on systems as
+&quot;old&quot; as Mojave.  It may run on earlier versions of macOS, but that has not
+been tested.</p>
+<p>Starting with version 20210203-095643-70a364eb, WezTerm is a Universal binary
+with support for both Apple Silicon and Intel hardware.</p>
+<p><a href="https://github.com/wez/wezterm/releases/download/20210203-095643-70a364eb/WezTerm-macos-20210203-095643-70a364eb.zip" class="btn">Download for macOS</a>
 <a href="https://github.com/wez/wezterm/releases/download/nightly/WezTerm-macos-nightly.zip" class="btn">Nightly for macOS</a></p>
 <ol>
-<li>Download <a href="https://github.com/wez/wezterm/releases/download/20201101-103216-403d002d/WezTerm-macos-20201101-103216-403d002d.zip">Release</a></li>
+<li>Download <a href="https://github.com/wez/wezterm/releases/download/20210203-095643-70a364eb/WezTerm-macos-20210203-095643-70a364eb.zip">Release</a></li>
 <li>Extract the zipfile and drag the <code>WezTerm.app</code> bundle to your <code>Applications</code> folder</li>
 <li>First time around, you may need to right click and select <code>Open</code> to allow launching
 the application that your just downloaded from the internet.</li>
@@ -235,18 +258,18 @@ self-contained single file that doesn't require installation or
 any special privileges to run, and that is compatible with a wide
 range of Linux distributions.</p>
 <p>Download and make the file executable and you're ready to run!</p>
-<p><a href="https://github.com/wez/wezterm/releases/download/20201101-103216-403d002d/WezTerm-20201101-103216-403d002d-Ubuntu16.04.AppImage" class="btn">AppImage</a>
+<p><a href="https://github.com/wez/wezterm/releases/download/20210203-095643-70a364eb/WezTerm-20210203-095643-70a364eb-Ubuntu16.04.AppImage" class="btn">AppImage</a>
 <a href="https://github.com/wez/wezterm/releases/download/nightly/WezTerm-nightly-Ubuntu16.04.AppImage" class="btn">Nightly AppImage</a></p>
-<pre><code class="language-bash">curl -LO https://github.com/wez/wezterm/releases/download/20201101-103216-403d002d/WezTerm-20201101-103216-403d002d-Ubuntu16.04.AppImage
-chmod +x WezTerm-20201101-103216-403d002d-Ubuntu16.04.AppImage
+<pre><code class="language-bash">curl -LO https://github.com/wez/wezterm/releases/download/20210203-095643-70a364eb/WezTerm-20210203-095643-70a364eb-Ubuntu16.04.AppImage
+chmod +x WezTerm-20210203-095643-70a364eb-Ubuntu16.04.AppImage
 </code></pre>
 <p>You may then execute the appimage directly to launch wezterm, with no
 specific installation steps required:</p>
-<pre><code class="language-bash">./WezTerm-20201101-103216-403d002d-Ubuntu16.04.AppImage
+<pre><code class="language-bash">./WezTerm-20210203-095643-70a364eb-Ubuntu16.04.AppImage
 </code></pre>
 <p>That said, you may wish to make it a bit more convenient:</p>
 <pre><code class="language-bash">mkdir ~/bin
-mv ./WezTerm-20201101-103216-403d002d-Ubuntu16.04.AppImage ~/bin/wezterm
+mv ./WezTerm-20210203-095643-70a364eb-Ubuntu16.04.AppImage ~/bin/wezterm
 ~/bin/wezterm
 </code></pre>
 <ul>
@@ -259,17 +282,16 @@ that exactly matches your system you can try installing one from an older versio
 of your distribution, or use one of the Debian packages linked below.  Failing that,
 you can try the AppImage download which should work on most Linux systems.</p>
 <table><thead><tr><th>Distro</th><th>Stable</th><th>Nightly</th></tr></thead><tbody>
-<tr><td>Ubuntu16</td><td><a href="https://github.com/wez/wezterm/releases/download/20201101-103216-403d002d/wezterm-20201101-103216-403d002d.Ubuntu16.04.deb">wezterm-20201101-103216-403d002d.Ubuntu16.04.deb</a></td><td><a href="https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly.Ubuntu16.04.deb">wezterm-nightly.Ubuntu16.04.deb</a></td></tr>
-<tr><td>Ubuntu18</td><td><a href="https://github.com/wez/wezterm/releases/download/20201101-103216-403d002d/wezterm-20201101-103216-403d002d.Ubuntu18.04.deb">wezterm-20201101-103216-403d002d.Ubuntu18.04.deb</a></td><td><a href="https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly.Ubuntu18.04.deb">wezterm-nightly.Ubuntu18.04.deb</a></td></tr>
-<tr><td>Ubuntu19</td><td><a href="https://github.com/wez/wezterm/releases/download/20201101-103216-403d002d/wezterm-20201101-103216-403d002d.Ubuntu19.10.deb">wezterm-20201101-103216-403d002d.Ubuntu19.10.deb</a></td><td><a href="https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly.Ubuntu19.10.deb">wezterm-nightly.Ubuntu19.10.deb</a></td></tr>
-<tr><td>Ubuntu20</td><td><a href="https://github.com/wez/wezterm/releases/download/20201101-103216-403d002d/wezterm-20201101-103216-403d002d.Ubuntu20.04.deb">wezterm-20201101-103216-403d002d.Ubuntu20.04.deb</a></td><td><a href="https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly.Ubuntu20.04.deb">wezterm-nightly.Ubuntu20.04.deb</a></td></tr>
-<tr><td>Debian9</td><td><a href="https://github.com/wez/wezterm/releases/download/20201101-103216-403d002d/wezterm-20201101-103216-403d002d.Debian9.12.deb">wezterm-20201101-103216-403d002d.Debian9.12.deb</a></td><td><a href="https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly.Debian9.12.deb">wezterm-nightly.Debian9.12.deb</a></td></tr>
-<tr><td>Debian10</td><td><a href="https://github.com/wez/wezterm/releases/download/20201101-103216-403d002d/wezterm-20201101-103216-403d002d.Debian10.deb">wezterm-20201101-103216-403d002d.Debian10.deb</a></td><td><a href="https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly.Debian10.deb">wezterm-nightly.Debian10.deb</a></td></tr>
+<tr><td>Ubuntu16</td><td><a href="https://github.com/wez/wezterm/releases/download/20210203-095643-70a364eb/wezterm-20210203-095643-70a364eb.Ubuntu16.04.deb">wezterm-20210203-095643-70a364eb.Ubuntu16.04.deb</a></td><td><a href="https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly.Ubuntu16.04.deb">wezterm-nightly.Ubuntu16.04.deb</a></td></tr>
+<tr><td>Ubuntu18</td><td><a href="https://github.com/wez/wezterm/releases/download/20210203-095643-70a364eb/wezterm-20210203-095643-70a364eb.Ubuntu18.04.deb">wezterm-20210203-095643-70a364eb.Ubuntu18.04.deb</a></td><td><a href="https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly.Ubuntu18.04.deb">wezterm-nightly.Ubuntu18.04.deb</a></td></tr>
+<tr><td>Ubuntu20</td><td><a href="https://github.com/wez/wezterm/releases/download/20210203-095643-70a364eb/wezterm-20210203-095643-70a364eb.Ubuntu20.04.deb">wezterm-20210203-095643-70a364eb.Ubuntu20.04.deb</a></td><td><a href="https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly.Ubuntu20.04.deb">wezterm-nightly.Ubuntu20.04.deb</a></td></tr>
+<tr><td>Debian9</td><td><a href="https://github.com/wez/wezterm/releases/download/20210203-095643-70a364eb/wezterm-20210203-095643-70a364eb.Debian9.12.deb">wezterm-20210203-095643-70a364eb.Debian9.12.deb</a></td><td><a href="https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly.Debian9.12.deb">wezterm-nightly.Debian9.12.deb</a></td></tr>
+<tr><td>Debian10</td><td><a href="https://github.com/wez/wezterm/releases/download/20210203-095643-70a364eb/wezterm-20210203-095643-70a364eb.Debian10.deb">wezterm-20210203-095643-70a364eb.Debian10.deb</a></td><td><a href="https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly.Debian10.deb">wezterm-nightly.Debian10.deb</a></td></tr>
 </tbody></table>
 <p>To download and install from the CLI, you can use something like this, which
 shows how to install the Ubuntu 16 package:</p>
-<pre><code class="language-bash">curl -LO https://github.com/wez/wezterm/releases/download/20201101-103216-403d002d/wezterm-20201101-103216-403d002d.Ubuntu16.04.deb
-sudo apt install -y ./wezterm-20201101-103216-403d002d.Ubuntu16.04.deb
+<pre><code class="language-bash">curl -LO https://github.com/wez/wezterm/releases/download/20210203-095643-70a364eb/wezterm-20210203-095643-70a364eb.Ubuntu16.04.deb
+sudo apt install -y ./wezterm-20210203-095643-70a364eb.Ubuntu16.04.deb
 </code></pre>
 <ul>
 <li>The package installs <code>/usr/bin/wezterm</code> and <code>/usr/share/applications/org.wezfurlong.wezterm.desktop</code></li>
@@ -281,14 +303,15 @@ These are likely compatible with other rpm-based distributions.
 Alternatively, you can try the AppImage download with should work
 on most Linux systems.</p>
 <table><thead><tr><th>Distro</th><th>Stable</th><th>Nightly</th></tr></thead><tbody>
-<tr><td>CentOS7</td><td><a href="https://github.com/wez/wezterm/releases/download/20201101-103216-403d002d/wezterm-20201101_103216_403d002d-1.el7.x86_64.rpm">wezterm-20201101_103216_403d002d-1.el7.x86_64.rpm</a></td><td><a href="https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly-centos7.rpm">wezterm-nightly-centos7.rpm</a></td></tr>
-<tr><td>CentOS8</td><td><a href="https://github.com/wez/wezterm/releases/download/20201101-103216-403d002d/wezterm-20201101_103216_403d002d-1.el8.x86_64.rpm">wezterm-20201101_103216_403d002d-1.el8.x86_64.rpm</a></td><td><a href="https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly-centos8.rpm">wezterm-nightly-centos8.rpm</a></td></tr>
-<tr><td>Fedora31</td><td><a href="https://github.com/wez/wezterm/releases/download/20201101-103216-403d002d/wezterm-20201101_103216_403d002d-1.fc31.x86_64.rpm">wezterm-20201101_103216_403d002d-1.fc31.x86_64.rpm</a></td><td><a href="https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly-fedora31.rpm">wezterm-nightly-fedora31.rpm</a></td></tr>
-<tr><td>Fedora32</td><td><a href="https://github.com/wez/wezterm/releases/download/20201101-103216-403d002d/wezterm-20201101_103216_403d002d-1.fc32.x86_64.rpm">wezterm-20201101_103216_403d002d-1.fc32.x86_64.rpm</a></td><td><a href="https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly-fedora32.rpm">wezterm-nightly-fedora32.rpm</a></td></tr>
+<tr><td>CentOS7</td><td><a href="https://github.com/wez/wezterm/releases/download/20210203-095643-70a364eb/wezterm-20210203_095643_70a364eb-1.el7.x86_64.rpm">wezterm-20210203_095643_70a364eb-1.el7.x86_64.rpm</a></td><td><a href="https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly-centos7.rpm">wezterm-nightly-centos7.rpm</a></td></tr>
+<tr><td>CentOS8</td><td><a href="https://github.com/wez/wezterm/releases/download/20210203-095643-70a364eb/wezterm-20210203_095643_70a364eb-1.el8.x86_64.rpm">wezterm-20210203_095643_70a364eb-1.el8.x86_64.rpm</a></td><td><a href="https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly-centos8.rpm">wezterm-nightly-centos8.rpm</a></td></tr>
+<tr><td>Fedora31</td><td><a href="https://github.com/wez/wezterm/releases/download/20210203-095643-70a364eb/wezterm-20210203_095643_70a364eb-1.fc31.x86_64.rpm">wezterm-20210203_095643_70a364eb-1.fc31.x86_64.rpm</a></td><td><a href="https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly-fedora31.rpm">wezterm-nightly-fedora31.rpm</a></td></tr>
+<tr><td>Fedora32</td><td><a href="https://github.com/wez/wezterm/releases/download/20210203-095643-70a364eb/wezterm-20210203_095643_70a364eb-1.fc32.x86_64.rpm">wezterm-20210203_095643_70a364eb-1.fc32.x86_64.rpm</a></td><td><a href="https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly-fedora32.rpm">wezterm-nightly-fedora32.rpm</a></td></tr>
+<tr><td>Fedora33</td><td><a href="https://github.com/wez/wezterm/releases/download/20210203-095643-70a364eb/wezterm-20210203_095643_70a364eb-1.fc33.x86_64.rpm">wezterm-20210203_095643_70a364eb-1.fc33.x86_64.rpm</a></td><td><a href="https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly-fedora33.rpm">wezterm-nightly-fedora33.rpm</a></td></tr>
 </tbody></table>
 <p>To download and install form the CLI you can use something like this, which
 shows how to install the Fedora 31 package:</p>
-<pre><code class="language-bash">sudo dnf install -y https://github.com/wez/wezterm/releases/download/20201101-103216-403d002d/wezterm-20201101_103216_403d002d-1.fc31.x86_64.rpm
+<pre><code class="language-bash">sudo dnf install -y https://github.com/wez/wezterm/releases/download/20210203-095643-70a364eb/wezterm-20210203_095643_70a364eb-1.fc31.x86_64.rpm
 </code></pre>
 <ul>
 <li>The package installs <code>/usr/bin/wezterm</code> and <code>/usr/share/applications/org.wezfurlong.wezterm.desktop</code></li>
@@ -318,7 +341,7 @@ $ brew install --HEAD wezterm
 <h2><a class="header" href="#raw-linux-binary" id="raw-linux-binary">Raw Linux Binary</a></h2>
 <p>Another option for linux is a raw binary archive.  These are the same binaries that
 are built for Ubuntu but provided in a tarball.</p>
-<p><a href="https://github.com/wez/wezterm/releases/download/20201101-103216-403d002d/wezterm-20201101-103216-403d002d.Ubuntu16.04.tar.xz" class="btn">Download raw Linux binaries</a>
+<p><a href="https://github.com/wez/wezterm/releases/download/20210203-095643-70a364eb/wezterm-20210203-095643-70a364eb.Ubuntu16.04.tar.xz" class="btn">Download raw Linux binaries</a>
 <a href="https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly.Ubuntu16.04.tar.xz" class="btn">Nightly raw Linux binaries</a></p>
 <h2><a class="header" href="#installing-from-source" id="installing-from-source">Installing from source</a></h2>
 <p>If your system isn't covered by the pre-built packages then you can build it
@@ -331,22 +354,22 @@ macOS.</p>
 <li>Build in release mode: <code>cargo build --release</code></li>
 <li>Run it via either <code>cargo run --release</code> or <code>target/release/wezterm</code></li>
 </ul>
-<p>You will need a collection of support libraries; the <a href="https://github.com/wez/wezterm/blob/master/get-deps"><code>get-deps</code></a> script will
+<p>You will need a collection of support libraries; the <a href="https://github.com/wez/wezterm/blob/main/get-deps"><code>get-deps</code></a> script will
 attempt to install them for you.  If it doesn't know about your system,
-<a href="https://github.com/wez/wezterm/blob/master/CONTRIBUTING.md">please contribute instructions!</a></p>
+<a href="https://github.com/wez/wezterm/blob/main/CONTRIBUTING.md">please contribute instructions!</a></p>
 <p>If you don't plan to submit a pull request to the wezterm repo, you can
 download a smaller source tarball using these steps:</p>
 <pre><code class="language-bash">curl https://sh.rustup.rs -sSf | sh -s
-curl -LO https://github.com/wez/wezterm/releases/download/20201101-103216-403d002d/wezterm-20201101-103216-403d002d-src.tar.gz
-tar -xzf wezterm-20201101-103216-403d002d-src.tar.gz
-cd wezterm-20201101-103216-403d002d
+curl -LO https://github.com/wez/wezterm/releases/download/20210203-095643-70a364eb/wezterm-20210203-095643-70a364eb-src.tar.gz
+tar -xzf wezterm-20210203-095643-70a364eb-src.tar.gz
+cd wezterm-20210203-095643-70a364eb
 sudo ./get-deps
 cargo build --release
 cargo run --release -- start
 </code></pre>
 <p>Alternatively, use the full git repo:</p>
 <pre><code class="language-bash">curl https://sh.rustup.rs -sSf | sh -s
-git clone --depth=1 --branch=master --recursive https://github.com/wez/wezterm.git
+git clone --depth=1 --branch=main --recursive https://github.com/wez/wezterm.git
 cd wezterm
 git submodule update --init --recursive
 sudo ./get-deps
@@ -386,6 +409,10 @@ daily) from the master branch.  It may not be usable and
 the feature set may change.  As features stabilize some
 brief notes about them may accumulate here.</p>
 <ul>
+<li>Not yet!</li>
+</ul>
+<h3><a class="header" href="#20210203-095643-70a364eb" id="20210203-095643-70a364eb">20210203-095643-70a364eb</a></h3>
+<ul>
 <li>Fix cursor position after using iTerm2 image protocol <a href="https://github.com/wez/wezterm/issues/317">#317</a></li>
 <li>Fix pixel dimensions after changing the pane size; this was mostly invisible but impacted image scaling when using sixel or iTerm2 image protocols. <a href="https://github.com/wez/wezterm/issues/312">#312</a></li>
 <li>Add support for OSC 133 which allows annotating output as <code>Output</code>, <code>Input</code> (that you typed) and <code>Prompt</code> (shell &quot;chrome&quot;). <a href="https://gitlab.freedesktop.org/Per_Bothner/specifications/blob/master/proposals/semantic-prompts.md">Learn more about Semantic prompt and OSC 133</a></li>
@@ -394,9 +421,45 @@ brief notes about them may accumulate here.</p>
 <li>Added <code>wezterm start --class CLASSNAME</code> option to specify the window class name under X11 and Windows, or the <code>app_id</code> under Wayland.  See <code>wezterm start --help</code> for more information.</li>
 <li>Added shell integration for setting OSC 7 (working directory) and OSC 133 (semantic zones) for Zsh and Bash. <a href="shell-integration.html">See Shell Integration docs</a>.</li>
 <li>Added <code>SemanticZone</code> as a possible parameter for <a href="config/lua/keyassignment/SelectTextAtMouseCursor.html">SelectTextAtMouseCursor</a>, making it possible to conveniently select complete input or output regions.</li>
-<li>Improved font rendering <a href="https://github.com/wez/wezterm/issues/320">#320</a> <a href="https://github.com/wez/wezterm/issues/331">#331</a></li>
+<li>Improved font rendering <a href="https://github.com/wez/wezterm/issues/320">#320</a> <a href="https://github.com/wez/wezterm/issues/331">#331</a> <a href="https://github.com/wez/wezterm/issues/413">#413</a> and changed <code>font_antialias = &quot;Greyscale&quot;</code> by default.</li>
 <li>Updated internal harfbuzz shaper to 2.7.2</li>
 <li>Fixed ALT-Escape not sending ESC-ESC <a href="https://github.com/wez/wezterm/issues/338">#338</a></li>
+<li>Added <code>allow_square_glyphs_to_overflow_width = &quot;WhenFollowedBySpace&quot;</code> option to allow square symbol glyphs to deliberately overflow their specified cell width when the next cell is a space.  Can be set to <code>Always</code> to allow overflowing regardless of the next cell being a space, or <code>Never</code> to strictly respect the cell width.  The default is <code>Never</code>. <a href="https://github.com/wez/wezterm/issues/342">#342</a></li>
+<li>macOS: Improved key input when Option is pressed.  Fixed dead key processing when <code>use_ime=true</code>. <a href="https://github.com/wez/wezterm/issues/357">#357</a></li>
+<li>macOS: Adjusted default dpi to 72 to bring point sizes into alignment with other macOS apps. <a href="https://github.com/wez/wezterm/issues/332">#332</a></li>
+<li>Improved font fallback; we now try harder to find a system-provided font for glyphs that are not found in your explicitly configured fonts.</li>
+<li>Revised pty output processing and removed the related <code>ratelimit_output_bytes_per_second</code> option</li>
+<li>Workaround Cocoa leaking window position saved state file descriptors to child processes on macOS Big Sur, and Gnome/Mutter doing something similar under X11</li>
+<li>The 256 color cube now uses slightly brighter colors <a href="https://github.com/wez/wezterm/issues/348">#348</a></li>
+<li>New: added <code>line_height</code> configuration option to scale the computed cell height. The default is <code>1.0</code>, resulting in using the font-specified metrics. Setting it to <code>1.2</code> will result in a 20% larger cell height.</li>
+<li>macOS: Fixed an issue where hovering over the split between panes could result in wezterm becoming unresponsive <a href="https://github.com/wez/wezterm/issues/391">#391</a></li>
+<li>Closing windows and <code>QuitApplication</code> will now prompt for confirmation before proceeding with the close/quit.  Added <code>window_close_confirmation</code> to control this; valid values are <code>AlwaysPrompt</code> and <code>NeverPrompt</code>. <a href="https://github.com/wez/wezterm/issues/280">#280</a></li>
+<li>Tidied up logging. Previously ERROR level logging was used to make sure that informational things showed up in the stderr stream. Now we use INFO level logging for this to avoid alarming the user.  You can set <code>WEZTERM_LOG=trace</code> in the environment to get more verbose logging for troubleshooting purposes.</li>
+<li>Windows: fix an issue where VNC-server-emulated AltGr was not treated as AltGr <a href="https://github.com/wez/wezterm/issues/392">#392</a></li>
+<li>X11: fix an issue where keys that produce unicode characters retained SHIFT as a modifier instead of normalizing it away. <a href="https://github.com/wez/wezterm/issues/394">#394</a></li>
+<li>Fixed an issue where a symbol-only font would be seen as 0-width and panic wezterm <a href="https://github.com/wez/wezterm/issues/404">#404</a></li>
+<li>Tweaked mouse selection: we now round the x-coordinate to the nearest cell which makes it a bit more forgiving if the mouse cursor is slightly to the left of the intended cell start. <a href="https://github.com/wez/wezterm/issues/350">#350</a></li>
+<li>Added <code>selection_word_boundary</code> option to control double-click word selection boundaries. The default is <tt> \t\n{}[]()&quot;'`</tt>. <a href="https://github.com/wez/wezterm/issues/405">#405</a></li>
+<li>Added support for Curly, Dotted and Dashed underlines.  See <a href="faq.html#how-do-i-enable-undercurl-curly-underlines">this documentation</a> on the escape sequences how enable undercurl support in vim and nvim. <a href="https://github.com/wez/wezterm/issues/415">#415</a></li>
+<li>Fixed an issue where wezterm would spawn processes with <code>umask 077</code> on unix systems, rather than the more commonly expected <code>umask 022</code>. <a href="https://github.com/wez/wezterm/issues/416">#416</a></li>
+<li>macOS: We now ship a Universal binary containing both Intel and &quot;Apple Silicon&quot; architectures</li>
+<li>Setting a really large or really small font scale (using CTRL +/-) no longer causes a panic <a href="https://github.com/wez/wezterm/issues/428">#428</a></li>
+<li>Fixed an issue where the mouse wheel wasn't mapped to cursor up/down when the alternate screen was active <a href="https://github.com/wez/wezterm/issues/429">#429</a></li>
+<li>Fixed <code>ToggleFullScreen</code> not working on macOS and X11.  It still doesn't function on Windows.  <code>native_macos_fullscreen_mode = false</code> uses a fast full-screen window on macOS. Set it to <code>true</code> to use the slower macOS native &quot;Spaces&quot; style fullscreen mode. <a href="https://github.com/wez/wezterm/issues/177">#177</a></li>
+<li>Windows: fix an issue where the initial window size didn't factor the correct DPI when the system-wide display scaling was not 100%. <a href="https://github.com/wez/wezterm/issues/427">#427</a></li>
+<li>New: <code>adjust_window_size_when_changing_font_size</code> option to control whether changing the font size adjusts the dimensions of the window (true) or adjusts the number of terminal rows/columns (false).  The default is <code>true</code>. <a href="https://github.com/wez/wezterm/issues/431">#431</a></li>
+<li>macOS: we no longer use MetalANGLE to render the gui; it was short lived as macOS Big Sur now uses Metal in its CGL implementation.  Support for using MetalANGLE is still present if the dylib is found on startup, but we no longer ship the dylib.</li>
+<li>Windows: when pasting text, ensure that the text has CRLF line endings unless bracketed paste is enabled. This imperfect heuristic helps to keep multi-line pastes on multiple lines when using Windows console applications and to avoid interleaved blank lines when using unix applications. <a href="https://github.com/wez/wezterm/issues/411">#411</a></li>
+<li>New: <a href="config/lua/keyassignment/ClearScrollback.html">ClearScrollback</a> now accepts a parameter to control whether the viewport is cleared along with the scrollback. Thanks to <a href="https://github.com/dfrankland">@dfrankland</a>!</li>
+<li>New: <a href="config/lua/config/default_cwd.html">default_cwd</a> to specify an alternative current working directory. Thanks to <a href="https://github.com/dfrankland">@dfrankland</a>!</li>
+<li>New: <a href="config/lua/keyassignment/CopyTo.html">CopyTo</a> and <a href="config/lua/keyassignment/PasteFrom.html">PasteFrom</a> actions. <a href="config/lua/keyassignment/Copy.html">Copy</a>, <a href="config/lua/keyassignment/Paste.html">Paste</a> and <a href="config/lua/keyassignment/PastePrimarySelection.html">PastePrimarySelection</a> are now deprecated in favor of these new options.</li>
+<li>X11: Mouse-based selection now copies-to and pastes-from the <code>PrimarySelection</code> by default. The <a href="config/lua/keyassignment/CompleteSelection.html">CompleteSelection</a> and <a href="config/lua/keyassignment/CompleteSelectionOrOpenLinkAtMouseCursor.html">CompleteSelectionOrOpenLinkAtMouseCursor</a> actions now require a parameter to specify the clipboard.</li>
+<li>X11: <code>SHIFT-CTRL-C</code> and <code>SHIFT-CTRL-V</code> now copy-to and paste from the <code>Clipboard</code> by default.  <code>SHIFT-Insert</code> pastes from the <code>PrimarySelection</code> by default.</li>
+<li>New: Added a new default <code>CTRL-Insert</code> key assignment bound to <code>CopyTo(PrimarySelection)</code></li>
+<li>macOS: Windows now have drop-shadows when they are opaque. These were disabled due transparency support was added. Thanks to <a href="https://github.com/fanzeyi">Rice</a>! <a href="https://github.com/wez/wezterm/pull/445">#445</a></li>
+<li>Unix: adjust font-config patterns to also match &quot;dual spacing&quot; fonts such as <a href="https://typeof.net/Iosevka/">Iosevka Term</a>. Thanks to <a href="https://github.com/leiserfg">Leiser</a>! <a href="https://github.com/wez/wezterm/pull/446">#446</a></li>
+<li>New: Added <a href="config/lua/config/alternate_buffer_wheel_scroll_speed.html">alternate_buffer_wheel_scroll_speed</a> option to control how many cursor key presses are generated by the mouse wheel when the alternate screen is active. The new default for this is a faster-than-previous-releases 3 lines per wheel tick. <a href="https://github.com/wez/wezterm/issues/432">#432</a></li>
+<li>macOS: Dead Keys are now processed even when <code>use_ime=false</code>.  <a href="config/keys.html#macos-left-and-right-option-key">More details in the docs</a>. <a href="https://github.com/wez/wezterm/issues/410">#410</a>.</li>
 </ul>
 <h3><a class="header" href="#20201101-103216-403d002d" id="20201101-103216-403d002d">20201101-103216-403d002d</a></h3>
 <ul>
@@ -858,6 +921,45 @@ to launch it.  This example opens up a new terminal window running vim
 to edit your wezterm configuration:</p>
 <pre><code class="language-bash">wezterm start -- vim ~/.wezterm.lua
 </code></pre>
+<h2><a class="header" href="#specifying-the-current-working-directory" id="specifying-the-current-working-directory">Specifying the current working directory</a></h2>
+<p>If you'd like <code>wezterm</code> to start running a program in a specific working
+directory you can do so via the config, CLI, and when using
+<a href="config/lua/SpawnCommand.html"><code>SpawnCommand</code></a>:</p>
+<ul>
+<li>
+<p>Setting the <a href="config/lua/config/default_cwd.html"><code>default_cwd</code></a> via the config:</p>
+<pre><code class="language-lua">return {
+  default_cwd = &quot;/some/path&quot;,
+}
+</code></pre>
+</li>
+<li>
+<p>One off program in a specific working directory via the CLI:</p>
+<pre><code class="language-bash">wezterm start --cwd /some/path
+</code></pre>
+</li>
+<li>
+<p>The <a href="config/lua/keyassignment/SpawnCommandInNewTab.html"><code>SpawnCommandInNewTab</code></a>,
+<a href="config/lua/keyassignment/SpawnCommandInNewWindow.html"><code>SpawnCommandInNewWindow</code></a>,
+<a href="config/lua/keyassignment/SpawnTab.html"><code>SpawnTab</code></a> key assignments, and the
+<a href="config/launch.html#the-launcher-menu">Launcher Menu</a> described below all accept a
+<a href="config/lua/SpawnCommand.html"><code>SpawnCommand</code></a> object that accepts an optional <code>cwd</code> field:</p>
+<pre><code class="language-lua">{
+  label = &quot;List files in /some/path&quot;,
+  args = {&quot;ls&quot;, &quot;-al&quot;},
+  cwd = &quot;/some/path&quot;,
+}
+</code></pre>
+</li>
+</ul>
+<p>Panes/Tabs/Windows created after the first will generally try to resolve the
+current working directory of the current Pane, preferring
+<a href="config/../shell-integration.html">a value set by OSC 7</a> and falling back to
+attempting to lookup the <code>cwd</code> of the current process group leader attached to a
+local Pane. If no <code>cwd</code> can be resolved, then the <code>default_cwd</code> will be used.
+If <code>default_cwd</code> is not specified, then the home directory of the user will be
+used.</p>
+<p><a href="config/lua/config/default_cwd.html">See <code>default_cwd</code> for an easier to understand visualization</a>.</p>
 <h2><a class="header" href="#passing-environment-variables-to-the-spawned-program" id="passing-environment-variables-to-the-spawned-program">Passing Environment variables to the spawned program</a></h2>
 <p>The <code>set_environment_variables</code> configuration setting can be used to
 add environment variables to the environment of the spawned program.</p>
@@ -996,6 +1098,15 @@ set of directories:</p>
   -- emulators, you may wish to tune this value!
   dpi = 96.0,
 
+  -- (available starting in version 20210203-095643-70a364eb)
+  -- Scale the effective cell height.
+  -- The cell height is computed based on your selected font_size
+  -- and dpi and then multiplied by line_height.  Setting it to
+  -- eg: 1.2 will result in the spacing between lines being 20%
+  -- larger than the distance specified by the font author.
+  -- Setting it to eg: 0.9 will make it 10% smaller.
+  line_height = 1.0,
+
   -- When true (the default), text that is set to ANSI color
   -- indices 0-7 will be shifted to the corresponding brighter
   -- color index (8-15) when the intensity is set to Bold.
@@ -1007,7 +1118,7 @@ set of directories:</p>
   -- range of mature software; for instance, a lot of software
   -- assumes that Black+Bold renders as a Dark Grey which is
   -- legible on a Black background, but if this option is set to
-  -- true, it would render as Black on Black.
+  -- false, it would render as Black on Black.
   bold_brightens_ansi_colors = true,
 }
 </code></pre>
@@ -1142,7 +1253,7 @@ is approximateley equivalent to ClearType rendering on Windows, but some
 people find that it appears blurry.  You may wish to try <code>Greyscale</code> in
 that case.</p>
 <pre><code class="language-lua">return {
-  font_antialias = &quot;Subpixel&quot;, -- None, Greyscale, Subpixel
+  font_antialias = &quot;Greyscale&quot;, -- None, Greyscale, Subpixel
   font_hinting = &quot;Full&quot;,  -- None, Vertical, VerticalSubpixel, Full
 }
 </code></pre>
@@ -1192,14 +1303,6 @@ it lists available stylistic sets here:
   -- What to set the TERM variable to
   term = &quot;xterm-256color&quot;,
 
-  -- Constrains the rate at which output from a child command is
-  -- processed and applied to the terminal model.
-  -- This acts as a brake in the case of a command spewing a
-  -- ton of output and allows for the UI to remain responsive
-  -- so that you can hit CTRL-C to interrupt it if desired.
-  -- The default value is 400,000 bytes/s.
-  ratelimit_output_bytes_per_second = 400000,
-
   -- Constrains the rate at which the multiplexer server will
   -- unilaterally push data to the client.
   -- This helps to avoid saturating the link between the client
@@ -1247,6 +1350,10 @@ it lists available stylistic sets here:
   -- Specifies the maximum width that a tab can have in the
   -- tab bar.  Defaults to 16 glyphs in width.
   tab_max_width = 16,
+
+  -- Set this to &quot;NeverPrompt&quot; if you don't like confirming closing
+  -- windows every time
+  window_close_confirmation = &quot;AlwaysPrompt&quot;,
 }
 </code></pre>
 <p>Both the keyboard and the mouse bindings are configurable.</p>
@@ -1283,6 +1390,14 @@ with no composition effects, while the right <code>Option</code> key performs co
 both left and right <code>Option</code> keys behave identically and composition
 behavior was influenced for both of them via the <code>send_composed_key_when_alt_is_pressed</code>
 configuration option.</p>
+<p><em>since: 20210203-095643-70a364eb</em></p>
+<p>WezTerm is now able to perform dead-key expansion when <code>use_ime = false</code>.  Dead
+keys are treated as composition effects, so with the default settings of
+<code>send_composed_key_when_left_alt_is_pressed</code> and
+<code>send_composed_key_when_right_alt_is_pressed</code> above, in a US layout, <code>Left-Opt n</code> will produce <code>Alt N</code> and <code>Right-Opt n</code> will will for a subsequent key press
+before generating an event; <code>Right-Opt n SPACE</code> will emit <code>~</code> whereas <code>Right-Opt n n</code> will emit <code>ñ</code>.</p>
+<p>You may also set <code>use_dead_keys = false</code> to skip the hold state; continuing
+the example above, <code>Right-Opt n</code> will then immediately produce <code>~</code>.</p>
 <h3><a class="header" href="#macos-and-the-input-method-editor-ime" id="macos-and-the-input-method-editor-ime">macOS and the Input Method Editor (IME)</a></h3>
 <p>WezTerm has support for using the operating system Input Method Editor (IME) on
 macOS.  This is useful in cases where you need to type kanji or are using a
@@ -1320,11 +1435,12 @@ the normal key processing.</p>
 <h2><a class="header" href="#default-shortcut--key-binding-assignments" id="default-shortcut--key-binding-assignments">Default Shortcut / Key Binding Assignments</a></h2>
 <p>The default key bindings are:</p>
 <table><thead><tr><th>Modifiers</th><th>Key</th><th>Action</th></tr></thead><tbody>
-<tr><td><code>SUPER</code></td><td><code>c</code></td><td><code>Copy</code></td></tr>
-<tr><td><code>SUPER</code></td><td><code>v</code></td><td><code>Paste</code></td></tr>
-<tr><td><code>CTRL+SHIFT</code></td><td><code>c</code></td><td><code>Copy</code></td></tr>
-<tr><td><code>CTRL+SHIFT</code></td><td><code>v</code></td><td><code>Paste</code></td></tr>
-<tr><td><code>SHIFT</code></td><td><code>Insert</code></td><td><code>Paste</code></td></tr>
+<tr><td><code>SUPER</code></td><td><code>c</code></td><td><code>CopyTo=&quot;Clipboard&quot;</code></td></tr>
+<tr><td><code>SUPER</code></td><td><code>v</code></td><td><code>PasteFrom=&quot;Clipboard&quot;</code></td></tr>
+<tr><td><code>CTRL+SHIFT</code></td><td><code>c</code></td><td><code>CopyTo=&quot;Clipboard&quot;</code></td></tr>
+<tr><td><code>CTRL+SHIFT</code></td><td><code>v</code></td><td><code>PasteFrom=&quot;Clipboard&quot;</code></td></tr>
+<tr><td><code>CTRL</code></td><td><code>Insert</code></td><td><code>CopyTo=&quot;PrimarySelection&quot;</code> (<em>since: 20210203-095643-70a364eb</em>)</td></tr>
+<tr><td><code>SHIFT</code></td><td><code>Insert</code></td><td><code>PasteFrom=&quot;PrimarySelection&quot;</code></td></tr>
 <tr><td><code>SUPER</code></td><td><code>m</code></td><td><code>Hide</code></td></tr>
 <tr><td><code>SUPER</code></td><td><code>n</code></td><td><code>SpawnWindow</code></td></tr>
 <tr><td><code>CTRL+SHIFT</code></td><td><code>n</code></td><td><code>SpawnWindow</code></td></tr>
@@ -1338,7 +1454,7 @@ the normal key processing.</p>
 <tr><td><code>SUPER</code></td><td><code>t</code></td><td><code>SpawnTab=&quot;CurrentPaneDomain&quot;</code></td></tr>
 <tr><td><code>CTRL+SHIFT</code></td><td><code>t</code></td><td><code>SpawnTab=&quot;CurrentPaneDomain&quot;</code></td></tr>
 <tr><td><code>SUPER+SHIFT</code></td><td><code>T</code></td><td><code>SpawnTab=&quot;DefaultDomain&quot;</code></td></tr>
-<tr><td><code>SUPER</code></td><td><code>w</code></td><td><code>CloseCurrentTab</code></td></tr>
+<tr><td><code>SUPER</code></td><td><code>w</code></td><td><code>CloseCurrentTab{confirm=true}</code></td></tr>
 <tr><td><code>SUPER</code></td><td><code>1</code></td><td><code>ActivateTab=0</code></td></tr>
 <tr><td><code>SUPER</code></td><td><code>2</code></td><td><code>ActivateTab=1</code></td></tr>
 <tr><td><code>SUPER</code></td><td><code>3</code></td><td><code>ActivateTab=2</code></td></tr>
@@ -1348,7 +1464,7 @@ the normal key processing.</p>
 <tr><td><code>SUPER</code></td><td><code>7</code></td><td><code>ActivateTab=6</code></td></tr>
 <tr><td><code>SUPER</code></td><td><code>8</code></td><td><code>ActivateTab=7</code></td></tr>
 <tr><td><code>SUPER</code></td><td><code>9</code></td><td><code>ActivateTab=-1</code></td></tr>
-<tr><td><code>CTRL+SHIFT</code></td><td><code>w</code></td><td><code>CloseCurrentTab</code></td></tr>
+<tr><td><code>CTRL+SHIFT</code></td><td><code>w</code></td><td><code>CloseCurrentTab{confirm=true}</code></td></tr>
 <tr><td><code>CTRL+SHIFT</code></td><td><code>1</code></td><td><code>ActivateTab=0</code></td></tr>
 <tr><td><code>CTRL+SHIFT</code></td><td><code>2</code></td><td><code>ActivateTab=1</code></td></tr>
 <tr><td><code>CTRL+SHIFT</code></td><td><code>3</code></td><td><code>ActivateTab=2</code></td></tr>
@@ -1360,10 +1476,10 @@ the normal key processing.</p>
 <tr><td><code>CTRL+SHIFT</code></td><td><code>9</code></td><td><code>ActivateTab=-1</code></td></tr>
 <tr><td><code>SUPER+SHIFT</code></td><td><code>[</code></td><td><code>ActivateTabRelative=-1</code></td></tr>
 <tr><td><code>SUPER+SHIFT</code></td><td><code>]</code></td><td><code>ActivateTabRelative=1</code></td></tr>
-<tr><td><code>CTRL+SHIFT</code></td><td><code>PAGEUP</code></td><td><code>MoveTabRelative=-1</code></td></tr>
-<tr><td><code>CTRL+SHIFT</code></td><td><code>PAGEDOWN</code></td><td><code>MoveTabRelative=1</code></td></tr>
-<tr><td><code>SHIFT</code></td><td><code>PAGEUP</code></td><td><code>ScrollByPage=-1</code></td></tr>
-<tr><td><code>SHIFT</code></td><td><code>PAGEDOWN</code></td><td><code>ScrollByPage=1</code></td></tr>
+<tr><td><code>CTRL+SHIFT</code></td><td><code>PageUp</code></td><td><code>MoveTabRelative=-1</code></td></tr>
+<tr><td><code>CTRL+SHIFT</code></td><td><code>PageDown</code></td><td><code>MoveTabRelative=1</code></td></tr>
+<tr><td><code>SHIFT</code></td><td><code>PageUp</code></td><td><code>ScrollByPage=-1</code></td></tr>
+<tr><td><code>SHIFT</code></td><td><code>PageDown</code></td><td><code>ScrollByPage=1</code></td></tr>
 <tr><td><code>ALT</code></td><td><code>9</code></td><td><code>ShowTabNavigator</code></td></tr>
 <tr><td><code>SUPER</code></td><td><code>r</code></td><td><code>ReloadConfiguration</code></td></tr>
 <tr><td><code>CTRL+SHIFT</code></td><td><code>R</code></td><td><code>ReloadConfiguration</code></td></tr>
@@ -1404,13 +1520,13 @@ that order.</p>
 <tr><td>Double Left Down</td><td><code>NONE</code></td><td><code>SelectTextAtMouseCursor=&quot;Word&quot;</code></td></tr>
 <tr><td>Single Left Down</td><td><code>NONE</code></td><td><code>SelectTextAtMouseCursor=&quot;Cell&quot;</code></td></tr>
 <tr><td>Single Left Down</td><td><code>SHIFT</code></td><td><code>ExtendSelectionToMouseCursor={}</code></td></tr>
-<tr><td>Single Left Up</td><td><code>NONE</code></td><td><code>CompleteSelectionOrOpenLinkAtMouseCursor</code></td></tr>
-<tr><td>Double Left Up</td><td><code>NONE</code></td><td><code>CompleteSelection</code></td></tr>
-<tr><td>Triple Left Up</td><td><code>NONE</code></td><td><code>CompleteSelection</code></td></tr>
+<tr><td>Single Left Up</td><td><code>NONE</code></td><td><code>CompleteSelectionOrOpenLinkAtMouseCursor=&quot;PrimarySelection&quot;</code></td></tr>
+<tr><td>Double Left Up</td><td><code>NONE</code></td><td><code>CompleteSelection=&quot;PrimarySelection&quot;</code></td></tr>
+<tr><td>Triple Left Up</td><td><code>NONE</code></td><td><code>CompleteSelection=&quot;PrimarySelection&quot;</code></td></tr>
 <tr><td>Single Left Drag</td><td><code>NONE</code></td><td><code>ExtendSelectionToMouseCursor=&quot;Cell&quot;</code></td></tr>
 <tr><td>Double Left Drag</td><td><code>NONE</code></td><td><code>ExtendSelectionToMouseCursor=&quot;Word&quot;</code></td></tr>
 <tr><td>Triple Left Drag</td><td><code>NONE</code></td><td><code>ExtendSelectionToMouseCursor=&quot;Line&quot;</code></td></tr>
-<tr><td>Single Middle Down</td><td><code>NONE</code></td><td><code>Paste</code></td></tr>
+<tr><td>Single Middle Down</td><td><code>NONE</code></td><td><code>PasteFrom=&quot;PrimarySelection&quot;</code></td></tr>
 </tbody></table>
 <p>If you don't want the default assignments to be registered, you can
 disable all of them with this configuration; if you chose to do this,
@@ -1438,7 +1554,7 @@ return {
     {
       event={Up={streak=1, button=&quot;Left&quot;}},
       mods=&quot;NONE&quot;,
-      action=&quot;CompleteSelection&quot;,
+      action=wezterm.action{CompleteSelection=&quot;PrimarySelection&quot;},
     },
 
     -- and make CTRL-Click open hyperlinks
@@ -1614,7 +1730,7 @@ to use in the <code>color_schemes</code> sections.</p>
 </code></pre>
 <h3><a class="header" href="#defining-a-color-scheme-in-a-separate-file" id="defining-a-color-scheme-in-a-separate-file">Defining a Color Scheme in a separate file</a></h3>
 <p>If you'd like to factor your color schemes out into separate files, you
-can create a file with a <code>[colors]</code> section; take a look at <a href="https://github.com/wez/wezterm/blob/master/assets/colors/Builtin%20Dark.toml">one of
+can create a file with a <code>[colors]</code> section; take a look at <a href="https://github.com/wez/wezterm/blob/main/assets/colors/Builtin%20Dark.toml">one of
 the available color schemes for an example</a>.</p>
 <p>It is recommended that you place your custom scheme in a directory
 named <code>$HOME/.config/wezterm/colors</code> if you're on a POSIX system.</p>
@@ -1721,12 +1837,12 @@ $ for scheme in *.sh ; do ; echo $scheme ; \
 </code></pre>
 <h2><a class="header" href="#styling-inactive-panes" id="styling-inactive-panes">Styling Inactive Panes</a></h2>
 <p><em>since: 20201031-154415-9614e117</em></p>
-<p>By default, inactive panes look no different from active panes, with the
-exception that the cursor will render as an outline style to indicate that it
-doesn't have the focus.</p>
-<p>You can optionally apply a transformation to the pane colors
-with a hue, saturation, brightness (HSB) multipler.</p>
-<p>In this example, inactive panes will be slightly de-saturated and dimmed:</p>
+<p>To make it easier to see which pane is active, the inactive panes are dimmed
+and de-saturated slightly.</p>
+<p>You can specify your own transformation to the pane colors with a hue,
+saturation, brightness (HSB) multipler.</p>
+<p>In this example, inactive panes will be slightly de-saturated and dimmed;
+this is the default configuration:</p>
 <pre><code class="language-lua">return {
   inactive_pane_hsb = {
     saturation = 0.9,
@@ -1780,7 +1896,7 @@ return {
   },
 }
 </code></pre>
-<p>See <a href="config/appearance.markdown#style-inactive-panes">Styling Inactive Panes</a> for more information
+<p>See <a href="config/appearance.html#style-inactive-panes">Styling Inactive Panes</a> for more information
 on hue, saturation, brigthness transformations.</p>
 <h2><a class="header" href="#window-background-opacity" id="window-background-opacity">Window Background Opacity</a></h2>
 <p><em>since: 20201031-154415-9614e117</em></p>
@@ -1855,7 +1971,7 @@ file:</p>
 </code></pre>
 <p>You may <a href="config/appearance.html#defining-your-own-colors">change the color of the scrollbar</a> if you wish!</p>
 <h3><a class="header" href="#scrolling-without-a-scrollbar" id="scrolling-without-a-scrollbar">Scrolling without a scrollbar</a></h3>
-<p>By default, <code>SHIFT-PAGEUP</code> and <code>SHIFT-PAGEDOWN</code> will adjust the viewport scrollback position
+<p>By default, <code>SHIFT-PageUp</code> and <code>SHIFT-PageDown</code> will adjust the viewport scrollback position
 by one full screen for each press.</p>
 <p>See the <a href="config/keys.html#scrollbypage">ScrollByPage</a> docs for more information
 on this key binding assignment.</p>
@@ -2022,7 +2138,7 @@ as the current pane, <a href="config/lua/keyassignment/ScrollToPrompt.html">jump
 or <a href="config/lua/keyassignment/SelectTextAtMouseCursor.html">conveniently selecting the complete output from a command</a>.</p>
 <p>In order for these features to be enabled, you will need to configure your
 shell program to emit the escape sequences at the appropriate place.</p>
-<p>You can find some <a href="https://github.com/wez/wezterm/tree/master/assets/shell-integration">examples for various shells in the wezterm
+<p>You can find some <a href="https://github.com/wez/wezterm/tree/main/assets/shell-integration">examples for various shells in the wezterm
 repo</a>.</p>
 <p>In the most recently nightly builds the Fedora and Debian packages
 automatically activate shell integration for Bash and Zsh.</p>
@@ -2309,6 +2425,283 @@ bootstrapping if your connection was interrupted and resume your
 remote terminal session</p>
 <pre><code class="language-bash">$ wezterm connect server.name
 </code></pre>
+<blockquote>
+<p>Please note that this is a &quot;living document&quot; and may lag or lead the state
+of the current stable release in a number of areas--as you might imagine,
+precisely documenting escape codes and their behaviors and cross-checking
+with the various technical documents is laborious and tedious and I only
+have so much spare time!</p>
+<p>If you notice that something is inaccurate or missing, please do <a href="https://github.com/wez/wezterm/issues/new/choose">file an issue</a>
+so that it can be resolved!</p>
+</blockquote>
+<h2><a class="header" href="#outputescape-sequences" id="outputescape-sequences">Output/Escape Sequences</a></h2>
+<p>WezTerm considers the output from the terminal to be a UTF-8 encoded stream of
+codepoints.  No other encoding is supported.  As described below, some C1
+control codes have both 7-bit ASCII compatible as well as 8-bit
+representations.  As ASCII is a compatible subset of UTF-8, the 7-bit
+representations are preferred and processed without any special consideration.</p>
+<p>The 8-bit values <em>are</em> recognized, but only if the 8-bit value is treated as a
+unicode code point and encoded via a UTF-8 multi-byte sequence.</p>
+<h3><a class="header" href="#printable-codepoints" id="printable-codepoints">Printable Codepoints</a></h3>
+<p>Codepoints with value 0x20 and higher are considered to be printable and are
+applied to the terminal display using the following rules:</p>
+<ul>
+<li>Codepoints are buffered until a C0, C1 or other escape/control sequence is encountered,
+which triggers a flush and processing continues with the next step.</li>
+<li>The buffered codepoint sequence is split into unicode graphemes, which means that
+combining sequences and emoji are decoded.  Processing continues for below for
+each individually recognized grapheme.</li>
+<li>If DEC line drawing mode is active, graphemes <code>j-n</code>, <code>q</code>, <code>t-x</code> are translated
+to equivalent line drawing graphemes and processing continues.</li>
+<li>If prior output/actions require it, the cursor position may be moved to a new line
+and the terminal display may be scrolled to make accomodate it.</li>
+<li>An appropriate number of cells, starting at the current cursor position,
+are allocated based on the column width of the current grapheme and are assigned
+to the grapheme.  The current current graphics rendition state (such as colors
+and other presentation attributes) is also applied to those cells.
+If insert mode is active, those cells will be inserted at the current cursor
+position, otherwise they will overwrite cells at the current cursor position.</li>
+<li>The cursor position will be updated based on the column width of the grapheme.</li>
+</ul>
+<p>After the graphemes are applied to the terminal display, the rendering portion of
+WezTerm will attempt to apply your <a href="config/font-shaping.html">font shaping</a> configuration
+based on runs of graphemes with matching graphic attributes to determine which glyphs
+should be rendered from your fonts; it is at this stage that emoji and ligatures are
+resolved.</p>
+<h3><a class="header" href="#c0-control-codes" id="c0-control-codes">C0 Control Codes</a></h3>
+<p>Codepoints in the range <code>0x00-0x1F</code> are considered to be <code>C0</code> control codes.
+<code>C0</code> controls will flush any buffered printable codepoints before triggering
+the action described below.</p>
+<table><thead><tr><th>Seq</th><th>Hex</th><th>Name</th><th>Description</th><th>Action</th></tr></thead><tbody>
+<tr><td>^@</td><td>0x00</td><td>NUL</td><td>Null</td><td>Ignored</td></tr>
+<tr><td>^A</td><td>0x01</td><td>SOH</td><td>Start of Heading</td><td>Ignored</td></tr>
+<tr><td>^B</td><td>0x02</td><td>STX</td><td>Start of Text</td><td>Ignored</td></tr>
+<tr><td>^C</td><td>0x03</td><td>ETX</td><td>End of Text</td><td>Ignored</td></tr>
+<tr><td>^D</td><td>0x04</td><td>EOT</td><td>End of Transmission</td><td>Ignored</td></tr>
+<tr><td>^E</td><td>0x05</td><td>ENQ</td><td>Enquiry</td><td>Ignored</td></tr>
+<tr><td>^F</td><td>0x06</td><td>ACK</td><td>Acknowledge</td><td>Ignored</td></tr>
+<tr><td>^G</td><td>0x07</td><td>BEL</td><td>Bell</td><td>Logs <code>Ding! (this is the bell)</code> to stderr of the WezTerm process. See <a href="https://github.com/wez/wezterm/issues/3">#3</a></td></tr>
+<tr><td>^H</td><td>0x08</td><td>BS</td><td>Backspace</td><td>Move cursor left by 1, constrained by the left margin. If Reverse Wraparound and dec auto wrap modes are enabled, moving left of the left margin will jump the cursor to the right margin, jumping to bottom right margin if it was at the top left.</td></tr>
+<tr><td>^I</td><td>0x09</td><td>HT</td><td>Horizontal Tab</td><td>Move cursor right to the next tab stop</td></tr>
+<tr><td>^J</td><td>0x0A</td><td>LF</td><td>Line Feed</td><td>If cursor is at the bottom margin, scroll the region up, otherwise move cursor down 1 row</td></tr>
+<tr><td>^K</td><td>0x0B</td><td>VT</td><td>Vertical Tab</td><td>Treated as Line Feed</td></tr>
+<tr><td>^L</td><td>0x0C</td><td>FF</td><td>Form Feed</td><td>Treated as Line Feed</td></tr>
+<tr><td>^M</td><td>0x0D</td><td>CR</td><td>Carriage Return</td><td>If cursor is left of leftmost margin, move to column 0. Otherwise move to left margin</td></tr>
+<tr><td>^N</td><td>0x0E</td><td>SO</td><td>Shift Out</td><td>Ignored</td></tr>
+<tr><td>^O</td><td>0x0F</td><td>SI</td><td>Shift In</td><td>Ignored</td></tr>
+<tr><td>^P</td><td>0x10</td><td>DLE</td><td>Data Link Escape</td><td>Ignored</td></tr>
+<tr><td>^Q</td><td>0x11</td><td>DC1</td><td>Device Control One</td><td>Ignored</td></tr>
+<tr><td>^R</td><td>0x12</td><td>DC2</td><td>Device Control Two</td><td>Ignored</td></tr>
+<tr><td>^S</td><td>0x13</td><td>DC3</td><td>Device Control Three</td><td>Ignored</td></tr>
+<tr><td>^T</td><td>0x14</td><td>DC4</td><td>Device Control Four</td><td>Ignored</td></tr>
+<tr><td>^U</td><td>0x15</td><td>NAK</td><td>Negative Acknowledge</td><td>Ignored</td></tr>
+<tr><td>^V</td><td>0x16</td><td>SYN</td><td>Synchronous Idle</td><td>Ignored</td></tr>
+<tr><td>^W</td><td>0x17</td><td>ETB</td><td>End Transmission Block</td><td>Ignored</td></tr>
+<tr><td>^X</td><td>0x18</td><td>CAN</td><td>Cancel</td><td>Ignored</td></tr>
+<tr><td>^Y</td><td>0x19</td><td>EM</td><td>End of Medium</td><td>Ignored</td></tr>
+<tr><td>^Z</td><td>0x1A</td><td>SUB</td><td>Substitute</td><td>Ignored</td></tr>
+<tr><td>^[</td><td>0x1B</td><td>ESC</td><td>Escape</td><td>Introduces various escape sequences described below</td></tr>
+<tr><td>^\</td><td>0x1C</td><td>FS</td><td>File Separator</td><td>Ignored</td></tr>
+<tr><td>^]</td><td>0x1D</td><td>GS</td><td>Group Separator</td><td>Ignored</td></tr>
+<tr><td>^^</td><td>0x1E</td><td>RS</td><td>Record Separator</td><td>Ignored</td></tr>
+<tr><td>^_</td><td>0x1F</td><td>US</td><td>Unit Separator</td><td>Ignored</td></tr>
+</tbody></table>
+<h3><a class="header" href="#c1-control-codes" id="c1-control-codes">C1 Control Codes</a></h3>
+<p>As mentioned above, WezTerm only supports UTF-8 encoding.  C1 control codes
+have an 8-bit representation as well as a multi-codepoint 7-bit escape sequence.</p>
+<p>The 8-bit representation is recognized if the 8-bit value is treated as a
+unicode code point and encoded as a multi-byte UTF-8 sequence.  Sending the
+8-bit binary value will not be recognized as intended, as those bitsequences
+are passing through a UTF-8 decoder.</p>
+<p>The table below lists the 7-bit <code>C1</code> sequence (which is preferred) as well as the
+codepoint value, along with the corresponding meaning.</p>
+<p>As with <code>C0</code> control codes, <code>C1</code> controls will flush any buffered printable
+codepoints before triggering the action described below.</p>
+<table><thead><tr><th>Seq</th><th>Codepoint</th><th>Name</th><th>Description</th><th>Action</th></tr></thead><tbody>
+<tr><td>ESC D</td><td>0x84</td><td>IND</td><td>Index</td><td>Moves the cursor down one line in the same column. If the cursor is at the bottom margin, the page scrolls up</td></tr>
+<tr><td>ESC E</td><td>0x85</td><td>NEL</td><td>Next Line</td><td>Moves the cursor to the left margin on the next line. If the cursor is at the bottom margin, scroll the page up</td></tr>
+<tr><td>ESC H</td><td>0x88</td><td>HTS</td><td>Horizontal Tab Set</td><td>Sets a horizontal tab stop at the column where the cursor is</td></tr>
+<tr><td>ESC M</td><td>0x8D</td><td>RI</td><td>Reverse Index</td><td>Move the cursor up one line. If the cursor is at the top margin, scroll the region down</td></tr>
+<tr><td>ESC P</td><td>0x90</td><td>DCS</td><td>Device Control String</td><td>Discussed below</td></tr>
+<tr><td>ESC [</td><td>0x9B</td><td>CSI</td><td>Control Sequence Introducer</td><td>Discussed below</td></tr>
+<tr><td>ESC \</td><td>0x9C</td><td>ST</td><td>String Terminator</td><td>No direct effect; ST is used to delimit the end of OSC style escape sequences</td></tr>
+</tbody></table>
+<h3><a class="header" href="#other-escape-sequences" id="other-escape-sequences">Other Escape Sequences</a></h3>
+<p>As these sequences start with an <code>ESC</code>, which is a <code>C0</code> control, these will
+flush any buffered printable codepoints before triggering the associated
+action.</p>
+<table><thead><tr><th>Seq</th><th>Name</th><th>Description</th><th>Action</th></tr></thead><tbody>
+<tr><td>ESC c</td><td><a href="https://vt100.net/docs/vt510-rm/RIS.html">RIS</a></td><td>Reset to Initial State</td><td>Resets tab stops, margins, modes, graphic rendition, palette, activates primary screen, erases the display and moves cursor to home position</td></tr>
+<tr><td>ESC 7</td><td><a href="https://vt100.net/docs/vt510-rm/DECSC.html">DECSC</a></td><td>Save Cursor Position</td><td>Records cursor position</td></tr>
+<tr><td>ESC 8</td><td><a href="https://vt100.net/docs/vt510-rm/DECRC.html">DECRC</a></td><td>Restored Saved Cursor Position</td><td>Moves cursor to location it had when DECSC was used</td></tr>
+<tr><td>ESC =</td><td><a href="https://vt100.net/docs/vt510-rm/DECPAM.html">DECPAM</a></td><td>Application Keypad</td><td>Enable Application Keypad Mode</td></tr>
+<tr><td>ESC &gt;</td><td><a href="https://vt100.net/docs/vt510-rm/DECPNM.html">DECPNM</a></td><td>Normal Keypad</td><td>Set Normal Keypad Mode</td></tr>
+<tr><td>ESC (0</td><td></td><td>DEC Line Drawing character set</td><td>Translate characters <code>j-x</code> to line drawing glyphs</td></tr>
+<tr><td>ESC (B</td><td></td><td>US ASCII character set</td><td>Disables DEC Line Drawing character translation</td></tr>
+<tr><td>ESC #8</td><td><a href="https://vt100.net/docs/vt510-rm/DECALN.html">DECALN</a></td><td>Screen Alignment Display</td><td>Fills the display with <code>E</code> characters for diagnostic/test purposes (for vttest)</td></tr>
+</tbody></table>
+<h3><a class="header" href="#csi---control-sequence-introducer-sequences" id="csi---control-sequence-introducer-sequences">CSI - Control Sequence Introducer Sequences</a></h3>
+<p>CSI sequences begin with the <code>C1</code> <code>CSI</code> sequence, which is either the 7-bit
+<code>ESC [</code> sequence or the codepoint <code>0x9B</code>.</p>
+<p>WezTerm classifies these sequences into a number of functional families which
+are broken out below.</p>
+<h4><a class="header" href="#graphic-rendition-sgr" id="graphic-rendition-sgr">Graphic Rendition (SGR)</a></h4>
+<p>SGR sequences are of the form <code>CSI DIGITS [; DIGITS ]+ m</code>.  That is, any number
+of semicolon separated numbers, terminated by the <code>m</code> codepoint.  There are a handful
+of slightly more modern sequences that use colon <code>:</code> codepoints to encode additional
+context.</p>
+<p>The digits map to one of the codes in the table below, which manipulate the
+presentation attributes of subsequently printed characters.</p>
+<p>It is valid to omit the code number; for example <code>CSI m</code> is equivalent to <code>CSI 0 m</code> which resets the presentation attributes.</p>
+<table><thead><tr><th>Code</th><th>Description</th><th>Action</th></tr></thead><tbody>
+<tr><td>0</td><td>Reset</td><td>Reset to default foreground/background colors, reset all presentation attributes, clear any explicit hyperlinks</td></tr>
+<tr><td>1</td><td>IntensityBold</td><td>Set the intensity level to Bold.  This causes subsequent text to be rendered in a bold font variant and, if the foreground color is set to a palette index in the 0-7 range, effectively shifts it to the brighter value in the 8-15 range</td></tr>
+<tr><td>2</td><td>IntensityDim</td><td>Set the intensity level to Dim or Half-Bright.  This causes text to be rendered in a lighter weight font variant</td></tr>
+<tr><td>3</td><td>ItalicOn</td><td>Sets the italic attribute on the text, causing an italic font variant to be selected</td></tr>
+<tr><td>4</td><td>UnderlineOn</td><td>Text will have a single underline</td></tr>
+<tr><td>4:0</td><td>UnderlineOff</td><td>Text will have no underline</td></tr>
+<tr><td>4:1</td><td>UnderlineOn</td><td>Text will have a single underline</td></tr>
+<tr><td>4:2</td><td>UnderlineDouble</td><td>Text will be rendered with double underline</td></tr>
+<tr><td>4:3</td><td>UnderlineCurly</td><td>Text will be rendered with a curly underline</td></tr>
+<tr><td>4:4</td><td>UnderlineDotted</td><td>Text will be rendered with a dotted underline</td></tr>
+<tr><td>4:5</td><td>UnderlineDashed</td><td>Text will be rendered with a dashed underline</td></tr>
+<tr><td>5</td><td>BlinkOn</td><td>Indicates that the text should blink &lt;150 times per minute.  While the attribute is preserved, WezTerm doesn't render blinking text</td></tr>
+<tr><td>6</td><td>RapidBlinkOn</td><td>Indicates that the text should blink &gt;150 times per minute.  While the attribute is preserved, WezTerm doesn't render blinking text</td></tr>
+<tr><td>7</td><td>InverseOn</td><td>Causes the foreground and background colors to be swapped</td></tr>
+<tr><td>8</td><td>InvisibleOn</td><td>Marks text as invisible.</td></tr>
+<tr><td>9</td><td>StrikeThroughOn</td><td>Text will be rendered with a single line struck through the middle</td></tr>
+<tr><td>21</td><td>UnderlineDouble</td><td>Text will be rendered with double underline</td></tr>
+<tr><td>22</td><td>NormalIntensity</td><td>Cancels the effect of IntensityBold and IntensityDim, returning the text to normal intensity</td></tr>
+<tr><td>23</td><td>ItalicOff</td><td>Cancels the effect of ItalicOn</td></tr>
+<tr><td>24</td><td>UnderlineOff</td><td>Text will have no underline</td></tr>
+<tr><td>25</td><td>BlinkOff</td><td>Cancels the effect of BlinkOn and RapidBlinkOn</td></tr>
+<tr><td>27</td><td>InverseOff</td><td>Cancels the effect of InverseOn</td></tr>
+<tr><td>28</td><td>InvisibleOff</td><td>cancels the effect of InvisibleOn</td></tr>
+<tr><td>29</td><td>StrikeThroughOff</td><td>Cancels the effect of StrikeThroughOn</td></tr>
+<tr><td>30</td><td>ForegroundBlack</td><td>Sets the foreground color to ANSI Black, which is palette index 0</td></tr>
+<tr><td>31</td><td>ForegroundRed</td><td>Sets the foreground color to ANSI Red, which is palette index 1</td></tr>
+<tr><td>32</td><td>ForegroundGreen</td><td>Sets the foreground color to ANSI Green, which is palette index 2</td></tr>
+<tr><td>33</td><td>ForegroundYellow</td><td>Sets the foreground color to ANSI Yellow, which is palette index 3</td></tr>
+<tr><td>34</td><td>ForegroundBlue</td><td>Sets the foreground color to ANSI Blue, which is palette index 4</td></tr>
+<tr><td>35</td><td>ForegroundMagenta</td><td>Sets the foreground color to ANSI Magenta, which is palette index 5</td></tr>
+<tr><td>36</td><td>ForegroundCyan</td><td>Sets the foreground color to ANSI Cyan, which is palette index 6</td></tr>
+<tr><td>37</td><td>ForegroundWhite</td><td>Sets the foreground color to ANSI White, which is palette index 7</td></tr>
+<tr><td>39</td><td>ForegroundDefault</td><td>Sets the foreground color to the user's configured default text color</td></tr>
+<tr><td>40</td><td>BackgroundBlack</td><td>Sets the background color to ANSI Black, which is palette index 0</td></tr>
+<tr><td>41</td><td>BackgroundRed</td><td>Sets the background color to ANSI Red, which is palette index 1</td></tr>
+<tr><td>42</td><td>BackgroundGreen</td><td>Sets the background color to ANSI Green, which is palette index 2</td></tr>
+<tr><td>43</td><td>BackgroundYellow</td><td>Sets the background color to ANSI Yellow, which is palette index 3</td></tr>
+<tr><td>44</td><td>BackgroundBlue</td><td>Sets the background color to ANSI Blue, which is palette index 4</td></tr>
+<tr><td>45</td><td>BackgroundMagenta</td><td>Sets the background color to ANSI Magenta, which is palette index 5</td></tr>
+<tr><td>46</td><td>BackgroundCyan</td><td>Sets the background color to ANSI Cyan, which is palette index 6</td></tr>
+<tr><td>47</td><td>BackgroundWhite</td><td>Sets the background color to ANSI White, which is palette index 7</td></tr>
+<tr><td>49</td><td>BackgroundDefault</td><td>Sets the background color to the user's configured default background color</td></tr>
+<tr><td>53</td><td>OverlineOn</td><td>Renders text with a single overline/overbar</td></tr>
+<tr><td>55</td><td>OverlineOff</td><td>Cancels OverlineOn</td></tr>
+<tr><td>59</td><td>UnderlineColorDefault</td><td>Resets the underline color to default, which is to match the foreground color</td></tr>
+<tr><td>90</td><td>ForegroundBrightBlack</td><td>Sets the foreground color to Bright Black, which is palette index 8</td></tr>
+<tr><td>91</td><td>ForegroundBrightRed</td><td>Sets the foreground color to Bright Red, which is palette index 9</td></tr>
+<tr><td>92</td><td>ForegroundBrightGreen</td><td>Sets the foreground color to Bright Green, which is palette index 10</td></tr>
+<tr><td>93</td><td>ForegroundBrightYellow</td><td>Sets the foreground color to Bright Yellow, which is palette index 11</td></tr>
+<tr><td>94</td><td>ForegroundBrightBlue</td><td>Sets the foreground color to Bright Blue, which is palette index 12</td></tr>
+<tr><td>95</td><td>ForegroundBrightMagenta</td><td>Sets the foreground color to Bright Magenta, which is palette index 13</td></tr>
+<tr><td>96</td><td>ForegroundBrightCyan</td><td>Sets the foreground color to Bright Cyan, which is palette index 14</td></tr>
+<tr><td>97</td><td>ForegroundBrightWhite</td><td>Sets the foreground color to Bright White, which is palette index 15</td></tr>
+<tr><td>100</td><td>BackgroundBrightBlack</td><td>Sets the background color to Bright Black, which is palette index 8</td></tr>
+<tr><td>101</td><td>BackgroundBrightRed</td><td>Sets the background color to Bright Red, which is palette index 9</td></tr>
+<tr><td>102</td><td>BackgroundBrightGreen</td><td>Sets the background color to Bright Green, which is palette index 10</td></tr>
+<tr><td>103</td><td>BackgroundBrightYellow</td><td>Sets the background color to Bright Yellow, which is palette index 11</td></tr>
+<tr><td>104</td><td>BackgroundBrightBlue</td><td>Sets the background color to Bright Blue, which is palette index 12</td></tr>
+<tr><td>105</td><td>BackgroundBrightMagenta</td><td>Sets the background color to Bright Magenta, which is palette index 13</td></tr>
+<tr><td>106</td><td>BackgroundBrightCyan</td><td>Sets the background color to Bright Cyan, which is palette index 14</td></tr>
+<tr><td>107</td><td>BackgroundBrightWhite</td><td>Sets the background color to Bright White, which is palette index 15</td></tr>
+</tbody></table>
+<p>There are a handful of additional SGR codes that allow setting extended colors;
+unlike the codes above, which are activated by a single numeric parameter out
+of SGR sequence, these the extended color codes require multiple parameters.
+The canonical representation of these sequences is to have the multiple
+parameters be separated by colons (<code>:</code>), but for compatibility reasons WezTerm
+also accepts an ambiguous semicolon (<code>;</code>) separated variation.  The colon form
+is unambiguous and should be preferred; the semicolon form should not be used
+by new applications and is not documented here in the interest of avoiding
+accidental new implementations.</p>
+<p>This sequence will set the <em>foreground color</em> to the specified palette INDEX,
+which can be a decimal number in the range <code>0-255</code>.</p>
+<pre><code>CSI 38 : 5 : INDEX m
+</code></pre>
+<p>This sequence will set the <em>background color</em> to the specified palette INDEX,
+which can be a decimal number in the range <code>0-255</code>.</p>
+<pre><code>CSI 48 : 5 : INDEX m
+</code></pre>
+<p>This sequence will set the <em>underline color</em> to the specified palette INDEX,
+which can be a decimal number in the range <code>0-255</code>.</p>
+<pre><code>CSI 58 : 5 : INDEX m
+</code></pre>
+<p>This sequence will set the <em>foreground color</em> to an arbitrary color in RGB
+colorspace.  The <code>R</code>, <code>G</code> and <code>B</code> symbols below are decimal numbers in the
+range <code>0-255</code>.  Note that after the <code>2</code> parameter two colons are present; its
+really an omitted <em>colorspace ID</em> parameter but that nature of that parameter
+is not specified in the accompanying ITU T.416 specification and is ignored by
+<code>WezTerm</code> and most (all?) other terminal emulators:</p>
+<pre><code>CSI 38 : 2 : : R : G : B m
+</code></pre>
+<p>This sequence will set the <em>background color</em> to an arbitrary color in RGB colorspace.
+The <code>R</code>, <code>G</code> and <code>B</code> symbols below are decimal numbers in the range <code>0-255</code>:</p>
+<pre><code>CSI 48 : 2 : : R : G : B m
+</code></pre>
+<p>This sequence will set the <em>underline color</em> to an arbitrary color in RGB colorspace.
+The <code>R</code>, <code>G</code> and <code>B</code> symbols below are decimal numbers in the range <code>0-255</code>:</p>
+<pre><code>CSI 58 : 2 : : R : G : B m
+</code></pre>
+<h4><a class="header" href="#cursor-movement" id="cursor-movement">Cursor Movement</a></h4>
+<h4><a class="header" href="#editing-functions" id="editing-functions">Editing Functions</a></h4>
+<h4><a class="header" href="#mode-functions" id="mode-functions">Mode Functions</a></h4>
+<h4><a class="header" href="#device-functions" id="device-functions">Device Functions</a></h4>
+<h4><a class="header" href="#window-functions" id="window-functions">Window Functions</a></h4>
+<h3><a class="header" href="#dcs---device-control-string" id="dcs---device-control-string">DCS - Device Control String</a></h3>
+<p>The <code>C1</code> <code>DCS</code> escape places the terminal parser into a device control mode until the <code>C1</code> <code>ST</code> is encountered.</p>
+<p>In the table below, <code>DCS</code> can be either the 7-bit representation (<code>ESC P</code>) or the 8-bit codepoint (<code>0x90</code>).</p>
+<table><thead><tr><th>Seq</th><th>Name</th><th>Description</th></tr></thead><tbody>
+<tr><td>DCS $ q &quot; p ST</td><td><a href="https://vt100.net/docs/vt510-rm/DECRQSS.html">DECRQSS</a> for <a href="https://vt100.net/docs/vt510-rm/DECSCL.html">DECSCL</a></td><td>Request Conformance Level; Reports the conformance level</td></tr>
+<tr><td>DCS $ q r ST</td><td><a href="https://vt100.net/docs/vt510-rm/DECRQSS.html">DECRQSS</a> for <a href="https://vt100.net/docs/vt510-rm/DECSTBM.html">DECSTBM</a></td><td>Request top and bottom margin report; Reports the margins</td></tr>
+<tr><td>DCS $ q s ST</td><td><a href="https://vt100.net/docs/vt510-rm/DECRQSS.html">DECRQSS</a> for <a href="https://vt100.net/docs/vt510-rm/DECSLRM.html">DECSLRM</a></td><td>Request left and right margin report; Reports the margins</td></tr>
+<tr><td>DCS [PARAMS] q [DATA] ST</td><td>Sixel Graphic Data</td><td>Decodes <a href="https://vt100.net/docs/vt3xx-gp/chapter14.html">Sixel graphic data</a> and apply the image to the terminal model. Support is preliminary and incomplete; see <a href="https://github.com/wez/wezterm/issues/217">this issue</a> for status.</td></tr>
+<tr><td>DCS 1000 q</td><td>tmux control mode</td><td>Bridges tmux into the WezTerm multiplexer.  Currently incomplete, see <a href="https://github.com/wez/wezterm/issues/336">this issue</a> for status.</td></tr>
+</tbody></table>
+<h3><a class="header" href="#operating-system-command-sequences" id="operating-system-command-sequences">Operating System Command Sequences</a></h3>
+<p>Operating System Command (OSC) sequences are introduced via <code>ESC ]</code> followed by
+a numeric code and typically have parameters delimited by <code>;</code>.  OSC sequences
+are canonically delimited by the <code>ST</code> (String Terminator) sequence, but WezTerm
+also accepts delimiting them with the <code>BEL</code> control.</p>
+<p>The table below is keyed by the OSC code.</p>
+<table><thead><tr><th>OSC</th><th>Description</th><th>Action</th><th>Example</th></tr></thead><tbody>
+<tr><td>0</td><td>Set Icon Name and Window Title</td><td>Clears Icon Name, sets Window Title.</td><td><code>\x1b]0;title\x1b\\</code></td></tr>
+<tr><td>1</td><td>Set Icon Name</td><td>Sets Icon Name, which is used as the Tab title when it is non-empty</td><td><code>\x1b]1;tab-title\x1b\\</code></td></tr>
+<tr><td>2</td><td>Set Window Title</td><td>Set Window Title</td><td><code>\x1b]2;window-title\x1b\\</code></td></tr>
+<tr><td>3</td><td>Set X11 Window Property</td><td>Ignored</td><td></td></tr>
+<tr><td>4</td><td>Change/Query Color Number</td><td>Set or query color palette entries 0-255.</td><td>query color number 1: <code>\x1b]4;1;?\x1b\\</code> <br/> Set color number 2: <code>\x1b]4;2;#cccccc\x1b\\</code></td></tr>
+<tr><td>5</td><td>Change/Query Special Color Number</td><td>Ignored</td><td></td></tr>
+<tr><td>6</td><td>iTerm2 Change Title Tab Color</td><td>Ignored</td><td></td></tr>
+<tr><td>7</td><td>Set Current Working Directory</td><td><a href="shell-integration.html#osc-7-escape-sequence-to-set-the-working-directory">See Shell Integration</a></td><td></td></tr>
+<tr><td>8</td><td>Set Hyperlink</td><td><a href="hyperlinks.html#explicit-hyperlinks">See Explicit Hyperlinks</a></td><td></td></tr>
+<tr><td>9</td><td>iTerm2 Show System Notification</td><td>Logs the notification to the stderr of the WezTerm process</td><td></td></tr>
+<tr><td>52</td><td>Manipulate clipboard</td><td>Requests to query the clipboard are ignored. Allows setting or clearing the clipboard</td><td></td></tr>
+<tr><td>104</td><td>ResetColors</td><td>Reset color palette entries to their default values</td><td></td></tr>
+<tr><td>133</td><td>FinalTerm semantic escapes</td><td>Informs the terminal about Input, Output and Prompt regions on the display</td><td><a href="shell-integration.html">See Shell Integration</a></td></tr>
+<tr><td>1337</td><td>iTerm2 File Upload Protocol</td><td>Allows displaying images inline</td><td><a href="imgcat.html">See iTerm Image Protocol</a></td></tr>
+<tr><td>L</td><td>Set Icon Name (Sun)</td><td>Same as OSC 1</td><td><code>\x1b]Ltab-title\x1b\\</code></td></tr>
+<tr><td>l</td><td>Set Window Title (Sun)</td><td>Same as OSC 2</td><td><code>\x1b]lwindow-title\x1b\\</code></td></tr>
+</tbody></table>
+<h1><a class="header" href="#additional-resources" id="additional-resources">Additional Resources</a></h1>
+<ul>
+<li><a href="http://invisible-island.net/xterm/ctlseqs/ctlseqs.txt">xterm's escape sequences</a></li>
+<li><a href="https://iterm2.com/documentation-escape-codes.html">iTerm2's escape sequences</a></li>
+<li><a href="https://sw.kovidgoyal.net/kitty/protocol-extensions.html">kitty's escape sequences</a></li>
+<li><a href="https://github.com/billiob/terminology#extended-escapes-for-terminology-only">Terminology's escape sequences</a></li>
+<li><a href="https://docs.google.com/spreadsheets/d/19W-lXWS9jYwqCK-LwgYo31GucPPxYVld_hVEcfpNpXg/edit?usp=sharing">This Google spreadsheet</a>
+aims to document all the known escape sequences.</li>
+<li><a href="https://en.wikipedia.org/wiki/ANSI_escape_code">Wikipedia's ANSI escape code page</a></li>
+</ul>
 <h1><a class="header" href="#frequently-asked-questions" id="frequently-asked-questions">Frequently Asked Questions</a></h1>
 <h2><a class="header" href="#unicode-glyphs-render-as-underscores-in-my-tmux" id="unicode-glyphs-render-as-underscores-in-my-tmux">Unicode glyphs render as underscores in my tmux!</a></h2>
 <p>This is likely an issue with LANG and locale.  <code>tmux</code> will substitute unicode
@@ -2426,25 +2819,68 @@ as a different sequence (eg: <code>£</code> will have the high bit stripped and
 it into <code>#</code>).</p>
 <p>You should consider disabling that setting when working with a UTF-8
 environment.</p>
+<h2><a class="header" href="#how-do-i-enable-undercurl-curly-underlines" id="how-do-i-enable-undercurl-curly-underlines">How do I enable undercurl (curly underlines)?</a></h2>
+<p>Starting in the nightly builds, WezTerm has support for colored and curly underlines.</p>
+<p>The relevant escape sequences are:</p>
+<pre><code> CSI 24 m   -&gt; No underline
+ CSI 4 m    -&gt; Single underline
+ CSI 4:0 m  -&gt; No underline
+ CSI 4:1 m  -&gt; Single underline
+ CSI 4:2 m  -&gt; Double underline
+ CSI 4:3 m  -&gt; Curly underline
+ CSI 4:4 m  -&gt; Dotted underline
+ CSI 4:5 m  -&gt; Dashed underline
+
+ CSI 58:2::R:G:B m   -&gt; set underline color to specified true color RGB
+ CSI 58:5:I m        -&gt; set underline color to palette index I (0-255)
+ CSI 59              -&gt; restore underline color to default
+</code></pre>
+<p>You can try these out in your shell; this example will print the various
+underline styles with a red underline:</p>
+<pre><code class="language-bash">$ printf &quot;\x1b[58:2::255:0:0m\x1b[4:1msingle\x1b[4:2mdouble\x1b[4:3mcurly\x1b[4:4mdotted\x1b[4:5mdashed\x1b[0m\n&quot;
+</code></pre>
+<p>To use this in vim, add something like the following to your <code>.vimrc</code>:</p>
+<pre><code class="language-vim">let &amp;t_Cs = &quot;\e[4:3m&quot;
+let &amp;t_Ce = &quot;\e[4:0m&quot;
+hi SpellBad   guisp=red gui=undercurl guifg=NONE guibg=NONE \
+     ctermfg=NONE ctermbg=NONE term=underline cterm=undercurl ctermul=red
+hi SpellCap   guisp=yellow gui=undercurl guifg=NONE guibg=NONE \
+     ctermfg=NONE ctermbg=NONE term=underline cterm=undercurl ctermul=yellow
+</code></pre>
+<p>If you are a neovim user then you will need to install a terminfo file that
+tells neovim about this support.</p>
+<p>You may wish to try these steps to install a copy of a <code>wezterm</code> terminfo file;
+this will compile a copy of the terminfo and install it into your <code>~/.terminfo</code>
+directory:</p>
+<pre><code class="language-bash">tempfile=$(mktemp) \
+  &amp;&amp; curl -o $tempfile https://raw.githubusercontent.com/wez/wezterm/master/termwiz/data/wezterm.terminfo \
+  &amp;&amp; tic -x -o ~/.terminfo $tempfile \
+  &amp;&amp; rm $tempfile
+</code></pre>
+<p>With that in place, you can then start neovim like this, and it should enable
+undercurl:</p>
+<pre><code class="language-bash">env TERM=wezterm nvim
+</code></pre>
 <h2><a class="header" href="#getting-help" id="getting-help">Getting Help</a></h2>
-<p>This is a spare time project, so please bear with me.  There are two channels for support:</p>
+<p>This is a spare time project, so please bear with me.  There are a couple of channels for support:</p>
 <ul>
 <li>You can use the GitHub issue tracker to see if someone else has a similar issue, or to file a new one: <a href="https://github.com/wez/wezterm/issues">https://github.com/wez/wezterm/issues</a></li>
-<li>There is a
-<a href="https://riot.im/app/#/room/#gitter_wezterm=2Flobby:matrix.org">Matrix/Riot.im</a>
-room for (potentially!) real time discussions; that is bridged from the
-original <a href="https://gitter.im/wezterm/Lobby">Gitter room</a>.</li>
+<li>Start or join a thread in our <a href="https://github.com/wez/wezterm/discussions">GitHub Discussions</a>; if you have general
+questions or want to chat with other wezterm users, you're welcome here!</li>
+<li>There is a <a href="https://app.element.io/#/room/#wezterm:matrix.org">Matrix room via Element.io</a>
+for (potentially!) real time discussions.</li>
 </ul>
-<p>The Matrix/Gitter room is probably better suited to questions than it is to bug
-reports, but don't be afraid to use whichever you are most comfortable using
-and we'll work it out.</p>
+<p>The GitHub Discussions and Element/Gitter rooms are better suited to questions
+than it is to bug reports, but don't be afraid to use whichever you are most
+comfortable using and we'll work it out.</p>
 <h2><a class="header" href="#contributing" id="contributing">Contributing</a></h2>
 <p>Thanks for considering donating your time and energy!  I value any contribution,
 even if it is just to highlight a typo.</p>
 <p>If you're thinking of helping out, then the following resources may be helpful:</p>
 <ul>
 <li><a href="https://github.com/wez/wezterm">WezTerm on GitHub</a></li>
-<li><a href="help.html">Realtime conversation with wez on Matrix/Gitter</a></li>
+<li><a href="https://github.com/wez/wezterm/discussions">GitHub Discussions</a></li>
+<li><a href="help.html">Realtime conversation with wez on Element.io/Gitter</a></li>
 <li><a href="install/source.html">Building from Source</a></li>
 <li><a href="https://github.com/wez/wezterm/blob/master/CONTRIBUTING.md#contributing-to-wezterm">Where to find things and hacking on wezterm</a></li>
 </ul>
@@ -4141,9 +4577,9 @@ make WezTerm look cooler, I'd also welcome your contribution!</p>
 }
 </code></pre>
 <h2><a class="header" href="#lua-reference" id="lua-reference">Lua Reference</a></h2>
-<p>This section documents the various lua functions that are provided to
-the configuration file.  These are provided by the <code>wezterm</code> module that
-must be imported into your configuration file:</p>
+<p>This section documents the various lua functions and types that are provided to
+the configuration file.  These are provided by the <code>wezterm</code> module that must
+be imported into your configuration file:</p>
 <pre><code class="language-lua">local wezterm = require 'wezterm';
 return {
   font = wezterm.font(&quot;JetBrains Mono&quot;),
@@ -4377,12 +4813,12 @@ in response to clicking on <code>mailto:</code> URLs, you could do something lik
 <pre><code class="language-lua">local wezterm = require 'wezterm';
 
 wezterm.on(&quot;open-uri&quot;, function(window, pane, uri)
-  local start, end = uri:find(&quot;mailto:&quot;)
+  local start, match_end = uri:find(&quot;mailto:&quot;)
   if start == 1 then
-    local recipient = uri:sub(end+1)
-    window.perform_action(wezterm.action{SpawnCommandInNewWindow={
+    local recipient = uri:sub(match_end+1)
+    window:perform_action(wezterm.action{SpawnCommandInNewWindow={
          args={&quot;mutt&quot;, recipient}
-      }});
+      }}, pane);
     -- prevent the default action from opening in a browser
     return false
   end
@@ -4459,7 +4895,7 @@ the copy.</p>
 <p>An entry for <code>NONE</code> is <em>NOT</em> generated (this is the only
 difference between <code>permute_any_mods</code> and <code>permute_any_or_no_mods</code>).</p>
 <p>An array holding all of those combinations is returned.</p>
-<p>The array can be unpacked into a lua table initializer and used like this:</p>
+<p>If this is your only binding, or it is the <em>last</em> binding, the resulting array can be unpacked into a lua table initializer and used like this:</p>
 <pre><code class="language-lua">local wezterm = require 'wezterm';
 
 return {
@@ -4471,6 +4907,7 @@ return {
   }
 }
 </code></pre>
+<p>(and if you have other bindings before and/or after, use a for loop to iterate and add each binding to your bindings table)</p>
 <p>This is equivalent to writing this out, but is much less verbose:</p>
 <pre><code class="language-lua">return {
   mouse_bindings = {
@@ -4638,18 +5075,19 @@ the copy.</p>
 <p>In addition, an entry for <code>NONE</code> <em>is</em> generated (this is the only
 difference between <code>permute_any_mods</code> and <code>permute_any_or_no_mods</code>).</p>
 <p>An array holding all of those combinations is returned.</p>
-<p>The array can be unpacked into a lua table initializer and used like this:</p>
+<p>If this is your only binding, or it is the <em>last</em> binding, the resulting array can be unpacked into a lua table initializer and used like this:</p>
 <pre><code class="language-lua">local wezterm = require 'wezterm';
 
 return {
   mouse_bindings = {
-    table.unpack(wezterm.permute_any_mods({
+    table.unpack(wezterm.permute_any_or_no_mods({
       event={Down={streak=1, button=&quot;Middle&quot;}},
       action=&quot;PastePrimarySelection&quot;
     }))
   }
 }
 </code></pre>
+<p>(and if you have other bindings before and/or after, use a for loop to iterate and add each binding to your bindings table)</p>
 <p>This is equivalent to writing this out, but is much less verbose:</p>
 <pre><code class="language-lua">return {
   mouse_bindings = {
@@ -4905,6 +5343,229 @@ the second component is the time and the final component is a git hash.</p>
 <pre><code class="language-lua">local wezterm = require 'wezterm';
 wezterm.log_error(&quot;Version &quot; .. wezterm.version)
 </code></pre>
+<h1><a class="header" href="#config-struct" id="config-struct"><code>Config</code> struct</a></h1>
+<p>The <code>return</code> statement at the end of your <code>wezterm.lua</code> file returns
+a table that is interpreted as the internal <code>Config</code> struct type.</p>
+<p>This section documents the various available fields in the config
+struct.</p>
+<p>At the time of writing, it is not a complete list!</p>
+<ul>
+<li><a href="config/lua/config/alternate_buffer_wheel_scroll_speed.html">alternate_buffer_wheel_scroll_speed</a></li>
+<li><a href="config/lua/config/bold_brightens_ansi_colors.html">bold_brightens_ansi_colors</a></li>
+<li><a href="config/lua/config/color_schemes.html">color_schemes</a></li>
+<li><a href="config/lua/config/colors.html">colors</a></li>
+<li><a href="config/lua/config/default_cwd.html">default_cwd</a></li>
+<li><a href="config/lua/config/default_prog.html">default_prog</a></li>
+<li><a href="config/lua/config/font.html">font</a></li>
+<li><a href="config/lua/config/font_antialias.html">font_antialias</a></li>
+<li><a href="config/lua/config/font_hinting.html">font_hinting</a></li>
+<li><a href="config/lua/config/font_locator.html">font_locator</a></li>
+<li><a href="config/lua/config/font_rasterizer.html">font_rasterizer</a></li>
+<li><a href="config/lua/config/font_rules.html">font_rules</a></li>
+<li><a href="config/lua/config/font_shaper.html">font_shaper</a></li>
+<li><a href="config/lua/config/font_size.html">font_size</a></li>
+<li><a href="config/lua/config/freetype_interpreter_version.html">freetype_interpreter_version</a></li>
+<li><a href="config/lua/config/front_end.html">front_end</a></li>
+<li><a href="config/lua/config/harfbuzz_features.html">harfbuzz_features</a></li>
+<li><a href="config/lua/config/hyperlink_rules.html">hyperlink_rules</a></li>
+<li><a href="config/lua/config/initial_cols.html">initial_cols</a></li>
+<li><a href="config/lua/config/initial_rows.html">initial_rows</a></li>
+<li><a href="config/lua/config/line_height.html">line_height</a></li>
+<li><a href="config/lua/config/scrollback_lines.html">scrollback_lines</a></li>
+<li><a href="config/lua/config/set_environment_variables.html">set_environment_variables</a></li>
+<li><a href="config/lua/config/term.html">term</a></li>
+<li><a href="config/lua/config/unix_domains.html">unix_domains</a></li>
+</ul>
+<h1><a class="header" href="#alternate_buffer_wheel_scroll_speed--3" id="alternate_buffer_wheel_scroll_speed--3"><code>alternate_buffer_wheel_scroll_speed = 3</code></a></h1>
+<p><em>Since: 20210203-095643-70a364eb</em></p>
+<p>Normally the vertical mouse wheel will scroll the terminal viewport
+so that different sections of the scrollback are visible.</p>
+<p>When an application activates the <em>Alternate Screen Buffer</em> (this is
+common for &quot;full screen&quot; terminal programs such as pagers and editors),
+the alternate screen doesn't have a scrollback.</p>
+<p>In this mode, if the application hasn't enabled mouse reporting, wezterm will
+generate Arrow Up/Down key events when the vertical mouse wheel is scrolled.</p>
+<p>The <code>alternate_buffer_wheel_scroll_speed</code> specifies how many arrow key presses
+are generated by a single scroll wheel &quot;tick&quot;.</p>
+<p>The default for this value is <code>3</code>, which means that a single wheel up tick will
+appear to the application as though the user pressed arrow up three times in
+quick succession.</p>
+<p>In versions of wezterm prior to this configuration option being available, the
+behavior was the same except that the effective value of this option was always
+<code>1</code>.</p>
+<h1><a class="header" href="#bold_brightens_ansi_colors--true" id="bold_brightens_ansi_colors--true"><code>bold_brightens_ansi_colors = true</code></a></h1>
+<p>When true (the default), PaletteIndex 0-7 are shifted to bright when the font
+intensity is bold.  The brightening doesn't apply to text that is the default
+color.</p>
+<h1><a class="header" href="#color_schemes" id="color_schemes"><code>color_schemes</code></a></h1>
+<p>Specifies various named color schemes in your configuration file.</p>
+<p>Described in more detail in <a href="config/lua/config/../../appearance.html#defining-a-color-scheme-in-your-weztermlua">Colors &amp; Appearance</a></p>
+<h1><a class="header" href="#colors" id="colors"><code>colors</code></a></h1>
+<p>Specifies the color palette.</p>
+<p>Described in more detail in <a href="config/lua/config/../../appearance.html#defining-your-own-colors">Colors &amp; Appearance</a></p>
+<h1><a class="header" href="#default_cwd" id="default_cwd"><code>default_cwd</code></a></h1>
+<p><em>Since: 20210203-095643-70a364eb</em></p>
+<p>Sets the default current working directory used by the initial window. If
+<code>wezterm start --cwd /some/path</code> is used to specify the current working
+directory, that will take precedence.</p>
+<p>Commands launched using <a href="config/lua/config/../SpawnCommand.html"><code>SpawnCommand</code></a> will use the
+<code>cwd</code> specified in the <code>SpawnCommand</code>, if any.</p>
+<p>Panes/Tabs/Windows created after the first will generally try to resolve the
+current working directory of the current Pane, preferring
+<a href="config/lua/config/../../../shell-integration.html">a value set by OSC 7</a> and falling back to
+attempting to lookup the <code>cwd</code> of the current process group leader attached to a
+local Pane. If no <code>cwd</code> can be resolved, then the <code>default_cwd</code> will be used.
+If <code>default_cwd</code> is not specified, then the home directory of the user will be
+used.</p>
+<pre><code class="language-text">                             Is initial window?
+               ______________________|______________________
+              |                                             |
+             Yes                                            No
+              |                                             |
+       Opened with CLI                  New pane, tab, or window. Opened with a
+      and `--cwd` flag?                   `SpawnCommand` that includes `cwd`?
+    __________|__________                         __________|__________
+   |                     |                       |                     |
+  Yes                    No                      No                   Yes
+   |                     |                       |                     |
+  Use                    |                Is there a value    Use `cwd` specified
+`--cwd`                  |                 set by OSC 7?       by `SpawnCommand`
+               __________|             __________|__________
+              |                       |                     |
+              |                       No                   Yes
+              |                       |                     |
+              |            Can `cwd` be resolved via    Use OSC 7
+              |            the process group leader?      value
+              |             __________|__________
+              |            |                     |
+              |            No                   Yes
+              |____________|                     |
+                    |                       Use resolved
+             Is `default_cwd`                  `cwd`
+                 defined?
+          __________|__________
+         |                     |
+        Yes                    No
+         |                     |
+        Use                 Use home
+   `default_cwd`            directory
+</code></pre>
+<p>On macOS and Linux, <code>wezterm</code> can attempt to resolve the process group leader
+and then attempt to resolve its current working directory. This is not
+guaranteed to succeed, and there are a number of potential edge cases (which is
+another reason for configuring your shell to use OSC 7 sequences).</p>
+<h1><a class="header" href="#default_prog" id="default_prog"><code>default_prog</code></a></h1>
+<p>If no <code>prog</code> is specified on the command line, use this
+instead of running the user's shell.</p>
+<p>For example, to have <code>wezterm</code> always run <code>top</code> by default,
+you'd use this:</p>
+<pre><code class="language-lua">return {
+  default_prog = {&quot;top&quot;}
+}
+</code></pre>
+<p><code>default_prog</code> is implemented as an array where the 0th element
+is the command to run and the rest of the elements are passed
+as the positional arguments to that command.</p>
+<p>See also: <a href="config/lua/config/../../launch.html">Launching Programs</a></p>
+<h1><a class="header" href="#font" id="font"><code>font</code></a></h1>
+<p>Configures the font to use by default.  The <code>font</code> setting can specify
+a set of fallbacks and other options, and is described in more detail
+in the <a href="config/lua/config/../../fonts.html">Fonts</a> section.</p>
+<h1><a class="header" href="#font_antialias--greyscale" id="font_antialias--greyscale"><code>font_antialias = &quot;Greyscale&quot;</code></a></h1>
+<p>Adjusts the anti-aliasing portion of the font rasterizer.</p>
+<p>Possible values are <code>None</code>, <code>Greyscale</code>, <code>Subpixel</code>.</p>
+<p>The default value is <code>Greyscale</code>.</p>
+<h1><a class="header" href="#font_hinting--full" id="font_hinting--full"><code>font_hinting = &quot;Full&quot;</code></a></h1>
+<p>Adjust the hinting portion of the font rasterizer.</p>
+<p>Possible values are <code>None</code>, <code>Vertical</code>, <code>VerticalSubpixel</code>, <code>Full</code>.</p>
+<h1><a class="header" href="#font_locator" id="font_locator"><code>font_locator</code></a></h1>
+<p>specifies the method by which system fonts are located and loaded.  You may
+specify <code>ConfigDirsOnly</code> to disable loading system fonts and use only the fonts
+found in the directories that you specify in your <code>font_dirs</code> configuration
+option.</p>
+<p>Otherwise, it is recommended to omit this setting.</p>
+<h1><a class="header" href="#font_rasterizer" id="font_rasterizer"><code>font_rasterizer</code></a></h1>
+<p>Specifies the method by which fonts are rendered on screen.  The only available
+implementation is <code>FreeType</code>.</p>
+<h1><a class="header" href="#font_rules" id="font_rules"><code>font_rules</code></a></h1>
+<p>An optional set of style rules that can be used to specify alternative
+fonts to be used for text matching various styles.</p>
+<p>This option is described in more detail in the <a href="config/lua/config/../../fonts.html">Fonts</a> section.</p>
+<h1><a class="header" href="#font_shaper" id="font_shaper"><code>font_shaper</code></a></h1>
+<p>specifies the method by which text is mapped to glyphs in the available fonts.
+The shaper is responsible for handling kerning, ligatures and emoji
+composition.  The default is <code>Harfbuzz</code> and we have very preliminary support
+for <code>Allsorts</code>.</p>
+<h1><a class="header" href="#font_size--100" id="font_size--100"><code>font_size = 10.0</code></a></h1>
+<p>Specifies the size of the font, measured in points.</p>
+<p>The default font size is 10 points.</p>
+<p>You may use fractional point sizes, such as <code>13.3</code>, to fine tune the size.</p>
+<h1><a class="header" href="#freetype_interpreter_version" id="freetype_interpreter_version"><code>freetype_interpreter_version</code></a></h1>
+<p>Selects the freetype interpret version to use.  Possible values are <code>35</code>, <code>38</code>
+and <code>40</code> which have different characteristics with respective to subpixel
+hinting.  See <a href="https://freetype.org/freetype2/docs/subpixel-hinting.html">https://freetype.org/freetype2/docs/subpixel-hinting.html</a></p>
+<h1><a class="header" href="#front_end--opengl" id="front_end--opengl"><code>front_end = &quot;OpenGL&quot;</code></a></h1>
+<p>Specifies which render front-end to use.  This option used to have
+more scope in earlier versions of wezterm, but today it allows two
+possible values:</p>
+<ul>
+<li><code>OpenGL</code> - use GPU accelerated rasterization (this is the default)</li>
+<li><code>Software</code> - use CPU-based rasterization.</li>
+</ul>
+<p>You may wish (or need!) to select <code>Software</code> if there are issues with your
+GPU/OpenGL drivers.</p>
+<p>WezTerm will automatically select <code>Software</code> if it detects that it is
+being started in a Remote Desktop environment on Windows.</p>
+<h1><a class="header" href="#harfbuzz_features" id="harfbuzz_features"><code>harfbuzz_features</code></a></h1>
+<p>When <code>font_shaper = &quot;Harfbuzz&quot;</code>, this setting affects how font shaping
+takes place.</p>
+<p>See <a href="config/lua/config/../../font-shaping.html">Font Shaping</a> for more information
+and examples.</p>
+<h1><a class="header" href="#hyperlink_rules" id="hyperlink_rules"><code>hyperlink_rules</code></a></h1>
+<p>Defines rules to match text from the terminal output and generate
+clickable links.</p>
+<p>See <a href="config/lua/config/../../../hyperlinks.html">Hyperlinks</a> for more information and
+examples.</p>
+<h1><a class="header" href="#initial_cols--80" id="initial_cols--80"><code>initial_cols = 80</code></a></h1>
+<p>Specifies the width of a new window, expressed in character cells.</p>
+<h1><a class="header" href="#initial_rows--24" id="initial_rows--24"><code>initial_rows = 24</code></a></h1>
+<p>Specifies the height of a new window, expressed in character cells.</p>
+<h1><a class="header" href="#line_height--10" id="line_height--10"><code>line_height = 1.0</code></a></h1>
+<p>Scales the computed line height to adjust the spacing between successive rows
+of text.  The default line height is controlled by the
+<a href="config/lua/config/font_size.html">font_size</a> configuration option.  If you feel that your chosen
+font feels too vertically cramped then you can set <code>line_height = 1.2</code> to
+increase the vertical spacing by 20%.  Conversely, setting <code>line_height = 0.9</code>
+will decrease the vertical spacing by 10%.</p>
+<h1><a class="header" href="#scrollback_lines--3500" id="scrollback_lines--3500"><code>scrollback_lines = 3500</code></a></h1>
+<p>How many lines of scrollback you want to retain.</p>
+<p><a href="config/lua/config/../../../scrollback.html">Learn more about scrollback</a></p>
+<h1><a class="header" href="#set_environment_variables" id="set_environment_variables"><code>set_environment_variables</code></a></h1>
+<p>Specifies a map of environment variables that should be set when spawning
+commands in the local domain.  This is not used when working with remote
+domains.</p>
+<p>See also: <a href="config/lua/config/../../launch.html#passing-environment-variables-to-the-spawned-program">Launching Programs</a></p>
+<h1><a class="header" href="#term--xterm-256color" id="term--xterm-256color"><code>term = &quot;xterm-256color&quot;</code></a></h1>
+<p>What to set the <code>TERM</code> environment variable to.  The default is
+<code>xterm-256color</code>, which should provide a good level of feature
+support without requiring the installation of additional terminfo
+data.</p>
+<p>If you want to get the most application support out of wezterm, then you may
+wish to install a copy of the <code>wezterm</code> TERM definition:</p>
+<pre><code>tempfile=$(mktemp) \
+  &amp;&amp; curl -o $tempfile https://raw.githubusercontent.com/wez/wezterm/main/termwiz/data/wezterm.terminfo \
+  &amp;&amp; tic -x -o ~/.terminfo $tempfile \
+  &amp;&amp; rm $tempfile
+</code></pre>
+<p>You can then set <code>term = &quot;wezterm&quot;</code> in your <code>.wezterm.lua</code> config file.</p>
+<p>Doing this will inform some software of newer, more advanced features such
+as colored underlines, styled underlines (eg: undercurl).  If the system
+you are using has a relatively outdated ncurses installation, the <code>wezterm</code>
+terminfo will also enable italics and true color support.</p>
+<h1><a class="header" href="#unix_domains" id="unix_domains"><code>unix_domains</code></a></h1>
+<p>Defines a list of multiplexer domains for both the multiplexer
+server and multiplexer client.</p>
+<p><a href="config/lua/config/../../../multiplexing.html#unix-domains">Read more about multiplexing</a></p>
 <h1><a class="header" href="#keyassignment-enumeration" id="keyassignment-enumeration"><code>KeyAssignment</code> enumeration</a></h1>
 <p>A <code>KeyAssignment</code> represents a pre-defined function that can be applied
 to control the Window, Tab, Pane state typically when a key or mouse event
@@ -4929,6 +5590,7 @@ clear and convenient.</p>
 <li><a href="config/lua/keyassignment/CompleteSelection.html">CompleteSelection</a></li>
 <li><a href="config/lua/keyassignment/CompleteSelectionOrOpenLinkAtMouseCursor.html">CompleteSelectionOrOpenLinkAtMouseCursor</a></li>
 <li><a href="config/lua/keyassignment/Copy.html">Copy</a></li>
+<li><a href="config/lua/keyassignment/CopyTo.html">CopyTo</a></li>
 <li><a href="config/lua/keyassignment/DecreaseFontSize.html">DecreaseFontSize</a></li>
 <li><a href="config/lua/keyassignment/DisableDefaultAssignment.html">DisableDefaultAssignment</a></li>
 <li><a href="config/lua/keyassignment/EmitEvent.html">EmitEvent</a></li>
@@ -4941,6 +5603,7 @@ clear and convenient.</p>
 <li><a href="config/lua/keyassignment/Nop.html">Nop</a></li>
 <li><a href="config/lua/keyassignment/OpenLinkAtMouseCursor.html">OpenLinkAtMouseCursor</a></li>
 <li><a href="config/lua/keyassignment/Paste.html">Paste</a></li>
+<li><a href="config/lua/keyassignment/PasteFrom.html">PasteFrom</a></li>
 <li><a href="config/lua/keyassignment/PastePrimarySelection.html">PastePrimarySelection</a></li>
 <li><a href="config/lua/keyassignment/QuitApplication.html">QuitApplication</a></li>
 <li><a href="config/lua/keyassignment/ReloadConfiguration.html">ReloadConfiguration</a></li>
@@ -5054,9 +5717,15 @@ return {
 <h1><a class="header" href="#clearscrollback" id="clearscrollback">ClearScrollback</a></h1>
 <p>Clears the lines that have scrolled off the top of the viewport, resetting
 the scrollbar thumb to the full height of the window.</p>
+<p><em>since: 20210203-095643-70a364eb</em></p>
+<p>Added a parameter that allows additionally clear the viewport:</p>
 <pre><code class="language-lua">return {
   keys = {
-    {key=&quot;K&quot;, mods=&quot;CTRL|SHIFT&quot;, action=&quot;ClearScrollback&quot;}
+    -- Clears only the scrollback and leaves the viewport intact.
+    -- This is the default behavior.
+    {key=&quot;K&quot;, mods=&quot;CTRL|SHIFT&quot;, action=wezterm.action{ClearScrollback=&quot;ScrollbackOnly&quot;}}
+    -- Clears the scrollback and viewport leaving the prompt line the new first line.
+    {key=&quot;K&quot;, mods=&quot;CTRL|SHIFT&quot;, action=wezterm.action{ClearScrollback=&quot;ScrollbackAndViewport&quot;}}
   }
 }
 </code></pre>
@@ -5104,17 +5773,75 @@ the tab and terminates its panes without prompting.</p>
 <p>Completes an active text selection process; the selection range is
 marked closed and then the selected text is copied as though the
 <code>Copy</code> action was executed.</p>
+<p><em>since: 20210203-095643-70a364eb</em></p>
+<p><code>CompleteSelection</code> now requires a destination parameter to specify
+which clipboard buffer the selection will populate; the copy action
+is now equivalent to <a href="config/lua/keyassignment/CopyTo.html">CopyTo</a>.</p>
+<pre><code class="language-lua">local wezterm = require 'wezterm';
+
+return {
+  mouse_bindings = {
+    -- Change the default click behavior so that it only selects
+    -- text and doesn't open hyperlinks, and that it populates
+    -- the Clipboard rather the PrimarySelection which is part
+    -- of the default assignment for a left mouse click.
+    {
+      event={Up={streak=1, button=&quot;Left&quot;}},
+      mods=&quot;NONE&quot;,
+      action=wezterm.action{CompleteSelection=&quot;Clipboard&quot;},
+    },
+  },
+}
+
+</code></pre>
 <h1><a class="header" href="#completeselectionoropenlinkatmousecursor" id="completeselectionoropenlinkatmousecursor">CompleteSelectionOrOpenLinkAtMouseCursor</a></h1>
 <p>If a selection is in progress, acts as though <code>CompleteSelection</code> was
 triggered.  Otherwise acts as though <code>OpenLinkAtMouseCursor</code> was
 triggered.</p>
+<p><em>since: 20210203-095643-70a364eb</em></p>
+<p><code>CompleteSelectionOrOpenLinkAtMouseCursor</code> now requires a destination parameter to specify
+which clipboard buffer the selection will populate. The copy action
+is now equivalent to <a href="config/lua/keyassignment/CopyTo.html">CopyTo</a>.</p>
+<pre><code class="language-lua">local wezterm = require 'wezterm';
+
+return {
+  mouse_bindings = {
+    -- Change the default click behavior so that it populates
+    -- the Clipboard rather the PrimarySelection.
+    {
+      event={Up={streak=1, button=&quot;Left&quot;}},
+      mods=&quot;NONE&quot;,
+      action=wezterm.action{CompleteSelectionOrOpenLinkAtMouseCursor=&quot;Clipboard&quot;},
+    },
+  },
+}
+
+</code></pre>
 <h1><a class="header" href="#copy" id="copy">Copy</a></h1>
-<p>Copy the selection to the clipboard.  On X11 systems, this populates both the
-Clipboard and the Primary Selection.</p>
+<p>Copy the selection to the clipboard.</p>
+<p><em>since: 20210203-095643-70a364eb</em></p>
+<p>This action is considered to be deprecated and will be removed in
+a future release; please use <a href="config/lua/keyassignment/CopyTo.html">CopyTo</a> instead.</p>
+<h2><a class="header" href="#example" id="example">Example</a></h2>
 <pre><code class="language-lua">local wezterm = require 'wezterm';
 return {
   keys = {
-    {key=&quot;c&quot;, mods=&quot;SHIFT|CTRL&quot;, action=&quot;Copy&quot;},
+    {key=&quot;C&quot;, mods=&quot;CTRL&quot;, action=&quot;Copy&quot;},
+  }
+}
+</code></pre>
+<h1><a class="header" href="#copytodestination" id="copytodestination">CopyTo(destination)</a></h1>
+<p>Copy the selection to the specified clipboard buffer.</p>
+<p>Possible values for destination are:</p>
+<ul>
+<li><code>Clipboard</code> - copy the text to the system clipboard.</li>
+<li><code>PrimarySelection</code> - Copy the test to the primary selection buffer (applicable to X11 systems only)</li>
+<li><code>ClipboardAndPrimarySelection</code> - Copy to both the clipboard and the primary selection.</li>
+</ul>
+<pre><code class="language-lua">local wezterm = require 'wezterm';
+return {
+  keys = {
+    {key=&quot;C&quot;, mods=&quot;CTRL&quot;, action=wezterm.action{CopyTo=&quot;ClipboardAndPrimarySelection&quot;}},
   }
 }
 </code></pre>
@@ -5236,22 +5963,68 @@ keys were not pressed.</p>
 <p>If the current mouse cursor position is over a cell that contains
 a hyperlink, this action causes that link to be opened.</p>
 <h1><a class="header" href="#paste" id="paste">Paste</a></h1>
-<p>Paste the clipboard to the current tab.  On X11 systems, this copies from the
-Clipboard rather than the Primary Selection.  See also <code>PastePrimarySelection</code>.</p>
+<p>Paste the clipboard to the current pane.</p>
+<p><em>since: 20210203-095643-70a364eb</em></p>
+<p>This action is considered to be deprecated and will be removed in
+a future release; please use <a href="config/lua/keyassignment/PasteFrom.html">PasteFrom</a> instead.</p>
+<h2><a class="header" href="#example-1" id="example-1">Example</a></h2>
 <pre><code class="language-lua">local wezterm = require 'wezterm';
 return {
   keys = {
     {key=&quot;v&quot;, mods=&quot;SHIFT|CTRL&quot;, action=&quot;Paste&quot;},
+  },
+
+  -- Middle mouse button pastes the clipboard.
+  -- Note that this is the default so you needn't copy this.
+  mouse_bindings = {
+    {
+      event={Up={streak=1, button=&quot;Middle&quot;}},
+      mods=&quot;NONE&quot;,
+      action=&quot;Paste&quot;,
+    },
   }
+}
+</code></pre>
+<h1><a class="header" href="#pastefromsource" id="pastefromsource">PasteFrom(source)</a></h1>
+<p>Paste the specified clipboard to the current pane.</p>
+<p>This is only really meaningful on X11 systems that have multiple clipboards.</p>
+<p>Possible values for source are:</p>
+<ul>
+<li><code>Clipboard</code> - paste from the system clipboard</li>
+<li><code>PrimarySelection</code> - paste from the primary selection buffer</li>
+</ul>
+<p>See also <a href="config/lua/keyassignment/Paste.html">Paste</a>.</p>
+<pre><code class="language-lua">local wezterm = require 'wezterm';
+return {
+  keys = {
+    -- paste from the clipboard
+    {key=&quot;V&quot;, mods=&quot;CTRL&quot;, action=PasteFrom=&quot;Clipboard&quot;},
+
+    -- paste from the primary selection
+    {key=&quot;V&quot;, mods=&quot;CTRL&quot;, action=PasteFrom=&quot;PrimarySelection&quot;},
+  },
 }
 </code></pre>
 <h1><a class="header" href="#pasteprimaryselection" id="pasteprimaryselection">PastePrimarySelection</a></h1>
 <p>X11: Paste the Primary Selection to the current tab.
-On other systems, this behaves identically to <code>Paste</code>.</p>
+On other systems, this behaves identically to <a href="config/lua/keyassignment/Paste.html">Paste</a>.</p>
+<p><em>since: 20210203-095643-70a364eb</em></p>
+<p>This action is considered to be deprecated and will be removed in
+a future release; please use <a href="config/lua/keyassignment/PasteFrom.html">PasteFrom</a> instead.</p>
+<h2><a class="header" href="#example-2" id="example-2">Example</a></h2>
 <pre><code class="language-lua">local wezterm = require 'wezterm';
 return {
   keys = {
     {key=&quot;v&quot;, mods=&quot;SHIFT|CTRL&quot;, action=&quot;PastePrimarySelection&quot;},
+  },
+
+  -- Middle mouse button pastes the primary selection.
+  mouse_bindings = {
+    {
+      event={Up={streak=1, button=&quot;Middle&quot;}},
+      mods=&quot;NONE&quot;,
+      action=&quot;PastePrimarySelection&quot;,
+    },
   }
 }
 </code></pre>
@@ -5293,7 +6066,7 @@ return {
 }
 </code></pre>
 <h1><a class="header" href="#scrolltoprompt" id="scrolltoprompt">ScrollToPrompt</a></h1>
-<p><em>Since: nightly builds only</em></p>
+<p><em>Since: 20210203-095643-70a364eb</em></p>
 <p>This action operates on Semantic Zones defined by applications that use <a href="https://gitlab.freedesktop.org/Per_Bothner/specifications/blob/master/proposals/semantic-prompts.md">OSC
 133 Semantic Prompt Escapes</a> and requires configuring your shell to emit those sequences.</p>
 <p>OSC 133 escapes allow marking regions of output as <code>Output</code> (from the commands
@@ -5340,7 +6113,7 @@ return {
 <p>Initiates selection of text at the current mouse cursor position.
 The mode argument can be one of <code>Cell</code>, <code>Word</code> or <code>Line</code> to control
 the scope of the selection.</p>
-<p><em>Since: nightly builds only</em></p>
+<p><em>Since: 20210203-095643-70a364eb</em></p>
 <p>The mode argument can be <code>SemanticZone</code> which causes the selection
 to take the surrounding semantic zone.</p>
 <p>In this example, the triple-left-click mouse action is set to
@@ -5386,7 +6159,7 @@ return {
 <h1><a class="header" href="#show" id="show">Show</a></h1>
 <p>Shows the current window.</p>
 <h1><a class="header" href="#showlauncher" id="showlauncher">ShowLauncher</a></h1>
-<p>Activate the <a href="config/lua/keyassignment/launch.html#the-launcher-menu">Launcher Menu</a>
+<p>Activate the <a href="config/lua/keyassignment/../../launch.html#the-launcher-menu">Launcher Menu</a>
 in the current tab.</p>
 <pre><code class="language-lua">return {
   keys = {
@@ -5462,12 +6235,23 @@ return {
 <p><em>Since: 20201031-154415-9614e117</em></p>
 <p>Splits the current pane in half horizontally such that the current pane becomes
 the left half and the new right half spawns a new command.</p>
+<pre><code class="language-lua">local wezterm = require 'wezterm';
+
+return {
+  keys = {
+    -- This will create a new split and run your default program inside it
+    {key=&quot;%&quot;, mods=&quot;CLTR|SHIFT|ALT&quot;,
+      action=wezterm.action{SplitHorizontal={domain=&quot;CurrentPaneDomain&quot;}}},
+  }
+}
+</code></pre>
 <p><code>SplitHorizontal</code> requires a <a href="config/lua/keyassignment/../SpawnCommand.html">SpawnCommand</a> parameter to
 specify what should be spawned into the new split.</p>
 <pre><code class="language-lua">local wezterm = require 'wezterm';
 
 return {
   keys = {
+    -- This will create a new split and run the `top` program inside it
     {key=&quot;%&quot;, mods=&quot;CLTR|SHIFT|ALT&quot;, action=wezterm.action{SplitHorizontal={
       args={&quot;top&quot;}
     }}},
@@ -5478,12 +6262,23 @@ return {
 <p><em>Since: 20201031-154415-9614e117</em></p>
 <p>Splits the current pane in half vertically such that the current pane becomes
 the top half and the new bottom half spawns a new command.</p>
+<pre><code class="language-lua">local wezterm = require 'wezterm';
+
+return {
+  keys = {
+    -- This will create a new split and run your default program inside it
+    {key=&quot;\&quot;&quot;, mods=&quot;CLTR|SHIFT|ALT&quot;,
+      action=wezterm.action{SplitVertical={domain=&quot;CurrentPaneDomain&quot;}}},
+  }
+}
+</code></pre>
 <p><code>SplitVertical</code> requires a <a href="config/lua/keyassignment/../SpawnCommand.html">SpawnCommand</a> parameter to
 specify what should be spawned into the new split.</p>
 <pre><code class="language-lua">local wezterm = require 'wezterm';
 
 return {
   keys = {
+    -- This will create a new split and run the `top` program inside it
     {key=&quot;\&quot;&quot;, mods=&quot;CTRL|SHIFT|ALT&quot;, action=wezterm.action{SplitVertical={
       args={&quot;top&quot;}
     }}},
@@ -5709,10 +6504,10 @@ via <code>wezterm cli</code> to indicate the subject of manipulation.</p>
         
 
         
-        
+
         
         <script type="text/javascript">
-            window.playpen_copyable = true;
+            window.playground_copyable = true;
         </script>
         
 
