@@ -47,6 +47,7 @@ use anyhow::Error;
 #[cfg(feature = "serde_support")]
 use serde_derive::*;
 use std::io::Result as IoResult;
+use libc;
 
 pub mod cmdbuilder;
 pub use cmdbuilder::CommandBuilder;
@@ -187,7 +188,11 @@ impl Child for std::process::Child {
     }
 
     fn kill(&mut self) -> IoResult<()> {
-        std::process::Child::kill(self)
+        unsafe {
+            libc::kill(self.id() as i32, libc::SIGHUP);
+        }
+        Ok(())
+        // std::process::Child::kill(self)
     }
 
     fn wait(&mut self) -> IoResult<ExitStatus> {
