@@ -635,7 +635,7 @@ dependencies = [
  "config",
  "leb128",
  "log",
- "metrics",
+ "metrics 0.14.2",
  "mux",
  "portable-pty",
  "rangeset",
@@ -1998,12 +1998,23 @@ dependencies = [
 
 [[package]]
 name = "metrics"
-version = "0.14.1"
+version = "0.14.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ee607b70506ed8dbabe467f24ce0a4d0568980993f94c0a7652d2d50e8b51fd1"
+checksum = "58e285601dcfb9f3a8f37a7093b9956a0df730b50848c8ac0117406aff06c851"
 dependencies = [
- "metrics-macros",
+ "metrics-macros 0.2.0",
  "proc-macro-hack",
+]
+
+[[package]]
+name = "metrics"
+version = "0.16.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9c0a7fa53d812d26e59d2baf7a6f77442041454ab32908eb304447f00f0dd4de"
+dependencies = [
+ "metrics-macros 0.4.0",
+ "proc-macro-hack",
+ "t1ha",
 ]
 
 [[package]]
@@ -2011,6 +2022,20 @@ name = "metrics-macros"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "11ac60cd4d3a869fd39d57baf0ed7f79fb677580d8d6655c4330d4f1126bc27b"
+dependencies = [
+ "lazy_static",
+ "proc-macro-hack",
+ "proc-macro2",
+ "quote 1.0.8",
+ "regex",
+ "syn 1.0.60",
+]
+
+[[package]]
+name = "metrics-macros"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "caa72e4a3d157986dd2565c82ecbddcc23941513669a3766b938f6b72eb87f3f"
 dependencies = [
  "lazy_static",
  "proc-macro-hack",
@@ -3612,6 +3637,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "t1ha"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fa44aa51ae1a544e2c35a38831ba54ae40591f21384816f531b84f3e984b9ccc"
+dependencies = [
+ "cfg-if 0.1.10",
+ "lazy_static",
+ "num-traits 0.2.14",
+ "rustc_version",
+]
+
+[[package]]
 name = "tabout"
 version = "0.3.0"
 dependencies = [
@@ -4309,7 +4346,7 @@ dependencies = [
  "futures",
  "log",
  "lru",
- "metrics",
+ "metrics 0.14.2",
  "mux",
  "openssl",
  "portable-pty",
@@ -4342,7 +4379,7 @@ dependencies = [
  "harfbuzz",
  "lazy_static",
  "log",
- "metrics",
+ "metrics 0.14.2",
  "mux",
  "ordered-float",
  "rangeset",
@@ -4380,7 +4417,7 @@ dependencies = [
  "log",
  "lru",
  "luahelper",
- "metrics",
+ "metrics 0.16.0",
  "mlua",
  "mux",
  "open",
@@ -4584,7 +4621,7 @@ dependencies = [
  "line_drawing",
  "log",
  "memmap",
- "metrics",
+ "metrics 0.14.2",
  "mio",
  "objc",
  "palette",
