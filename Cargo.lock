@@ -34,6 +34,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "739f4a8db6605981345c5654f3a85b056ce52f37a39d34da03f25bf2151ea16e"
 
 [[package]]
+name = "ahash"
+version = "0.7.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "43bb833f0bf979d8475d38fbf09ed3b8a55e1885fe93ad3f93239fc6a4f17b98"
+dependencies = [
+ "getrandom 0.2.2",
+ "once_cell",
+ "version_check",
+]
+
+[[package]]
 name = "aho-corasick"
 version = "0.7.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -635,7 +646,7 @@ dependencies = [
  "config",
  "leb128",
  "log",
- "metrics",
+ "metrics 0.14.2",
  "mux",
  "portable-pty",
  "rangeset",
@@ -1525,7 +1536,7 @@ version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d7afe4a420e3fe79967a00898cc1f4db7c8a49a9333a29f8a4bd76a253d5cd04"
 dependencies = [
- "ahash",
+ "ahash 0.4.7",
 ]
 
 [[package]]
@@ -1998,11 +2009,22 @@ dependencies = [
 
 [[package]]
 name = "metrics"
-version = "0.14.1"
+version = "0.14.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ee607b70506ed8dbabe467f24ce0a4d0568980993f94c0a7652d2d50e8b51fd1"
+checksum = "58e285601dcfb9f3a8f37a7093b9956a0df730b50848c8ac0117406aff06c851"
 dependencies = [
- "metrics-macros",
+ "metrics-macros 0.2.0",
+ "proc-macro-hack",
+]
+
+[[package]]
+name = "metrics"
+version = "0.17.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a00f42f354a2ed4894db863b3a4db47aef2d2e4435b937221749bd37a8a7aaa8"
+dependencies = [
+ "ahash 0.7.4",
+ "metrics-macros 0.4.0",
  "proc-macro-hack",
 ]
 
@@ -2011,6 +2033,20 @@ name = "metrics-macros"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "11ac60cd4d3a869fd39d57baf0ed7f79fb677580d8d6655c4330d4f1126bc27b"
+dependencies = [
+ "lazy_static",
+ "proc-macro-hack",
+ "proc-macro2",
+ "quote 1.0.8",
+ "regex",
+ "syn 1.0.60",
+]
+
+[[package]]
+name = "metrics-macros"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "caa72e4a3d157986dd2565c82ecbddcc23941513669a3766b938f6b72eb87f3f"
 dependencies = [
  "lazy_static",
  "proc-macro-hack",
@@ -4309,7 +4345,7 @@ dependencies = [
  "futures",
  "log",
  "lru",
- "metrics",
+ "metrics 0.14.2",
  "mux",
  "openssl",
  "portable-pty",
@@ -4342,7 +4378,7 @@ dependencies = [
  "harfbuzz",
  "lazy_static",
  "log",
- "metrics",
+ "metrics 0.14.2",
  "mux",
  "ordered-float",
  "rangeset",
@@ -4380,7 +4416,7 @@ dependencies = [
  "log",
  "lru",
  "luahelper",
- "metrics",
+ "metrics 0.17.0",
  "mlua",
  "mux",
  "open",
@@ -4584,7 +4620,7 @@ dependencies = [
  "line_drawing",
  "log",
  "memmap",
- "metrics",
+ "metrics 0.14.2",
  "mio",
  "objc",
  "palette",
