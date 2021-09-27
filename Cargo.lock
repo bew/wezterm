@@ -5091,7 +5091,7 @@ dependencies = [
  "wezterm-toast-notification",
  "winapi 0.3.9",
  "window",
- "windows",
+ "windows 0.21.1",
 ]
 
 [[package]]
@@ -5216,7 +5216,7 @@ dependencies = [
  "objc",
  "open",
  "serde",
- "windows",
+ "windows 0.11.0",
  "xml-rs",
  "zbus",
  "zvariant",
@@ -5389,8 +5389,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "25b270ca3fa1282aa091f122551348f8186f07888dffdfe64df17206ad3b56d0"
 dependencies = [
  "const-sha1",
- "windows_gen",
- "windows_macros",
+ "windows_gen 0.11.0",
+ "windows_macros 0.11.0",
+]
+
+[[package]]
+name = "windows"
+version = "0.21.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b8f5f8d2ea79bf690bbee453fd4a1516ae426e5d5c7215d96cc0c3dc134fc4a0"
+dependencies = [
+ "const-sha1",
+ "windows_gen 0.21.1",
+ "windows_macros 0.21.1",
+ "windows_reader",
 ]
 
 [[package]]
@@ -5400,14 +5412,48 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "44bd40154eb69ba3c80f11752494a2a34d1b448b06b80449238edfbd00ec7eef"
 
 [[package]]
+name = "windows_gen"
+version = "0.21.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7e6994f42f8481387778cc608407d6703410672d57f32a66009419d7a18aa912"
+dependencies = [
+ "windows_quote",
+ "windows_reader",
+]
+
+[[package]]
 name = "windows_macros"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bae6942e04aa5792bbf3b3cf5ded1b7590a7ffd76d53ea179210b87911b6587f"
 dependencies = [
  "syn",
- "windows_gen",
+ "windows_gen 0.11.0",
 ]
+
+[[package]]
+name = "windows_macros"
+version = "0.21.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "81cc2357b1b03c19f056cb0e6d06011f80f54beadb4e36aee2ca98493c7cfc3c"
+dependencies = [
+ "syn",
+ "windows_gen 0.21.1",
+ "windows_quote",
+ "windows_reader",
+]
+
+[[package]]
+name = "windows_quote"
+version = "0.21.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7cf987b5288c15e1997226848f78f3ed3ef8b78dcfd71a201c8c8684163a7e4d"
+
+[[package]]
+name = "windows_reader"
+version = "0.21.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "237b53e8b40766ea7db5da0d8c6c1442d21d0429f0ee7500d7b5688967bd9d7b"
 
 [[package]]
 name = "winreg"
