@@ -15,7 +15,7 @@ jobs:
     
     steps:
     - name: "checkout repo"
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
          submodules: "recursive"
     - name: "Fetch tags"
@@ -91,7 +91,7 @@ jobs:
       env:
          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
     - name: "Checkout homebrew tap"
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
          repository: "wez/homebrew-wezterm"
          path: "homebrew-wezterm"
