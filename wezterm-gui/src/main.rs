@@ -859,7 +859,7 @@ pub fn run_ls_fonts(config: config::ConfigHandle, cmd: &LsFontsCommand) -> anyho
 
                 let parsed = &handles[info.font_idx];
                 let escaped = format!("{}", text.escape_unicode());
-                if config.custom_block_glyphs {
+                if !config.custom_glyphs.is_empty() {
                     if let Some(block) = customglyph::BlockKey::from_str(&text) {
                         println!(
                             "{:2} {:4} {:12} drawn by wezterm because custom_block_glyphs=true: {:?}",

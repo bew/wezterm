@@ -30,6 +30,7 @@ use luahelper::impl_lua_conversion_dynamic;
 use mlua::FromLua;
 use portable_pty::CommandBuilder;
 use std::collections::HashMap;
+use std::convert::TryFrom;
 use std::ffi::OsStr;
 use std::io::Read;
 use std::path::{Path, PathBuf};
@@ -388,10 +389,13 @@ pub struct Config {
     #[dynamic(default = "default_prefer_egl")]
     pub prefer_egl: bool,
 
+    #[dynamic(deprecated = "use custom_glyphs instead", default)]
+    pub custom_block_glyphs: Option<bool>,
+    #[dynamic(default)]
+    pub custom_glyphs: CustomGlyphsFlags,
+
     #[dynamic(default = "default_true")]
-    pub custom_block_glyphs: bool,
-    #[dynamic(default = "default_true")]
-    pub anti_alias_custom_block_glyphs: bool,
+    pub anti_alias_custom_block_glyphs: bool, // FIXME: rename? (it's not released AFAIK) or deprecate and make another config?
 
     /// Controls the amount of padding to use around the terminal cell area
     #[dynamic(default)]
@@ -1026,6 +1030,16 @@ impl Config {
             cfg.background.insert(0, bg);
         }
 
+        // Overwrite `custom_glyphs` based on the deprecated `custom_block_glyphs` which
+        // takes precedence when it is set.
+        if let Some(legacy) = self.custom_block_glyphs {
+            cfg.custom_glyphs = if legacy {
+                CustomGlyphsFlags::all()
+            } else {
+                CustomGlyphsFlags::empty()
+            };
+        }
+
         cfg
     }
 
@@ -1213,6 +1227,75 @@ impl Config {
 fn default_check_for_updates() -> bool {
     cfg!(not(feature = "distro-defaults"))
 }
+
+bitflags::bitflags! {
+    #[derive(Default,  FromDynamic, ToDynamic)]
+    #[dynamic(try_from="String", into="String")]
+    pub struct CustomGlyphsFlags: u32 {
+        const BOX_DRAWING = 1;
+        const BLOCK_ELEMENTS = 2;
+        const SYMBOLS_FOR_LEGACY_COMPUTING = 4;
+        const BRAILLE = 8;
+        const POWERLINE = 16;
+        // FIXME: are there other categories ? (check on unicode spec?)
+    }
+}
+
+impl Into<String> for CustomGlyphsFlags {
+    fn into(self) -> String {
+        self.to_string()
+    }
+}
+impl Into<String> for &CustomGlyphsFlags {
+    fn into(self) -> String {
+        self.to_string()
+    }
+}
+
+impl TryFrom<String> for CustomGlyphsFlags {
+    type Error = String;
+    fn try_from(s: String) -> Result<Self, Self::Error> {
+        let mut flags = CustomGlyphsFlags::default();
+
+        for ele in s.split('|') {
+            let ele = ele.trim();
+            match ele {
+                "BOX_DRAWING" => flags |= Self::BOX_DRAWING,
+                "BLOCK_ELEMENTS" => flags |= Self::BLOCK_ELEMENTS,
+                "SYMBOLS_FOR_LEGACY_COMPUTING" => flags |= Self::SYMBOLS_FOR_LEGACY_COMPUTING,
+                "BRAILLE" => flags |= Self::BRAILLE,
+                "POWERLINE" => flags |= Self::POWERLINE,
+                _ => {
+                    return Err(format!("invalid CustomGlyphsFlags `{}` in `{}`", ele, s));
+                }
+            }
+        }
+
+        Ok(flags)
+    }
+}
+impl ToString for CustomGlyphsFlags {
+    fn to_string(&self) -> String {
+        let mut s = vec![];
+        if self.contains(Self::BOX_DRAWING) {
+            s.push("BOX_DRAWING");
+        }
+        if self.contains(Self::BLOCK_ELEMENTS) {
+            s.push("BLOCK_ELEMENTS");
+        }
+        if self.contains(Self::SYMBOLS_FOR_LEGACY_COMPUTING) {
+            s.push("SYMBOLS_FOR_LEGACY_COMPUTING");
+        }
+        if self.contains(Self::BRAILLE) {
+            s.push("BRAILLE");
+        }
+        if self.contains(Self::POWERLINE) {
+            s.push("POWERLINE");
+        }
+        s.join("|")
+    }
+}
+
 
 fn default_pane_select_fg_color() -> RgbaColor {
     SrgbaTuple(0.75, 0.75, 0.75, 1.0).into()
@@ -1604,4 +1687,10 @@ fn validate_line_height(value: f64) -> Result<(), String> {
     } else {
         Ok(())
     }
+}
+
+fn default_custom_glyphs() -> CustomGlyphsFlags {
+    // NOTE: When `custom_block_glyphs` is set, this default value is
+    //       overwritten in 'compute_extra_defaults'.
+    CustomGlyphsFlags::all()
 }

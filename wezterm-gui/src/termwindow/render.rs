@@ -2687,7 +2687,8 @@ impl super::TermWindow {
                             - (glyph.y_offset + glyph.bearing_y).get() as f32)
                             * height_scale;
 
-                    if self.config.custom_block_glyphs {
+                    // config usage point!
+                    if !self.config.custom_glyphs.is_empty() {
                         if let Some(cell) = params.line.get_cell(visual_cell_idx) {
                             if let Some(block) = BlockKey::from_cell_iter(cell) {
                                 texture.replace(
@@ -3218,7 +3219,8 @@ impl super::TermWindow {
         for info in infos {
             let cell_idx = cluster.byte_to_cell_idx(info.cluster as usize);
 
-            if self.config.custom_block_glyphs {
+            // config usage point!
+            if !self.config.custom_glyphs.is_empty() {
                 if let Some(cell) = line.get_cell(cell_idx) {
                     if BlockKey::from_cell_iter(cell).is_some() {
                         // Don't bother rendering the glyph from the font, as it can

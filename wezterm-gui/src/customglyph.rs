@@ -233,10 +233,12 @@ impl PolyStyle {
     }
 }
 
+// TODO: rename ?
+//   or make a top level thing that includes block stuff + other kind of custom glyph categoris ?
 impl BlockKey {
     pub fn filter_out_synthetic(glyphs: &mut Vec<char>) {
         let config = config::configuration();
-        if config.custom_block_glyphs {
+        if !config.custom_glyphs.is_empty() {
             glyphs.retain(|&c| Self::from_char(c).is_none());
         }
     }
@@ -253,6 +255,9 @@ impl BlockKey {
 
     pub fn from_char(c: char) -> Option<Self> {
         let c = c as u32;
+        // DEVNOTE: Here is the ~3380 lines switch for all supported custom glyphs
+        // TODO: group by category, make each category activable on demand
+        // (may need some re-architect around here)
         Some(match c {
             // [─] BOX DRAWINGS LIGHT HORIZONTAL
             0x2500 => Self::Poly(&[Poly {
