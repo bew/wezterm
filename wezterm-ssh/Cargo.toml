@@ -18,9 +18,9 @@ vendored-openssl-libssh-rs = ["libssh-rs/vendored-openssl"]
 
 [dependencies]
 anyhow = "1.0"
-base64 = "0.21"
-bitflags = "1.3"
-camino = "1.0"
+base64 = "0.22"
+bitflags = "2.5"
+camino = "1.1"
 dirs-next = "2.0"
 filedescriptor = { version="0.8", path = "../filedescriptor" }
 filenamegen = "0.2"
@@ -29,9 +29,9 @@ libc = "0.2"
 log = "0.4"
 portable-pty = { version="0.8", path = "../pty" }
 regex = "1"
-smol = "1.2"
+smol = "2.0"
 ssh2 = {version="0.9.3", features=["openssl-on-win32"], optional = true}
-libssh-rs = {version="0.2.1", features=["vendored"], optional = true}
+libssh-rs = {version="0.3.3", features=["vendored"], optional = true}
 #libssh-rs = {path="../../libssh-rs/libssh-rs", features=["vendored"], optional = true}
 thiserror = "1.0"
 socket2 = "0.5"
@@ -46,7 +46,7 @@ k9 = "0.12.0"
 once_cell = "1.8"
 predicates = "3.0"
 env_logger = "0.11"
-rstest = "0.19"
+rstest = "0.21"
 shell-words = "1.1"
 smol-potat = "1.1.2"
 termwiz = { version = "0.22", path = "../termwiz" }
