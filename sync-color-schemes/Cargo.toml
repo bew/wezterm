@@ -11,7 +11,7 @@ color-funcs = { path = "../lua-api-crates/color-funcs" }
 config = { path = "../config" }
 env_logger = "0.11"
 futures = "0.3"
-lazy_static = "1.4"
+lazy_static = "1.5"
 libflate = "2"
 log = "0.4"
 reqwest = "0.12"
@@ -22,6 +22,6 @@ serde_yaml = "0.9"
 sqlite-cache = {git="https://github.com/losfair/sqlite-cache", rev="0961b50385ff189bb12742716331c05ed0bf7805" }
 tar = "0.4"
 tempfile = "3.3"
-tokio = { version = "1.19", features = ["rt-multi-thread", "sync", "macros"] }
+tokio = { version = "1.38", features = ["rt-multi-thread", "sync", "macros"] }
 toml = "0.8"
 wezterm-dynamic = { path = "../wezterm-dynamic" }
