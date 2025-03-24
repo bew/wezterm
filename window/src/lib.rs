@@ -372,9 +372,13 @@ pub struct ResolvedGeometry {
 
 #[derive(Debug, Clone, Copy)]
 pub struct ResizeIncrement {
+    /// Width size of a terminal cell, in pixels
     pub x: u16,
+    /// Height size of a terminal cell, in pixels
     pub y: u16,
+    /// Incompressible width of the window (accounting for border, padding..)
     pub base_width: u16,
+    /// Incompressible height of the window (accounting for border, padding..)
     pub base_height: u16,
 }
 

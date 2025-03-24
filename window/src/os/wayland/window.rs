@@ -811,7 +811,7 @@ impl WaylandWindowInner {
         }
 
         if let Some((mut w, mut h)) = pending.configure.take() {
-            log::trace!("Pending configure: w:{w}, h{h} -- {:?}", self.window);
+            log::trace!("Pending configure: w:{w}, h:{h} -- {:?}", self.window);
             if self.window.is_some() {
                 let surface_udata = SurfaceUserData::from_wl(self.surface());
                 let factor = surface_udata.surface_data.scale_factor() as f64;
