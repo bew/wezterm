@@ -1134,6 +1134,7 @@ impl GlyphCache {
         Ok(sprite)
     }
 
+    // NOTE: this is where block_sprite is called
     pub fn cached_block(
         &mut self,
         block: BlockKey,

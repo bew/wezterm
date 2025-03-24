@@ -533,6 +533,8 @@ pub struct Config {
     pub custom_block_glyphs: bool,
     #[dynamic(default = "default_true")]
     pub anti_alias_custom_block_glyphs: bool,
+    #[dynamic(try_from = "crate::units::OptPixelUnit", default)]
+    pub custom_glyph_stroke_size: Option<Dimension>,
 
     /// Controls the amount of padding to use around the terminal cell area
     #[dynamic(default)]
