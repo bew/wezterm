@@ -80,6 +80,7 @@ bitflags::bitflags! {
     }
 }
 
+/// The opacity level of a custom glyph.
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
 pub enum BlockAlpha {
     /// 100%
@@ -103,7 +104,7 @@ impl BlockAlpha {
     }
 }
 
-/// Represents a scaled width of the underline thickness.
+/// Represents a scaled width of the line thickness.
 /// Can either multiple or divide by the specified amount
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
 pub enum LineScale {
@@ -180,21 +181,29 @@ impl BlockCoord {
     }
 }
 
+/// A rectangular shape that is used to assemble more complex custom glyphs
+// TODO: rename to Rect ?
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
 pub enum Block {
     /// Number of 1/8ths: x0, x1, y0, y1 with custom alpha
     Custom(u8, u8, u8, u8, BlockAlpha),
     /// Number of 1/8ths in the upper half
+    // TODO: rename to `TopEighths` ? 🤔
     UpperBlock(u8),
     /// Number of 1/8ths in the lower half
+    // TODO: rename to `BottomEighths` ? 🤔
     LowerBlock(u8),
     /// Number of 1/8ths in the left half
+    // TODO: rename to `LeftEighths` ? 🤔
     LeftBlock(u8),
     /// Number of 1/8ths in the right half
+    // TODO: rename to `RightEighths` ? 🤔
     RightBlock(u8),
-    /// Number of 1/8ths: x0, x1
+    /// From-To in 1/8ths: x0, x1
+    // TODO: rename: `VerticalEighth`
     VerticalBlock(u8, u8),
-    /// Number of 1/8ths: y0, y1
+    /// From-To in 1/8ths: y0, y1
+    // TODO: rename: `HorizontalEighth`
     HorizontalBlock(u8, u8),
     /// Quadrants
     // ╭──┬──╮
@@ -213,6 +222,8 @@ pub enum Block {
 /// <https://www.unicode.org/charts/PDF/U2580.pdf>
 /// <https://unicode.org/charts/PDF/U1FB00.pdf>
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
+// NOTE: it's named '…Key' because it's used as key in the glyph cache (see ./glyphcache.rs)
+// MAYBE: rename to `BlockKind` 🤔
 pub enum BlockKey {
     /// List of block rectangles
     Blocks(&'static [Block]),
@@ -234,6 +245,9 @@ pub enum BlockKey {
 
     Poly(&'static [Poly]),
 
+    // FIXME: I don't udnerstand why this variant is here 🤔
+    //  👉 It's not used for any custom glyphs
+    //  Might have been added for convenience
     PolyWithCustomMetrics {
         polys: &'static [Poly],
         underline_height: IntPixelLength,
@@ -570,22 +584,29 @@ pub struct Poly {
 
 pub type BlockPoint = (BlockCoord, BlockCoord);
 
+/// A command to control the polygon path tracing
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
 pub enum PolyCommand {
+    /// Start tracing the path at (x, y) point
     MoveTo(BlockCoord, BlockCoord),
+    /// Trace line from last point to (x, y) point
     LineTo(BlockCoord, BlockCoord),
+    /// Trace quad curve from last point to target point, passing through control point
     QuadTo {
         control: BlockPoint,
         to: BlockPoint,
     },
+    /// Trace oval contour from center point with radius 'vectors'
     Oval {
         center: BlockPoint,
         radiuses: BlockPoint,
     },
+    /// Trace circle from center point with radius
     Circle {
         center: BlockPoint,
         radius: BlockCoord,
     },
+    /// Close the path
     Close,
 }
 
@@ -639,14 +660,15 @@ impl PolyCommand {
     }
 }
 
+/// The fill/stroke style for a polygon
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
 pub enum PolyStyle {
     Fill,
     OutlineAlpha,
     OutlineThin,
-    // A line with the thickness as underlines
+    // A line with the thickness as base glyph lines
     Outline,
-    // A line with twice the thickness of underlines
+    // A line with 3 times the thickness of base glyph lines
     OutlineHeavy,
 }
 
@@ -695,6 +717,8 @@ impl BlockKey {
         }
     }
 
+    // NOTE: This is the function where all unicode custom glyphs are drawn on demand
+    // TODO: doc!
     pub fn from_char(c: char) -> Option<Self> {
         let c = c as u32;
         Some(match c {
@@ -5048,6 +5072,7 @@ impl GlyphCache {
         }
     }
 
+    /// Creates Sprite for the given cursor shape
     pub fn cursor_sprite(
         &mut self,
         shape: Option<CursorShape>,
@@ -5138,6 +5163,7 @@ impl GlyphCache {
         Ok(sprite)
     }
 
+    /// Creates Sprite for the given BlockKey (with size info).
     pub fn block_sprite(
         &mut self,
         render_metrics: &RenderMetrics,
