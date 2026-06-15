@@ -1,0 +1,33 @@
+name: Lint CI python scripts
+
+on:
+  push:
+    paths:
+      - ci/*.py
+  pull_request:
+    paths:
+      - ci/*.py
+  workflow_dispatch:
+
+jobs:
+  linter:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: 3.14
+          cache: pip
+
+      - name: Install deps
+        run: pip install pyrefly ruff
+
+      - name: Run ruff checks
+        run: ruff check
+        working-directory: ci/
+
+      - name: Run pyrefly type checks
+        run: pyrefly check
+        working-directory: ci/

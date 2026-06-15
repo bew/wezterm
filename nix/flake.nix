@@ -213,6 +213,9 @@
 
               nightly.latest.rustfmt
               nightly.latest.rust-analyzer
+
+              pkgs.pyrefly
+              pkgs.ruff
             ]);
 
           LD_LIBRARY_PATH = libPath;

@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+
+# TODO: explain what this script does / is about!
+
 import os
 import sys
 import glob

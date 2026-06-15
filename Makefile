@@ -1,4 +1,4 @@
-.PHONY: all fmt build check test docs servedocs
+.PHONY: all fmt build check test docs servedocs cilint
 
 all: build
 
@@ -27,3 +27,7 @@ docs:
 
 servedocs:
 	ci/build-docs.sh serve
+
+# Lint CI python scripts
+cilint:
+	ci/lint-ci-scripts.sh

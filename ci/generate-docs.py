@@ -1,80 +1,148 @@
 #!/usr/bin/env python3
+
+# TODO: explain what this script does / is about!
+
+from __future__ import annotations
+
+import abc
 import base64
-import glob
 import json
 import os
 import re
-import subprocess
-import sys
+import typing as ty
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Literal, TextIO
 
 
-class Page(object):
-    def __init__(self, title, filename, children=None):
+type RenderMode = Literal["mdbook", "mkdocs"]
+
+class BasePage(abc.ABC):
+    title: str
+
+    @abc.abstractmethod
+    def render(self, output: TextIO, *, depth: int = 0, mode: RenderMode) -> None:
+        pass
+
+
+class Page(BasePage):
+    def __init__(
+        self,
+        title: str,
+        filepath: Path | str | None,
+        *,
+        # note: need `Sequence` here not `list`, because python mutable containers are invariant 😬
+        children: ty.Sequence[BasePage] | None = None,
+    ):
         self.title = title
-        self.filename = filename
-        self.children = children or []
+        self.filepath = Path(filepath) if filepath else None
+        self.children: list[BasePage] = list(children or [])
 
-    def render(self, output, depth=0, mode="mdbook"):
+    @ty.override
+    def render(self, output: TextIO, *, depth: int = 0, mode: RenderMode) -> None:
         indent = "  " * depth
         bullet = "- " if depth > 0 else ""
         if mode == "mdbook":
-            if self.filename:
-                output.write(f"{indent}{bullet}[{self.title}]({self.filename})\n")
+            if self.filepath:
+                output.write(f"{indent}{bullet}[{self.title}]({self.filepath})\n")
         elif mode == "mkdocs":
             if depth > 0:
                 if len(self.children) == 0:
-                    output.write(f'{indent}{bullet}"{self.title}": {self.filename}\n')
+                    output.write(f'{indent}{bullet}"{self.title}": {self.filepath}\n')
                 else:
                     output.write(f'{indent}{bullet}"{self.title}":\n')
-                    if self.filename:
+                    if self.filepath:
                         output.write(
-                            f'{indent}  {bullet}"{self.title}": {self.filename}\n'
+                            f'{indent}  {bullet}"{self.title}": {self.filepath}\n'
                         )
-        for kid in self.children:
-            kid.render(output, depth + 1, mode)
+        for child_page in self.children:
+            child_page.render(output, depth=depth + 1, mode=mode)
 
 
 # autogenerate an index page from the contents of a directory
-class Gen(object):
-    def __init__(self, title, dirname, index=None, extract_title=False):
+class GenIndexPage(BasePage):
+    def __init__(self, title: str, dirname: str, *, index=None, extract_title: bool = False):
         self.title = title
-        self.dirname = dirname
-        self.index = index
+        self.dir = Path(dirname)
+        self.index = index  # FIXME: index is never initialized to anything else than None, remove?
         self.extract_title = extract_title
 
-    def render(self, output, depth=0, mode="mdbook"):
-        names = sorted(glob.glob(f"{self.dirname}/*.md"))
-        children = []
-        for filename in names:
-            title = os.path.basename(filename).rsplit(".", 1)[0]
+    def render(self, output: TextIO, *, depth: int = 0, mode: RenderMode) -> None:
+        paths = sorted(self.dir.glob("*.md"))
+        children: list[Page] = []
+        for filepath in paths:
+            title = filepath.stem  # foo in /path/to/foo.md
             if title == "index":
                 continue
 
             if self.extract_title:
-                with open(filename, "r") as f:
+                with open(filepath) as f:
                     title = f.readline().strip("#").strip()
 
-            children.append(Page(title, filename))
+            children.append(Page(title, filepath))
 
-        index_filename = f"{self.dirname}/index.md"
-        index_page = Page(self.title, index_filename, children=children)
-        index_page.render(output, depth, mode)
-        with open(f"{self.dirname}/index.md", "w") as idx:
+        index_filepath = self.dir / "index.md"
+        index_page = Page(self.title, index_filepath, children=children)
+        index_page.render(output, depth=depth, mode=mode)
+        with open(self.dir / "index.md", "w") as idx_file:
             if self.index:
-                idx.write(self.index)
-                idx.write("\n\n")
+                idx_file.write(self.index)
+                idx_file.write("\n\n")
             else:
                 try:
-                    with open(f"{self.dirname}/index.markdown", "r") as f:
-                        idx.write(f.read())
-                        idx.write("\n\n")
+                    with open(self.dir / "index.markdown") as f:
+                        idx_file.write(f.read())
+                        idx_file.write("\n\n")
                 except FileNotFoundError:
                     pass
             for page in children:
-                idx.write(f"  - [{page.title}]({os.path.basename(page.filename)})\n")
+                assert page.filepath  # (hint for type system)
+                idx_file.write(f"  - [{page.title}]({page.filepath.name})\n")
 
 
-def load_scheme(scheme):
+class RawColorSchemeData_Colors(ty.TypedDict):
+    """The "colors" section of a raw colorscheme definition"""
+    ansi: list[str]
+    brights: list[str]
+    indexed: list[str]
+    background: str
+    cursor_bg: str
+    cursor_border: str
+    cursor_fg: str
+    foreground: str
+    selection_bg: str
+    selection_fg: str
+
+
+class RawColorSchemeData_Metadata(ty.TypedDict):
+    """The "metadata" section of a raw colorscheme definition"""
+    aliases: list[str]
+    name: str
+    prefix: str
+    author: ty.NotRequired[str]
+    origin_url: ty.NotRequired[str]
+    wezterm_version: ty.NotRequired[str]
+
+
+class RawColorSchemeData(ty.TypedDict):
+    """A raw colorscheme definition"""
+    colors: RawColorSchemeData_Colors
+    metadata: RawColorSchemeData_Metadata
+
+
+class LoadedColorScheme(ty.TypedDict):
+    """A loaded colorscheme"""
+    name: str
+    prefix: str
+    ident: str
+    fg: str
+    bg: str
+    cursor: str
+    metadata: RawColorSchemeData_Metadata
+    css: str
+
+
+def load_scheme(scheme: RawColorSchemeData) -> LoadedColorScheme:
     ident = re.sub(
         "[^a-z0-9_]", "_", scheme["metadata"]["name"].lower().replace("+", "plus")
     )
@@ -140,11 +208,41 @@ def load_scheme(scheme):
 """
 
     data["css"] = css
-    return data
+    return ty.cast(LoadedColorScheme, data)
 
 
-def screen_shot_table(scheme):
-    T = "gYw"
+@dataclass
+class AsciinemaTerminal:
+    """Represents an Asciinema Terminal"""
+
+    class Header(ty.TypedDict):
+        width: int
+        height: int
+        title: str
+
+    title: str
+    width: int
+    height: int
+    lines: list[str]
+
+    def to_base64(self) -> str:
+        """Render the terminal in asciinema base64 format, to be passed to an AsciinemaPlayer"""
+        # FIXME: link to spec 🤔 (/!\ impl doesn't match v2 spec /!\)
+        asciinema_header = {
+            "version": 2,
+            "width": self.width,
+            "height": self.height,
+            "title": self.title,
+        }
+        screen_content = "\r\n".join(self.lines)
+
+        header_json = json.dumps(asciinema_header, sort_keys=True)
+        data_json = json.dumps([0.0, "o", screen_content])
+        return base64.b64encode(f"{header_json}\n{data_json}\n".encode("UTF-8")).decode("UTF-8")
+
+
+def screen_shot_table(scheme: LoadedColorScheme) -> AsciinemaTerminal:
+    example_text = "gYw"
     lines = [
         scheme["name"],
         "",
@@ -171,86 +269,82 @@ def screen_shot_table(scheme):
         "1;37m",
     ]:
         fg = fg_space.strip()
-        line = f" {fg_space} \033[{fg}  {T}  "
+        line = f" {fg_space} \033[{fg}  {example_text}  "
 
         for bg in ["40m", "41m", "42m", "43m", "44m", "45m", "46m", "47m"]:
-            line += f" \033[{fg}\033[{bg}  {T}  \033[0m"
+            line += f" \033[{fg}\033[{bg}  {example_text}  \033[0m"
         lines.append(line)
 
     lines.append("")
     lines.append("")
 
-    screen = "\r\n".join(lines)
-
-    header = {
-        "version": 2,
-        "width": 80,
-        "height": 24,
-        "title": scheme["name"],
-    }
-    header = json.dumps(header, sort_keys=True)
-    data = json.dumps([0.0, "o", screen])
-
-    return base64.b64encode(f"{header}\n{data}\n".encode("UTF-8")).decode("UTF-8")
+    return AsciinemaTerminal(
+        title=scheme["name"],
+        width=80,
+        height=len(lines),
+        lines=lines,
+    )
 
 
-class GenColorScheme(object):
-    def __init__(self, title, dirname, index=None):
+class GenColorSchemePageTree(BasePage):
+    def __init__(self, title: str, dirname: str):
         self.title = title
-        self.dirname = dirname
-        self.index = index
+        self.dir = Path(dirname)
 
-    def render(self, output, depth=0, mode="mdbook"):
+    def render(self, output: TextIO, *, depth: int = 0, mode: RenderMode) -> None:
         with open("colorschemes/data.json") as f:
-            scheme_data = json.load(f)
-        by_prefix = {}
-        by_name = {}
-        for scheme in scheme_data:
-            scheme = load_scheme(scheme)
+            schemes_data: list[RawColorSchemeData] = json.load(f)
+        by_prefix: dict[str, list[LoadedColorScheme]] = {}
+        by_name: dict[str, LoadedColorScheme] = {}
+        for scheme in schemes_data:
+            try:
+                scheme = load_scheme(scheme)
+            except KeyError as err:
+                raise ValueError(f"Failed to load colorscheme {scheme!r}: (KeyError) {err}")
             prefix = scheme["prefix"]
             if prefix not in by_prefix:
                 by_prefix[prefix] = []
             by_prefix[prefix].append(scheme)
             by_name[scheme["name"]] = scheme
 
-        style_filename = f"{self.dirname}/scheme.css"
-        with open(style_filename, "w") as style_file:
+        style_filepath = self.dir / "scheme.css"
+        with open(style_filepath, "w") as style_file:
             for scheme in by_name.values():
                 style_file.write(scheme["css"])
                 style_file.write("\n")
-        js_filename = f"{self.dirname}/scheme.js"
-        with open(js_filename, "w") as js_file:
-            data_by_scheme = {}
+        js_filepath = self.dir / "scheme.js"
+        with open(js_filepath, "w") as js_file:
+            terminal_data_by_scheme: dict[str, str] = {}
             for scheme in by_name.values():
                 ident = scheme["ident"]
-                data = screen_shot_table(scheme)
-                data_by_scheme[ident] = data
+                terminal_data = screen_shot_table(scheme)
+                terminal_data_by_scheme[ident] = terminal_data.to_base64()
 
-            js_file.write(f"SCHEME_DATA = {json.dumps(data_by_scheme)};\n")
+            js_file.write(f"SCHEME_DATA = {json.dumps(terminal_data_by_scheme)};\n")
             js_file.write(
-                f"""
-function load_scheme_player(ident) {{
+                """
+function load_scheme_player(ident) {
   var data = SCHEME_DATA[ident];
   AsciinemaPlayer.create(
     'data:text/plain;base64,' + data,
-    document.getElementById(ident + '-player'), {{
+    document.getElementById(ident + '-player'), {
     theme: ident,
     autoPlay: true,
-  }});
-}}
+  });
+}
 """
             )
 
-        children = []
+        children: list[BasePage] = []
         for scheme_prefix in sorted(by_prefix.keys()):
-            scheme_filename = f"{self.dirname}/{scheme_prefix}/index.md"
-            os.makedirs(os.path.dirname(scheme_filename), exist_ok=True)
-            children.append(Page(scheme_prefix, scheme_filename))
+            scheme_filepath = self.dir / scheme_prefix / "index.md"
+            scheme_filepath.parent.mkdir(exist_ok=True)
+            children.append(Page(scheme_prefix, scheme_filepath))
 
-            with open(scheme_filename, "w") as idx:
+            with open(scheme_filepath, "w") as idx_file:
                 idents_to_load = []
 
-                idx.write(
+                idx_file.write(
                     f"""---
 title: Color Schemes with first letter "{scheme_prefix}"
 ---
@@ -260,13 +354,12 @@ title: Color Schemes with first letter "{scheme_prefix}"
 
                 for scheme in by_prefix[scheme_prefix]:
                     title = scheme["name"]
-                    idx.write(f"## {title}\n")
+                    idx_file.write(f"## {title}\n")
 
-                    data = screen_shot_table(scheme)
                     ident = scheme["ident"]
                     idents_to_load.append(ident)
 
-                    idx.write(
+                    idx_file.write(
                         f"""
 <div id="{ident}-player"></div>
 """
@@ -274,24 +367,22 @@ title: Color Schemes with first letter "{scheme_prefix}"
 
                     author = scheme["metadata"].get("author", None)
                     if author:
-                        idx.write(f"Author: `{author}`<br/>\n")
+                        idx_file.write(f"Author: `{author}`<br/>\n")
                     origin_url = scheme["metadata"].get("origin_url", None)
                     if origin_url:
-                        idx.write(f"Source: <{origin_url}><br/>\n")
+                        idx_file.write(f"Source: <{origin_url}><br/>\n")
                     version = scheme["metadata"].get("wezterm_version", None)
                     if version and version != "Always":
-                        idx.write(f"{{{{since('{version}')}}}}<br/>\n")
+                        idx_file.write(f"{{{{since('{version}')}}}}<br/>\n")
 
                     aliases = scheme["metadata"]["aliases"]
                     if len(aliases) > 0:
-                        alias_list = []
-                        for a in aliases:
-                            alias_list.append(f"`{a}`")
-                        aliases = ", ".join(alias_list)
-                        idx.write(f"This scheme is also known as {aliases}.<br/>\n")
+                        aliases = ", ".join(f"`{a}`" for a in aliases)
+                        idx_file.write(f"This scheme is also known as {aliases}.<br/>\n")
 
-                    idx.write("\nTo use this scheme, add this to your config:\n")
-                    idx.write(
+                    idx_file.write("\n")
+                    idx_file.write("To use this scheme, add this to your config:\n")
+                    idx_file.write(
                         f"""
 ```lua
 config.color_scheme = '{title}'
@@ -301,7 +392,7 @@ config.color_scheme = '{title}'
                     )
 
                 idents_to_load = json.dumps(idents_to_load)
-                idx.write(
+                idx_file.write(
                     f"""
 <script>
 document.addEventListener("DOMContentLoaded", function() {{
@@ -311,15 +402,15 @@ document.addEventListener("DOMContentLoaded", function() {{
 """
                 )
 
-        index_filename = f"{self.dirname}/index.md"
-        index_page = Page(self.title, index_filename, children=children)
-        index_page.render(output, depth, mode)
+        index_filepath = self.dir / "index.md"
+        index_page = Page(self.title, index_filepath, children=children)
+        index_page.render(output, depth=depth, mode=mode)
 
-        with open(f"{self.dirname}/index.md", "w") as idx:
-            idx.write(f"{len(scheme_data)} Color schemes listed by first letter\n\n")
+        with open(self.dir / "index.md", "w") as idx_file:
+            idx_file.write(f"{len(schemes_data)} Color schemes listed by first letter\n\n")
             for page in children:
                 upper = page.title.upper()
-                idx.write(f"  - [{upper}]({page.title}/index.md)\n")
+                idx_file.write(f"  - [{upper}]({page.title}/index.md)\n")
 
 
 TOC = [
@@ -366,93 +457,93 @@ TOC = [
             Page("Keyboard Encoding", "config/key-encoding.md"),
             Page("Mouse Binding", "config/mouse.md"),
             Page("Plugins", "config/plugins.md"),
-            GenColorScheme("Color Schemes", "colorschemes"),
-            Gen("Recipes", "recipes", extract_title=True),
+            GenColorSchemePageTree("Color Schemes", "colorschemes"),
+            GenIndexPage("Recipes", "recipes", extract_title=True),
         ],
     ),
     Page(
         "Full Config & Lua Reference",
         "config/lua/general.md",
         children=[
-            Gen(
+            GenIndexPage(
                 "Config Options",
                 "config/lua/config",
             ),
-            Gen(
+            GenIndexPage(
                 "module: wezterm",
                 "config/lua/wezterm",
             ),
-            Gen(
+            GenIndexPage(
                 "module: wezterm.color",
                 "config/lua/wezterm.color",
             ),
-            Gen(
+            GenIndexPage(
                 "module: wezterm.gui",
                 "config/lua/wezterm.gui",
             ),
-            Gen(
+            GenIndexPage(
                 "module: wezterm.mux",
                 "config/lua/wezterm.mux",
             ),
-            Gen(
+            GenIndexPage(
                 "module: wezterm.plugin",
                 "config/lua/wezterm.plugin",
             ),
-            Gen(
+            GenIndexPage(
                 "module: wezterm.procinfo",
                 "config/lua/wezterm.procinfo",
             ),
-            Gen(
+            GenIndexPage(
                 "module: wezterm.serde",
                 "config/lua/wezterm.serde",
             ),
-            Gen(
+            GenIndexPage(
                 "module: wezterm.time",
                 "config/lua/wezterm.time",
             ),
-            Gen(
+            GenIndexPage(
                 "module: wezterm.url",
                 "config/lua/wezterm.url",
             ),
-            Gen(
+            GenIndexPage(
                 "enum: KeyAssignment",
                 "config/lua/keyassignment",
             ),
-            Gen(
+            GenIndexPage(
                 "enum: CopyModeAssignment",
                 "config/lua/keyassignment/CopyMode",
             ),
-            Gen("object: Color", "config/lua/color"),
+            GenIndexPage("object: Color", "config/lua/color"),
             Page("object: ExecDomain", "config/lua/ExecDomain.md"),
             Page("object: LocalProcessInfo", "config/lua/LocalProcessInfo.md"),
-            Gen("object: MuxDomain", "config/lua/MuxDomain"),
-            Gen("object: MuxWindow", "config/lua/mux-window"),
-            Gen("object: MuxTab", "config/lua/MuxTab"),
+            GenIndexPage("object: MuxDomain", "config/lua/MuxDomain"),
+            GenIndexPage("object: MuxWindow", "config/lua/mux-window"),
+            GenIndexPage("object: MuxTab", "config/lua/MuxTab"),
             Page("object: PaneInformation", "config/lua/PaneInformation.md"),
             Page("object: TabInformation", "config/lua/TabInformation.md"),
             Page("object: SshDomain", "config/lua/SshDomain.md"),
             Page("object: SpawnCommand", "config/lua/SpawnCommand.md"),
-            Gen("object: Time", "config/lua/wezterm.time/Time"),
+            GenIndexPage("object: Time", "config/lua/wezterm.time/Time"),
             Page("object: TlsDomainClient", "config/lua/TlsDomainClient.md"),
             Page("object: TlsDomainServer", "config/lua/TlsDomainServer.md"),
-            Gen(
+            GenIndexPage(
                 "object: Pane",
                 "config/lua/pane",
             ),
-            Gen(
+            GenIndexPage(
                 "object: Window",
                 "config/lua/window",
             ),
             Page("object: WslDomain", "config/lua/WslDomain.md"),
-            Gen(
+            GenIndexPage(
                 "events: Gui",
                 "config/lua/gui-events",
             ),
-            Gen(
+            GenIndexPage(
                 "events: Multiplexer",
                 "config/lua/mux-events",
             ),
-            Gen(
+            GenIndexPage(
                 "events: Window",
                 "config/lua/window-events",
             ),
@@ -462,7 +553,7 @@ TOC = [
         "CLI Reference",
         "cli/general.md",
         children=[
-            Gen("wezterm cli", "cli/cli"),
+            GenIndexPage("wezterm cli", "cli/cli"),
             Page("wezterm connect", "cli/connect.md"),
             Page("wezterm imgcat", "cli/imgcat.md"),
             Page("wezterm ls-fonts", "cli/ls-fonts.md"),
@@ -497,17 +588,22 @@ TOC = [
     Page("Sponsor", "sponsor.md"),
 ]
 
-os.chdir("docs")
+def main():
+    os.chdir("docs")
 
-with open("../mkdocs.yml", "w") as f:
-    f.write("# this is auto-generated by docs/generate-toc.py, do not edit\n")
-    f.write("INHERIT: docs/mkdocs-base.yml\n")
-    f.write("nav:\n")
-    for page in TOC:
-        page.render(f, depth=1, mode="mkdocs")
+    with open("../mkdocs.yml", "w") as f:
+        f.write("# this is auto-generated by docs/generate-toc.py, do not edit\n")
+        f.write("INHERIT: docs/mkdocs-base.yml\n")
+        f.write("nav:\n")
+        for page in TOC:
+            page.render(f, depth=1, mode="mkdocs")
 
 
-with open("SUMMARY.md", "w") as f:
-    f.write("[root](index.md)\n")
-    for page in TOC:
-        page.render(f, depth=1, mode="mdbook")
+    with open("SUMMARY.md", "w") as f:
+        f.write("[root](index.md)\n")
+        for page in TOC:
+            page.render(f, depth=1, mode="mdbook")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,19 @@
+[tool.ruff]
+include = [
+    "generate-docs.py",
+    # == The following files are not ready to be checked yet
+    # "generate-workflows.py",
+    # "subst-release-info.py",
+    # "update-doc-versions.py",
+]
+
+[tool.pyrefly]
+project-includes = [
+    "generate-docs.py",
+    # == The following files are not ready to be checked yet
+    # "generate-workflows.py",
+    # "subst-release-info.py",
+    # "update-doc-versions.py",
+]
+
+# vim:set sw=4:
