@@ -545,10 +545,10 @@ pub fn front_end() -> Rc<GuiFrontEnd> {
         .expect("to be called on gui thread")
 }
 
-/// A guard that completes a workspace switch when dropped.
+/// A guard that executes a workspace switch when dropped.
 ///
-/// Creating it marks a switch as in progress so that reentrant reconciliation is
-/// suppressed until the switch completes.
+/// note: Creating it marks a switch as in progress so that reentrant
+/// reconciliation is suppressed until the switch completes.
 pub struct WorkspaceSwitcherGuard {
     new_name: String,
 }
