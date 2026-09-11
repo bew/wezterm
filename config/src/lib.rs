@@ -231,6 +231,8 @@ pub fn designate_this_as_the_main_thread() {
     });
 }
 
+/// A handle to a subscription to config reload events.
+/// The subscription remains active until this handle is dropped.
 #[must_use = "Cancels the subscription when dropped"]
 pub struct ConfigSubscription(usize);
 
