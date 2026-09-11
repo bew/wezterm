@@ -3026,7 +3026,7 @@ impl TermWindow {
                     .as_ref()
                     .map(|name| name.to_string())
                     .unwrap_or_else(|| mux.generate_workspace_name());
-                let switcher = crate::frontend::WorkspaceSwitcher::new(&name);
+                let switcher = crate::frontend::WorkspaceSwitcherGuard::new(&name);
                 mux.set_active_workspace(&name);
 
                 if mux.iter_windows_in_workspace(&name).is_empty() {

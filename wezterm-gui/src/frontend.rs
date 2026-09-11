@@ -1,3 +1,5 @@
+//! Defines [`GuiFrontEnd`], the process-wide master struct for the WezTerm GUI.
+
 use crate::scripting::guiwin::GuiWin;
 use crate::spawn::SpawnWhere;
 use crate::termwindow::TermWindowNotif;
@@ -17,12 +19,28 @@ use std::sync::Arc;
 use wezterm_term::{Alert, ClipboardSelection};
 use wezterm_toast_notification::*;
 
+/// The process-wide master struct for a WezTerm GUI.
+/// A single [`GuiFrontEnd`] is created per GUI process.
+///
+/// It holds the windowing-system [`Connection`] which runs the native message loop,
+/// applies mux notifications, and reconciles the on-screen GUI windows against the active
+/// workspace as needed.
+///
+/// This is not a per-window object, instead windows get registered on the frontend.
 pub struct GuiFrontEnd {
+    /// The windowing-system connection.
     connection: Rc<Connection>,
+    /// True while a workspace switch is in progress.
+    /// This is used to suppress reentrant reconciliation.
     switching_workspaces: RefCell<bool>,
+    /// Mux window IDs for which a GUI window has been spawned / is currently being spawned.
+    /// Entries are removed on spawn failure or when a surplus window is closed.
     spawned_mux_window: RefCell<HashSet<MuxWindowId>>,
+    /// The GUI windows currently registered, mapped to their mux window IDs.
     known_windows: RefCell<BTreeMap<Window, MuxWindowId>>,
+    /// This client's mux identity.
     client_id: Arc<ClientId>,
+    /// The global subscription to config reload events.
     config_subscription: RefCell<Option<ConfigSubscription>>,
 }
 
@@ -33,6 +51,8 @@ impl Drop for GuiFrontEnd {
 }
 
 impl GuiFrontEnd {
+    /// Returns a fresh GUI frontend master struct.
+    /// Initializes the windowing-system connection & subscribes to mux notifications.
     pub fn try_new() -> anyhow::Result<Rc<GuiFrontEnd>> {
         let connection = Connection::init()?;
         connection.set_event_handler(Self::app_event_handler);
@@ -58,7 +78,7 @@ impl GuiFrontEnd {
                     let mux = Mux::get();
                     let active = mux.active_workspace();
                     if active == old_workspace || active == new_workspace {
-                        let switcher = WorkspaceSwitcher::new(&new_workspace);
+                        let switcher = WorkspaceSwitcherGuard::new(&new_workspace);
                         promise::spawn::spawn_into_main_thread(async move {
                             drop(switcher);
                         })
@@ -167,7 +187,7 @@ impl GuiFrontEnd {
                                  as allow_download_protocols=false",
                             name
                         );
-                    } else if let Err(err) = crate::download::save_to_downloads(name, &*data) {
+                    } else if let Err(err) = crate::download::save_to_downloads(name, &data) {
                         log::error!("save_to_downloads: {:#}", err);
                     }
                 }
@@ -205,22 +225,23 @@ impl GuiFrontEnd {
         });
         // Re-evaluate the config so that folks that are using
         // `wezterm.gui.get_appearance()` can have that take effect
-        // before any windows are created
+        // before any windows are created.
         config::reload();
 
         // And build the initial menu bar.
-        // TODO: arrange for this to happen on config reload.
         crate::commands::CommandDef::recreate_menubar(&config::configuration());
 
         Ok(front_end)
     }
 
+    /// Handles global app events.
+    /// (they don't have a window context, from e.g. the menubar on macOS)
     fn app_event_handler(event: ApplicationEvent) {
         log::trace!("Got app event {event:?}");
         match event {
             ApplicationEvent::OpenCommandScript(file_name) => {
                 let quoted_file_name = match shlex::try_quote(&file_name) {
-                    Ok(name) => name.to_owned().to_string(),
+                    Ok(name) => name.into_owned(),
                     Err(_) => {
                         log::error!(
                             "OpenCommandScript: {file_name} has embedded NUL bytes and
@@ -262,7 +283,7 @@ impl GuiFrontEnd {
                         Ok((_tab, pane, _window_id)) => {
                             log::trace!("Spawned {file_name} as pane_id {}", pane.pane_id());
                             let mut writer = pane.writer();
-                            write!(writer, "{quoted_file_name} ; exit\n").ok();
+                            writeln!(writer, "{quoted_file_name} ; exit").ok();
                         }
                         Err(err) => {
                             log::error!("Failed to spawn {file_name}: {err:#?}");
@@ -279,7 +300,7 @@ impl GuiFrontEnd {
 
                 fn spawn_command(spawn: &SpawnCommand, spawn_where: SpawnWhere) {
                     let config = config::configuration();
-                    let dpi = config.dpi.unwrap_or_else(|| ::window::default_dpi());
+                    let dpi = config.dpi.unwrap_or_else(::window::default_dpi);
                     let size =
                         config.initial_size(dpi as u32, crate::cell_pixel_dims(&config, dpi).ok());
                     let term_config = Arc::new(config::TermConfig::with_config(config));
@@ -313,19 +334,21 @@ impl GuiFrontEnd {
                         spawn_command(&spawn, SpawnWhere::NewWindow);
                     }
                     _ => {
-                        log::warn!("unhandled perform: {action:?}");
+                        log::warn!("unhandled app-wide perform: {action:?}");
                     }
                 }
             }
         }
     }
 
+    /// Runs the windowing-system message loop until it terminates.
     pub fn run_forever(&self) -> anyhow::Result<()> {
         self.connection
             .run_message_loop()
             .context("running message loop")
     }
 
+    /// Returns handles to all currently registered GUI windows, in window order.
     pub fn gui_windows(&self) -> Vec<GuiWin> {
         let windows = self.known_windows.borrow();
         let mut windows: Vec<GuiWin> = windows
@@ -339,25 +362,26 @@ impl GuiFrontEnd {
         windows
     }
 
+    /// Synchronizes the on-screen GUI windows with the windows of the active workspace,
+    /// repurposing or closing existing OS windows and spawning new ones so that the GUI
+    /// shows exactly the active workspace's mux windows.
     pub fn reconcile_workspace(&self) -> Future<()> {
         let mut promise = Promise::new();
         let mux = Mux::get();
-        let workspace = mux.active_workspace_for_client(&self.client_id);
 
-        if mux.is_workspace_empty(&workspace) {
-            // We don't want to silently kill off things that might
-            // be running in other workspaces, so let's pick one
-            // and activate it
+        // First ensure that active workspace
+        // If the active workspace has no panes, prefer a non-empty workspace
+        // instead of reconciling onto the empty one and closing every window.
+        if mux.is_workspace_empty(&mux.active_workspace_for_client(&self.client_id)) {
             if self.is_switching_workspace() {
+                // A workspace switch is already in progress, let it reconcile itself
+                // when it completes.
                 promise.ok(());
                 return promise.get_future().unwrap();
             }
-            for workspace in mux.iter_workspaces() {
-                if !mux.is_workspace_empty(&workspace) {
-                    mux.set_active_workspace_for_client(&self.client_id, &workspace);
-                    log::debug!("using {} instead, as it is not empty", workspace);
-                    break;
-                }
+            if let Some(workspace) = self.next_non_empty_workspace() {
+                log::debug!("using {} instead, as it is not empty", workspace);
+                mux.set_active_workspace_for_client(&self.client_id, &workspace);
             }
         }
 
@@ -366,14 +390,14 @@ impl GuiFrontEnd {
 
         let mut mux_windows = mux.iter_windows_in_workspace(&workspace);
 
-        // First, repurpose existing windows.
-        // Note that both iter_windows_in_workspace and self.known_windows have a
+        // note: both `mux.iter_windows_in_workspace` and `self.known_windows` have a
         // deterministic iteration order, so switching back and forth should result
         // in a consistent mux <-> gui window mapping.
         let known_windows = std::mem::take(&mut *self.known_windows.borrow_mut());
         let mut windows = BTreeMap::new();
         let mut unused = BTreeMap::new();
 
+        // Start by identifying already correct windows, others are marked 'unused'
         for (window, window_id) in known_windows.into_iter() {
             if let Some(idx) = mux_windows.iter().position(|&id| id == window_id) {
                 // it already points to the desired mux window
@@ -386,6 +410,8 @@ impl GuiFrontEnd {
 
         let mut mux_windows = mux_windows.into_iter();
 
+        // Repurpose unused windows to target mux windows if any left to assign,
+        // otherwise close them.
         for (window, old_id) in unused.into_iter() {
             if let Some(mux_window_id) = mux_windows.next() {
                 window.notify(TermWindowNotif::SwitchToMuxWindow(mux_window_id));
@@ -403,9 +429,9 @@ impl GuiFrontEnd {
 
         let future = promise.get_future().unwrap();
 
-        // then spawn any new windows that are needed
+        // Finally any non-assigned mux windows gets a new window spawned as needed.
         promise::spawn::spawn(async move {
-            while let Some(mux_window_id) = mux_windows.next() {
+            for mux_window_id in mux_windows {
                 if front_end().has_mux_window(mux_window_id)
                     || front_end()
                         .spawned_mux_window
@@ -429,6 +455,7 @@ impl GuiFrontEnd {
                         .remove(&mux_window_id);
                 }
             }
+            // Reconciliation is now over, the workspace switch is done.
             *front_end().switching_workspaces.borrow_mut() = false;
             promise.ok(());
         })
@@ -436,6 +463,15 @@ impl GuiFrontEnd {
         future
     }
 
+    /// Returns the next non-empty workspace, or `None`.
+    fn next_non_empty_workspace(&self) -> Option<String> {
+        let mux = Mux::get();
+        mux.iter_workspaces()
+            .into_iter()
+            .find(|workspace| !mux.is_workspace_empty(workspace))
+    }
+
+    /// Returns true if a GUI window is currently registered for the given mux window.
     fn has_mux_window(&self, mux_window_id: MuxWindowId) -> bool {
         for &mux_id in self.known_windows.borrow().values() {
             if mux_id == mux_window_id {
@@ -445,6 +481,7 @@ impl GuiFrontEnd {
         false
     }
 
+    /// Makes the given workspace active, reconciles the GUI windows with it.
     pub fn switch_workspace(&self, workspace: &str) {
         let mux = Mux::get();
         mux.set_active_workspace_for_client(&self.client_id, workspace);
@@ -452,6 +489,7 @@ impl GuiFrontEnd {
         self.reconcile_workspace();
     }
 
+    /// Register a [`Window`] on the GUI frontend.
     pub fn record_known_window(&self, window: Window, mux_window_id: MuxWindowId) {
         self.known_windows
             .borrow_mut()
@@ -461,6 +499,7 @@ impl GuiFrontEnd {
         }
     }
 
+    /// De-register a [`Window`] on the GUI frontend.
     pub fn forget_known_window(&self, window: &Window) {
         self.known_windows.borrow_mut().remove(window);
         if !self.is_switching_workspace() {
@@ -468,10 +507,13 @@ impl GuiFrontEnd {
         }
     }
 
+    /// Returns true while a workspace switch is in progress.
+    /// Can be used to suppress reentrant reconciliation.
     pub fn is_switching_workspace(&self) -> bool {
         *self.switching_workspaces.borrow()
     }
 
+    /// Returns the GUI window registered for the given mux window, if any.
     pub fn gui_window_for_mux_window(&self, mux_window_id: MuxWindowId) -> Option<GuiWin> {
         let windows = self.known_windows.borrow();
         for (window, v) in windows.iter() {
@@ -487,24 +529,33 @@ impl GuiFrontEnd {
 }
 
 thread_local! {
-    static FRONT_END: RefCell<Option<Rc<GuiFrontEnd>>> = RefCell::new(None);
+    static FRONT_END: RefCell<Option<Rc<GuiFrontEnd>>> = const { RefCell::new(None) };
 }
 
+/// Returns the frontend if one has been created on this thread.
 pub fn try_front_end() -> Option<Rc<GuiFrontEnd>> {
     FRONT_END.with(|f| f.borrow().as_ref().map(Rc::clone))
 }
 
+/// Returns the frontend for the current thread.
+/// Panics if it has not been created on this thread.
 pub fn front_end() -> Rc<GuiFrontEnd> {
     FRONT_END
         .with(|f| f.borrow().as_ref().map(Rc::clone))
         .expect("to be called on gui thread")
 }
 
-pub struct WorkspaceSwitcher {
+/// A guard that completes a workspace switch when dropped.
+///
+/// Creating it marks a switch as in progress so that reentrant reconciliation is
+/// suppressed until the switch completes.
+pub struct WorkspaceSwitcherGuard {
     new_name: String,
 }
 
-impl WorkspaceSwitcher {
+impl WorkspaceSwitcherGuard {
+    /// Begins a switch to the named workspace, suppressing reconciliation until
+    /// the guard is dropped.
     pub fn new(new_name: &str) -> Self {
         *front_end().switching_workspaces.borrow_mut() = true;
         Self {
@@ -512,25 +563,30 @@ impl WorkspaceSwitcher {
         }
     }
 
+    /// Consumes the guard, completing the switch via its `Drop` impl.
     pub fn do_switch(self) {
         // Drop is invoked, which will complete the switch
     }
 }
 
-impl Drop for WorkspaceSwitcher {
+impl Drop for WorkspaceSwitcherGuard {
     fn drop(&mut self) {
         front_end().switch_workspace(&self.new_name);
     }
 }
 
+/// Shutddown the frontend, closes everything.
 pub fn shutdown() {
     FRONT_END.with(|f| drop(f.borrow_mut().take()));
 }
 
+/// Creates the master frontend. Fails if initialization fails.
 pub fn try_new() -> Result<Rc<GuiFrontEnd>, Error> {
     let front_end = GuiFrontEnd::try_new()?;
     FRONT_END.with(|f| *f.borrow_mut() = Some(Rc::clone(&front_end)));
 
+    // Installs the config-reload subscription to rebuild the menu bar.
+    // note: This is only relevant on MacOS.
     let config_subscription = config::subscribe_to_config_reload({
         move || {
             promise::spawn::spawn_into_main_thread(async {
