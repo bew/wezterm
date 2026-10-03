@@ -76,7 +76,7 @@ impl crate::TermWindow {
             foreground_text_hsb.brightness,
         ];
 
-        let milliseconds = self.created.elapsed().as_millis() as u32;
+        let milliseconds = self.created_at.elapsed().as_millis() as u32;
         let projection = euclid::Transform3D::<f32, f32, f32>::ortho(
             -(self.dimensions.pixel_width as f32) / 2.0,
             self.dimensions.pixel_width as f32 / 2.0,
@@ -168,14 +168,12 @@ impl crate::TermWindow {
         )
         .to_arrays_transposed();
 
-        let use_subpixel = match self
-            .config
-            .freetype_render_target
-            .unwrap_or(self.config.freetype_load_target)
-        {
-            FreeTypeLoadTarget::HorizontalLcd | FreeTypeLoadTarget::VerticalLcd => true,
-            _ => false,
-        };
+        let use_subpixel = matches!(
+            self.config
+                .freetype_render_target
+                .unwrap_or(self.config.freetype_load_target),
+            FreeTypeLoadTarget::HorizontalLcd | FreeTypeLoadTarget::VerticalLcd
+        );
 
         let dual_source_blending = glium::DrawParameters {
             blend: glium::Blend {
@@ -211,12 +209,12 @@ impl crate::TermWindow {
         // Clamp and use the nearest texel rather than interpolate.
         // This prevents things like the box cursor outlines from
         // being randomly doubled in width or height
-        let atlas_nearest_sampler = Sampler::new(&*tex)
+        let atlas_nearest_sampler = Sampler::new(tex)
             .wrap_function(SamplerWrapFunction::Clamp)
             .magnify_filter(MagnifySamplerFilter::Nearest)
             .minify_filter(MinifySamplerFilter::Nearest);
 
-        let atlas_linear_sampler = Sampler::new(&*tex)
+        let atlas_linear_sampler = Sampler::new(tex)
             .wrap_function(SamplerWrapFunction::Clamp)
             .magnify_filter(MagnifySamplerFilter::Linear)
             .minify_filter(MinifySamplerFilter::Linear);
@@ -228,11 +226,11 @@ impl crate::TermWindow {
             foreground_text_hsb.brightness,
         );
 
-        let milliseconds = self.created.elapsed().as_millis() as u32;
+        let milliseconds = self.created_at.elapsed().as_millis() as u32;
 
         let cursor_blink: ColorEaseUniform = (*self.cursor_blink_state.borrow()).into();
-        let blink: ColorEaseUniform = (*self.blink_state.borrow()).into();
-        let rapid_blink: ColorEaseUniform = (*self.rapid_blink_state.borrow()).into();
+        let text_blink: ColorEaseUniform = (*self.text_blink_state.borrow()).into();
+        let rapid_text_blink: ColorEaseUniform = (*self.rapid_text_blink_state.borrow()).into();
 
         for layer in gl_state.layers.borrow().iter() {
             for idx in 0..3 {
@@ -251,8 +249,8 @@ impl crate::TermWindow {
                     uniforms.add("subpixel_aa", &subpixel_aa);
                     uniforms.add("milliseconds", &milliseconds);
                     uniforms.add_struct("cursor_blink", &cursor_blink);
-                    uniforms.add_struct("blink", &blink);
-                    uniforms.add_struct("rapid_blink", &rapid_blink);
+                    uniforms.add_struct("blink", &text_blink);
+                    uniforms.add_struct("rapid_blink", &rapid_text_blink);
 
                     frame.draw(
                         vertices.glium().slice(0..vertex_count).unwrap(),

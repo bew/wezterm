@@ -132,7 +132,7 @@ impl CopyOverlay {
             SAVED_PATTERN
                 .lock()
                 .get(&tab_id)
-                .map(|p| p.clone())
+                .cloned()
                 .unwrap_or(params.pattern)
         } else {
             params.pattern

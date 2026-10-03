@@ -52,14 +52,14 @@ const PLUS_BUTTON: &[Poly] = &[
 
 impl crate::TermWindow {
     pub fn invalidate_fancy_tab_bar(&mut self) {
-        self.fancy_tab_bar.take();
+        self.cached_fancy_tab_bar.take();
     }
 
     pub fn build_fancy_tab_bar(&self, palette: &ColorPalette) -> anyhow::Result<ComputedElement> {
         let tab_bar_height = self.tab_bar_pixel_height()?;
         let font = self.fonts.title_font()?;
         let metrics = RenderMetrics::with_font_metrics(&font.metrics());
-        let items = self.tab_bar.items();
+        let items = self.tab_bar_state.items();
         let colors = self
             .config
             .colors
@@ -73,14 +73,14 @@ impl crate::TermWindow {
         let mut right_eles = vec![];
         let bar_colors = ElementColors {
             border: BorderColor::default(),
-            bg: if self.focused.is_some() {
+            bg: if self.focused_at.is_some() {
                 self.config.window_frame.active_titlebar_bg
             } else {
                 self.config.window_frame.inactive_titlebar_bg
             }
             .to_linear()
             .into(),
-            text: if self.focused.is_some() {
+            text: if self.focused_at.is_some() {
                 self.config.window_frame.active_titlebar_fg
             } else {
                 self.config.window_frame.inactive_titlebar_fg
@@ -459,7 +459,7 @@ impl crate::TermWindow {
     }
 
     pub fn paint_fancy_tab_bar(&self) -> anyhow::Result<Vec<UIItem>> {
-        let computed = self.fancy_tab_bar.as_ref().ok_or_else(|| {
+        let computed = self.cached_fancy_tab_bar.as_ref().ok_or_else(|| {
             anyhow::anyhow!("paint_fancy_tab_bar called but fancy_tab_bar is None")
         })?;
         let ui_items = computed.ui_items();

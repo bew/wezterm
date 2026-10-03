@@ -6,31 +6,35 @@ use smol::Timer;
 use std::time::{Duration, Instant};
 use wezterm_font::ClearShapeCache;
 
+/// How images should be rendered, given available texture atlas space.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum AllowImage {
-    Yes,
-    Scale(usize),
-    No,
+pub enum ImageRenderPolicy {
+    /// Render at native scale.
+    Full,
+    /// Downscale by the given factor to reduce atlas pressure.
+    Downscaled(usize),
+    /// Skip images entirely.
+    Disabled,
 }
 
 impl crate::TermWindow {
     pub fn paint_impl(&mut self, frame: &mut RenderFrame) {
-        self.num_frames += 1;
+        self.num_new_frames += 1;
         // If nothing on screen needs animating, then we can avoid
         // invalidating as frequently
-        *self.has_animation.borrow_mut() = None;
+        *self.animation_started_at.borrow_mut() = None;
         // Start with the assumption that we should allow images to render
-        self.allow_images = AllowImage::Yes;
+        self.image_render_policy = ImageRenderPolicy::Full;
 
         let start = Instant::now();
 
         {
-            let diff = start.duration_since(self.last_fps_check_time);
+            let diff = start.duration_since(self.last_fps_updated_at);
             if diff > Duration::from_secs(1) {
                 let seconds = diff.as_secs_f32();
-                self.fps = self.num_frames as f32 / seconds;
-                self.num_frames = 0;
-                self.last_fps_check_time = start;
+                self.fps = self.num_new_frames as f32 / seconds;
+                self.num_new_frames = 0;
+                self.last_fps_updated_at = start;
             }
         }
 
@@ -68,12 +72,18 @@ impl crate::TermWindow {
                         self.invalidate_modal();
 
                         if let Err(err) = result {
-                            self.allow_images = match self.allow_images {
-                                AllowImage::Yes => AllowImage::Scale(2),
-                                AllowImage::Scale(2) => AllowImage::Scale(4),
-                                AllowImage::Scale(4) => AllowImage::Scale(8),
-                                AllowImage::Scale(8) => AllowImage::No,
-                                AllowImage::No | _ => {
+                            // Not enough texture space!
+                            // Try to scale down images up to /8 or give up on images.
+                            self.image_render_policy = match self.image_render_policy {
+                                ImageRenderPolicy::Full => ImageRenderPolicy::Downscaled(2),
+                                ImageRenderPolicy::Downscaled(2) => {
+                                    ImageRenderPolicy::Downscaled(4)
+                                }
+                                ImageRenderPolicy::Downscaled(4) => {
+                                    ImageRenderPolicy::Downscaled(8)
+                                }
+                                ImageRenderPolicy::Downscaled(8) => ImageRenderPolicy::Disabled,
+                                ImageRenderPolicy::Disabled | ImageRenderPolicy::Downscaled(_) => {
                                     log::error!(
                                         "Failed to {} texture: {}",
                                         if pass == 0 { "clear" } else { "resize" },
@@ -84,10 +94,8 @@ impl crate::TermWindow {
                             };
 
                             log::info!(
-                                "Not enough texture space ({:#}); \
-                                     will retry render with {:?}",
-                                err,
-                                self.allow_images,
+                                "Not enough texture space ({err:#}); will retry render with {:?}",
+                                self.image_render_policy,
                             );
                         }
                     } else if err.root_cause().downcast_ref::<ClearShapeCache>().is_some() {
@@ -118,22 +126,22 @@ impl crate::TermWindow {
         // If self.has_animation is some, then the last render detected
         // image attachments with multiple frames, so we also need to
         // invalidate the viewport when the next frame is due
-        if self.focused.is_some() {
-            if let Some(next_due) = *self.has_animation.borrow() {
-                let prior = self.scheduled_animation.borrow_mut().take();
+        if self.focused_at.is_some() {
+            if let Some(next_due) = *self.animation_started_at.borrow() {
+                let prior = self.animation_scheduled_at.borrow_mut().take();
                 match prior {
                     Some(prior) if prior <= next_due => {
                         // Already due before that time
                     }
                     _ => {
-                        self.scheduled_animation.borrow_mut().replace(next_due);
-                        let window = self.window.clone().take().unwrap();
+                        self.animation_scheduled_at.borrow_mut().replace(next_due);
+                        let window = self.window.clone().unwrap();
                         promise::spawn::spawn(async move {
                             Timer::at(next_due).await;
                             let win = window.clone();
                             window.notify(TermWindowNotif::Apply(Box::new(move |tw| {
-                                tw.scheduled_animation.borrow_mut().take();
-                                if tw.tab_bar.next_progress_frame_due().is_some() {
+                                tw.animation_scheduled_at.borrow_mut().take();
+                                if tw.tab_bar_state.next_progress_frame_due().is_some() {
                                     tw.update_title_post_status();
                                 }
                                 win.invalidate();
@@ -152,7 +160,7 @@ impl crate::TermWindow {
                 let mut ui_items = computed.ui_items();
 
                 let gl_state = self.render_state.as_ref().unwrap();
-                self.render_element(&computed, gl_state, None)?;
+                self.render_element(computed, gl_state, None)?;
 
                 self.ui_items.append(&mut ui_items);
             }
@@ -173,7 +181,7 @@ impl crate::TermWindow {
         self.ui_items.clear();
 
         let panes = self.get_panes_to_render();
-        let focused = self.focused.is_some();
+        let focused = self.focused_at.is_some();
         let window_is_transparent =
             !self.window_background.is_empty() || self.config.window_background_opacity != 1.0;
 
@@ -189,8 +197,8 @@ impl crate::TermWindow {
         let mut paint_terminal_background = false;
 
         // Render the full window background
-        match (self.window_background.is_empty(), self.allow_images) {
-            (false, AllowImage::Yes | AllowImage::Scale(_)) => {
+        match (self.window_background.is_empty(), self.image_render_policy) {
+            (false, ImageRenderPolicy::Full | ImageRenderPolicy::Downscaled(_)) => {
                 let bg_color = self.palette().background.to_linear();
 
                 let top = panes

@@ -12,13 +12,13 @@ impl crate::TermWindow {
         // repainted when its next frame is due. The paint scheduler wakes us
         // when this is the soonest pending animation and rebuilds the tab bar
         // to advance the frame.
-        self.update_next_frame_time(self.tab_bar.next_progress_frame_due());
+        self.update_next_frame_time(self.tab_bar_state.next_progress_frame_due());
 
         if self.config.use_fancy_tab_bar {
-            if self.fancy_tab_bar.is_none() {
+            if self.cached_fancy_tab_bar.is_none() {
                 let palette = self.palette().clone();
                 let tab_bar = self.build_fancy_tab_bar(&palette)?;
-                self.fancy_tab_bar.replace(tab_bar);
+                self.cached_fancy_tab_bar.replace(tab_bar);
             }
 
             self.ui_items.append(&mut self.paint_fancy_tab_bar()?);
@@ -37,11 +37,12 @@ impl crate::TermWindow {
         };
 
         // Register the tab bar location
-        self.ui_items.append(&mut self.tab_bar.compute_ui_items(
-            tab_bar_y as usize,
-            self.render_metrics.cell_size.height as usize,
-            self.render_metrics.cell_size.width as usize,
-        ));
+        self.ui_items
+            .append(&mut self.tab_bar_state.compute_ui_items(
+                tab_bar_y as usize,
+                self.font_render_metrics.cell_size.height as usize,
+                self.font_render_metrics.cell_size.width as usize,
+            ));
 
         let window_is_transparent =
             !self.window_background.is_empty() || self.config.window_background_opacity != 1.0;
@@ -63,20 +64,20 @@ impl crate::TermWindow {
                 left_pixel_x: 0.,
                 pixel_width: self.dimensions.pixel_width as f32,
                 stable_line_idx: None,
-                line: self.tab_bar.line(),
+                line: self.tab_bar_state.line(),
                 selection: 0..0,
                 cursor: &Default::default(),
                 palette: &palette,
                 dims: &RenderableDimensions {
                     cols: self.dimensions.pixel_width
-                        / self.render_metrics.cell_size.width as usize,
+                        / self.font_render_metrics.cell_size.width as usize,
                     physical_top: 0,
                     scrollback_rows: 0,
                     scrollback_top: 0,
                     viewport_rows: 1,
-                    dpi: self.terminal_size.dpi,
-                    pixel_height: self.render_metrics.cell_size.height as usize,
-                    pixel_width: self.terminal_size.pixel_width,
+                    dpi: self.window_terminal_size.dpi,
+                    pixel_height: self.font_render_metrics.cell_size.height as usize,
+                    pixel_width: self.window_terminal_size.pixel_width,
                     reverse_video: false,
                 },
                 config: &self.config,
@@ -96,7 +97,7 @@ impl crate::TermWindow {
                 style: None,
                 font: None,
                 use_pixel_positioning: self.config.experimental_pixel_positioning,
-                render_metrics: self.render_metrics,
+                render_metrics: self.font_render_metrics,
                 shape_key: None,
                 password_input: false,
             },
@@ -120,6 +121,6 @@ impl crate::TermWindow {
     }
 
     pub fn tab_bar_pixel_height(&self) -> anyhow::Result<f32> {
-        Self::tab_bar_pixel_height_impl(&self.config, &self.fonts, &self.render_metrics)
+        Self::tab_bar_pixel_height_impl(&self.config, &self.fonts, &self.font_render_metrics)
     }
 }

@@ -29,7 +29,7 @@ impl PrevCursorPos {
     }
 
     /// When did the cursor last move?
-    pub fn last_cursor_movement(&self) -> Instant {
+    pub fn when_cursor_moved(&self) -> Instant {
         self.when
     }
 }

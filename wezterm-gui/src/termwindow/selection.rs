@@ -7,6 +7,7 @@ use termwiz::surface::Line;
 use wezterm_term::StableRowIndex;
 
 impl super::TermWindow {
+    /// Returns the text selection state for a given pane ID.
     pub fn selection(&self, pane_id: PaneId) -> RefMut<'_, Selection> {
         RefMut::map(self.pane_state(pane_id), |state| &mut state.selection)
     }

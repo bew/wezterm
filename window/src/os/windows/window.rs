@@ -1,6 +1,6 @@
 use super::*;
 use crate::connection::ConnectionOps;
-use crate::parameters::{self, Parameters};
+use crate::os_metrics::{self, OSMetrics};
 use crate::{
     Appearance, Clipboard, CursorIcon, DeadKeyStatus, Dimensions, Handled, KeyCode, KeyEvent,
     Modifiers, MouseButtons, MouseEvent, MouseEventKind, MousePress, Point, RawKeyEvent, Rect,
@@ -96,7 +96,7 @@ lazy_static! {
             true
         }
     };
-    static ref TITLE_FONT: Mutex<Option<parameters::FontAndSize>> = Mutex::new(None);
+    static ref TITLE_FONT: Mutex<Option<os_metrics::FontAndSize>> = Mutex::new(None);
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Ord, PartialOrd)]
@@ -977,11 +977,11 @@ impl WindowOps for Window {
         });
     }
 
-    fn get_os_parameters(
+    fn get_os_metrics(
         &self,
         config: &ConfigHandle,
         window_state: WindowState,
-    ) -> anyhow::Result<Option<Parameters>> {
+    ) -> anyhow::Result<Option<OSMetrics>> {
         let hwnd = self.0 .0;
         anyhow::ensure!(!hwnd.is_null(), "HWND is null");
 
@@ -1019,14 +1019,14 @@ impl WindowOps for Window {
             (*font).clone()
         };
 
-        Ok(Some(Parameters {
-            title_bar: parameters::TitleBar {
+        Ok(Some(OSMetrics {
+            title_bar: os_metrics::TitleBar {
                 padding_left: ULength::new(0),
                 padding_right: ULength::new(0),
                 height: None,
                 font_and_size: title_font,
             },
-            border_dimensions: Some(parameters::Border {
+            border_dimensions: Some(os_metrics::Border {
                 top: if is_resize && !*IS_WIN10 && !is_full_screen {
                     BASE_BORDER + ULength::new(1)
                 } else {

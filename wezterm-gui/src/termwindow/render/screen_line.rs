@@ -769,17 +769,17 @@ impl crate::TermWindow {
                         attrs.strikethrough(),
                         attrs.underline(),
                         attrs.overline(),
-                        &self.render_metrics,
+                        &self.font_render_metrics,
                     )?
                     .texture_coords();
                 let bg_is_default = attrs.background() == ColorAttribute::Default;
                 let bg_color = params.palette.resolve_bg(attrs.background()).to_linear();
 
                 let fg_color = resolve_fg_color_attr(
-                    &attrs,
+                    attrs,
                     attrs.foreground(),
-                    &params.palette,
-                    &params.config,
+                    params.palette,
+                    params.config,
                     style,
                 );
                 let (fg_color, bg_color, bg_is_default) = {
@@ -799,12 +799,13 @@ impl crate::TermWindow {
                     // features.
                     let blink_rate = match attrs.blink() {
                         Blink::None => None,
-                        Blink::Slow => {
-                            Some((params.config.text_blink_rate, self.blink_state.borrow_mut()))
-                        }
+                        Blink::Slow => Some((
+                            params.config.text_blink_rate,
+                            self.text_blink_state.borrow_mut(),
+                        )),
                         Blink::Rapid => Some((
                             params.config.text_blink_rate_rapid,
-                            self.rapid_blink_state.borrow_mut(),
+                            self.rapid_text_blink_state.borrow_mut(),
                         )),
                     };
                     if let Some((blink_rate, mut colorease)) = blink_rate {
@@ -863,7 +864,7 @@ impl crate::TermWindow {
                 &cluster,
                 &gl_state,
                 None,
-                &self.render_metrics,
+                &self.font_render_metrics,
             )?;
             let pixel_width = glyph_info
                 .iter()

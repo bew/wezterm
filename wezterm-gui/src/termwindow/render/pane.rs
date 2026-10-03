@@ -79,7 +79,7 @@ impl crate::TermWindow {
 
         let cursor = pos.pane.get_cursor_position();
         if pos.is_active {
-            self.prev_cursor.update(&cursor);
+            self.prev_cursor_pos.update(&cursor);
         }
 
         let pane_id = pos.pane.pane_id();
@@ -105,8 +105,8 @@ impl crate::TermWindow {
                 config.text_background_opacity
             });
 
-        let cell_width = self.render_metrics.cell_size.width as f32;
-        let cell_height = self.render_metrics.cell_size.height as f32;
+        let cell_width = self.font_render_metrics.cell_size.width as f32;
+        let cell_height = self.font_render_metrics.cell_size.height as f32;
         let background_rect = {
             // We want to fill out to the edges of the splits
             let (x, width_delta) = if pos.left == 0 {
@@ -137,13 +137,13 @@ impl crate::TermWindow {
                 x,
                 y,
                 // Go all the way to the right edge if we're right-most
-                if pos.left + pos.width >= self.terminal_size.cols as usize {
+                if pos.left + pos.width >= self.window_terminal_size.cols as usize {
                     self.dimensions.pixel_width as f32 - x
                 } else {
                     (pos.width as f32 * cell_width) + width_delta
                 },
                 // Go all the way to the bottom if we're bottom-most
-                if pos.top + pos.height >= self.terminal_size.rows as usize {
+                if pos.top + pos.height >= self.window_terminal_size.rows as usize {
                     self.dimensions.pixel_height as f32 - y
                 } else {
                     (pos.height as f32 * cell_height) + height_delta as f32
@@ -339,7 +339,7 @@ impl crate::TermWindow {
 
             let left_pixel_x = padding_left
                 + border.left.get() as f32
-                + (pos.left as f32 * self.render_metrics.cell_size.width as f32);
+                + (pos.left as f32 * self.font_render_metrics.cell_size.width as f32);
 
             let mut render = LineRender {
                 term_window: self,
@@ -436,7 +436,7 @@ impl crate::TermWindow {
                         shape_hash,
                         top_pixel_y: NotNan::new(self.top_pixel_y).unwrap()
                             + (line_idx + self.pos.top) as f32
-                                * self.term_window.render_metrics.cell_size.height as f32,
+                                * self.term_window.font_render_metrics.cell_size.height as f32,
                         left_pixel_x: NotNan::new(self.left_pixel_x).unwrap(),
                         phys_line_idx: line_idx,
                         reverse_video: self.dims.reverse_video,
@@ -468,7 +468,7 @@ impl crate::TermWindow {
                     }
 
                     let mut buf = HeapQuadAllocator::default();
-                    let next_due = self.term_window.has_animation.borrow_mut().take();
+                    let next_due = self.term_window.animation_started_at.borrow_mut().take();
 
                     let shape_key = LineToEleShapeCacheKey {
                         shape_hash,
@@ -493,7 +493,7 @@ impl crate::TermWindow {
                                 top_pixel_y: *quad_key.top_pixel_y,
                                 left_pixel_x: self.left_pixel_x,
                                 pixel_width: self.dims.cols as f32
-                                    * self.term_window.render_metrics.cell_size.width as f32,
+                                    * self.term_window.font_render_metrics.cell_size.width as f32,
                                 stable_line_idx: Some(stable_row),
                                 line: &line,
                                 selection: selrange.clone(),
@@ -520,7 +520,7 @@ impl crate::TermWindow {
                                     .term_window
                                     .config
                                     .experimental_pixel_positioning,
-                                render_metrics: self.term_window.render_metrics,
+                                render_metrics: self.term_window.font_render_metrics,
                                 shape_key: Some(shape_key),
                                 password_input,
                             },
@@ -528,7 +528,12 @@ impl crate::TermWindow {
                         )
                         .context("render_screen_line")?;
 
-                    let expires = self.term_window.has_animation.borrow().as_ref().cloned();
+                    let expires = self
+                        .term_window
+                        .animation_started_at
+                        .borrow()
+                        .as_ref()
+                        .cloned();
                     self.term_window.update_next_frame_time(next_due);
 
                     buf.apply_to(self.layers)
@@ -585,8 +590,8 @@ impl crate::TermWindow {
     pub fn build_pane(&mut self, pos: &PositionedPane) -> anyhow::Result<ComputedElement> {
         // First compute the bounds for the pane background
 
-        let cell_width = self.render_metrics.cell_size.width as f32;
-        let cell_height = self.render_metrics.cell_size.height as f32;
+        let cell_width = self.font_render_metrics.cell_size.width as f32;
+        let cell_height = self.font_render_metrics.cell_size.height as f32;
         let (padding_left, padding_top) = self.padding_left_top();
         let tab_bar_height = if self.show_tab_bar {
             self.tab_bar_pixel_height()?
@@ -632,13 +637,13 @@ impl crate::TermWindow {
             x,
             y,
             // Go all the way to the right edge if we're right-most
-            if pos.left + pos.width >= self.terminal_size.cols as usize {
+            if pos.left + pos.width >= self.window_terminal_size.cols as usize {
                 self.dimensions.pixel_width as f32 - x
             } else {
                 (pos.width as f32 * cell_width) + width_delta
             },
             // Go all the way to the bottom if we're bottom-most
-            if pos.top + pos.height >= self.terminal_size.rows as usize {
+            if pos.top + pos.height >= self.window_terminal_size.rows as usize {
                 self.dimensions.pixel_height as f32 - y
             } else {
                 (pos.height as f32 * cell_height) + height_delta as f32

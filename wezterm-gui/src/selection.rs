@@ -9,6 +9,7 @@ use termwiz::surface::line::DoubleClickRange;
 use termwiz::surface::SequenceNo;
 use wezterm_term::{SemanticZone, StableRowIndex};
 
+/// Per-pane text selection state.
 #[derive(Debug, Default, Copy, Clone, Eq, PartialEq)]
 pub struct Selection {
     /// Remembers the starting coordinate of the selection prior to

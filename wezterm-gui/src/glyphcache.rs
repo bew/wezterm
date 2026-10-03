@@ -1,7 +1,7 @@
 use super::utilsprites::RenderMetrics;
 use crate::customglyph::*;
 use crate::renderstate::RenderContext;
-use crate::termwindow::render::paint::AllowImage;
+use crate::termwindow::render::paint::ImageRenderPolicy;
 use ::window::bitmaps::atlas::{Atlas, OutOfTextureSpace, Sprite};
 use ::window::bitmaps::{BitmapImage, Image, ImageTexture, Texture2d};
 use ::window::color::SrgbaPixel;
@@ -99,7 +99,7 @@ pub struct BorrowedGlyphKey<'a> {
 }
 
 impl<'a> BorrowedGlyphKey<'a> {
-    fn to_owned(&self) -> GlyphKey {
+    fn to_owned(self) -> GlyphKey {
         GlyphKey {
             font_idx: self.font_idx,
             glyph_pos: self.glyph_pos,
@@ -338,7 +338,7 @@ impl FrameDecoder {
             .context("sending first frame")?;
         decoded_frames.push(decoded_frame);
 
-        while let Some(frame) = frames.next() {
+        for frame in frames.by_ref() {
             let frame = frame?;
 
             let duration: Duration = frame.delay().into();
@@ -459,7 +459,7 @@ impl FrameState {
                 }
             },
             FrameSource::FrameIndex(idx) => {
-                *idx = *idx + 1;
+                *idx += 1;
                 if *idx >= self.frames.len() {
                     *idx = 0;
                 }
@@ -523,7 +523,7 @@ impl DecodedImage {
             ImageDataType::EncodedLease(lease) => {
                 Self::start_frame_decoder(lease.clone(), image_data)
             }
-            ImageDataType::EncodedFile(data) => match BlobManager::store(&data) {
+            ImageDataType::EncodedFile(data) => match BlobManager::store(data) {
                 Ok(lease) => Self::start_frame_decoder(lease, image_data),
                 Err(err) => {
                     log::error!("Unable to move file data to blob manager: {err:#}");
@@ -590,7 +590,7 @@ impl GlyphCache {
             block_glyphs: HashMap::new(),
             cursor_glyphs: HashMap::new(),
             color: HashMap::new(),
-            min_frame_duration: Duration::from_millis(1000 / fonts.config().max_fps as u64),
+            min_frame_duration: Duration::from_millis(1000 / fonts.config().max_fps),
         })
     }
 }
@@ -619,7 +619,7 @@ impl GlyphCache {
             block_glyphs: HashMap::new(),
             cursor_glyphs: HashMap::new(),
             color: HashMap::new(),
-            min_frame_duration: Duration::from_millis(1000 / fonts.config().max_fps as u64),
+            min_frame_duration: Duration::from_millis(1000 / fonts.config().max_fps),
         })
     }
 }
@@ -639,7 +639,7 @@ impl GlyphCache {
         let key = BorrowedGlyphKey {
             font_idx: info.font_idx,
             glyph_pos: info.glyph_pos,
-            num_cells: num_cells,
+            num_cells,
             style,
             followed_by_space,
             metric: metrics.into(),
@@ -833,12 +833,8 @@ impl GlyphCache {
                 scale,
             }
         } else {
-            let raw_im = Image::with_rgba32(
-                glyph.width as usize,
-                glyph.height as usize,
-                4 * glyph.width as usize,
-                &glyph.data,
-            );
+            let raw_im =
+                Image::with_rgba32(glyph.width, glyph.height, 4 * glyph.width, &glyph.data);
 
             let bearing_x = glyph.bearing_x * scale * metrics_only_scale;
             // No metrics_only_scale adjustment to bearing_y is needed because
@@ -902,15 +898,15 @@ impl GlyphCache {
         decoded: &DecodedImage,
         padding: Option<usize>,
         min_frame_duration: Duration,
-        allow_image: AllowImage,
+        image_render_policy: ImageRenderPolicy,
     ) -> anyhow::Result<(Sprite, Option<Instant>, LoadState)> {
         let mut handle = DecodedImageHandle {
             h: decoded.image.data(),
             current_frame: *decoded.current_frame.borrow(),
         };
 
-        let scale_down = match allow_image {
-            AllowImage::Scale(n) => Some(n),
+        let scale_down = match image_render_policy {
+            ImageRenderPolicy::Downscaled(n) => Some(n),
             _ => None,
         };
 
@@ -924,7 +920,7 @@ impl GlyphCache {
                     .context("atlas.allocate_with_padding")?;
                 frame_cache.insert(*hash, sprite.clone());
 
-                return Ok((sprite, None, LoadState::Loaded));
+                Ok((sprite, None, LoadState::Loaded))
             }
             ImageDataType::AnimRgba8 {
                 hashes,
@@ -952,12 +948,12 @@ impl GlyphCache {
                         + durations[*decoded_current_frame].max(min_frame_duration);
                     if now >= next_due {
                         // Advance to next frame
-                        *decoded_current_frame = *decoded_current_frame + 1;
+                        *decoded_current_frame += 1;
                         if *decoded_current_frame >= frames.len() {
                             *decoded_current_frame = 0;
                             // Skip potential 0-duration root frame
                             if durations[0].as_millis() == 0 && frames.len() > 1 {
-                                *decoded_current_frame = *decoded_current_frame + 1;
+                                *decoded_current_frame += 1;
                             }
                         }
                         *decoded_frame_start = now;
@@ -981,14 +977,14 @@ impl GlyphCache {
 
                 frame_cache.insert(hash, sprite.clone());
 
-                return Ok((
+                Ok((
                     sprite,
                     Some(
                         *decoded_frame_start
                             + durations[*decoded_current_frame].max(min_frame_duration),
                     ),
                     LoadState::Loaded,
-                ));
+                ))
             }
             ImageDataType::EncodedLease(_) | ImageDataType::EncodedFile(_) => {
                 let mut frames = decoded.frames.borrow_mut();
@@ -1022,7 +1018,7 @@ impl GlyphCache {
                 if now >= next_due {
                     // Advance to next frame
                     if frames.load_next_frame() {
-                        *decoded_current_frame = *decoded_current_frame + 1;
+                        *decoded_current_frame += 1;
                         *decoded_frame_start = now;
                         next_due =
                             *decoded_frame_start + frames.frame_duration().max(min_frame_duration);
@@ -1085,7 +1081,7 @@ impl GlyphCache {
         &mut self,
         image_data: &Arc<ImageData>,
         padding: Option<usize>,
-        allow_image: AllowImage,
+        image_render_policy: ImageRenderPolicy,
     ) -> anyhow::Result<(Sprite, Option<Instant>, LoadState)> {
         let hash = image_data.hash();
 
@@ -1096,7 +1092,7 @@ impl GlyphCache {
                 decoded,
                 padding,
                 self.min_frame_duration,
-                allow_image,
+                image_render_policy,
             )
         } else {
             let decoded = DecodedImage::load(image_data);
@@ -1106,7 +1102,7 @@ impl GlyphCache {
                 &decoded,
                 padding,
                 self.min_frame_duration,
-                allow_image,
+                image_render_policy,
             )?;
             self.image_cache.put(hash, decoded);
             Ok(res)

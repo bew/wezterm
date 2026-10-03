@@ -79,12 +79,12 @@ impl crate::TermWindow {
     }
 
     pub fn get_os_border_impl(
-        os_parameters: &Option<window::parameters::Parameters>,
+        os_metrics: &Option<window::os_metrics::OSMetrics>,
         config: &ConfigHandle,
         dimensions: &crate::Dimensions,
         render_metrics: &RenderMetrics,
-    ) -> window::parameters::Border {
-        let mut border = os_parameters
+    ) -> window::os_metrics::Border {
+        let mut border = os_metrics
             .as_ref()
             .and_then(|p| p.border_dimensions.clone())
             .unwrap_or_default();
@@ -137,12 +137,12 @@ impl crate::TermWindow {
         border
     }
 
-    pub fn get_os_border(&self) -> window::parameters::Border {
+    pub fn get_os_border(&self) -> window::os_metrics::Border {
         Self::get_os_border_impl(
-            &self.os_parameters,
+            &self.os_metrics,
             &self.config,
             &self.dimensions,
-            &self.render_metrics,
+            &self.font_render_metrics,
         )
     }
 }

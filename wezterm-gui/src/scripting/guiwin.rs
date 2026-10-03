@@ -57,9 +57,11 @@ impl UserData for GuiWin {
 
         methods.add_method(
             "set_inner_size",
-            |_, this, (width, height): (usize, usize)| {
-                this.window
-                    .notify(TermWindowNotif::SetInnerSize { width, height });
+            |_, this, (width_px, height_px): (usize, usize)| {
+                this.window.notify(TermWindowNotif::SetInnerSize {
+                    width_px,
+                    height_px,
+                });
                 Ok(())
             },
         );
@@ -204,7 +206,7 @@ impl UserData for GuiWin {
             let (tx, rx) = smol::channel::bounded(1);
             this.window
                 .notify(TermWindowNotif::Apply(Box::new(move |term_window| {
-                    tx.try_send(term_window.focused.is_some()).ok();
+                    tx.try_send(term_window.focused_at.is_some()).ok();
                 })));
             let result = rx
                 .recv()

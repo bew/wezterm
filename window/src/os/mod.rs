@@ -18,4 +18,4 @@ pub mod macos;
 #[cfg(target_os = "macos")]
 pub use self::macos::*;
 
-pub mod parameters;
+pub mod os_metrics;

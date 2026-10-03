@@ -116,7 +116,7 @@ impl CommandDef {
                 .resolve(config.key_map_preference)
                 .clone();
 
-            let ukey = DeferredKeyCode::try_from(us_layout_shift(&label))
+            let ukey = DeferredKeyCode::try_from(us_layout_shift(label))
                 .unwrap()
                 .resolve(config.key_map_preference)
                 .clone();
@@ -177,8 +177,8 @@ impl CommandDef {
                     def.permute_keys(config)
                 };
                 Some(ExpandedCommand {
-                    brief: def.brief.into(),
-                    doc: def.doc.into(),
+                    brief: def.brief,
+                    doc: def.doc,
                     keys,
                     action,
                     menubar: def.menubar,
@@ -331,8 +331,8 @@ impl CommandDef {
             }
             if let Some(cmd) = derive_command_from_key_assignment(&entry.action) {
                 result.push(ExpandedCommand {
-                    brief: cmd.brief.into(),
-                    doc: cmd.doc.into(),
+                    brief: cmd.brief,
+                    doc: cmd.doc,
                     keys: vec![(*mods, keycode.clone())],
                     action: entry.action.clone(),
                     menubar: cmd.menubar,
@@ -351,8 +351,8 @@ impl CommandDef {
                 }
                 if let Some(cmd) = derive_command_from_key_assignment(&entry.action) {
                     result.push(ExpandedCommand {
-                        brief: cmd.brief.into(),
-                        doc: cmd.doc.into(),
+                        brief: cmd.brief,
+                        doc: cmd.doc,
                         keys: vec![],
                         action: entry.action.clone(),
                         menubar: cmd.menubar,
@@ -365,11 +365,13 @@ impl CommandDef {
         result
     }
 
+    /// (Only on MacOS) Update the menubar to reflect the current config state.
     #[cfg(not(target_os = "macos"))]
     pub fn recreate_menubar(_config: &ConfigHandle) {}
 
-    /// Update the menubar to reflect the current config state.
-    /// We cannot simply build a completely new one and replace it at runtime,
+    /// (Only on MacOS) Update the menubar to reflect the current config state.
+    ///
+    /// note: We cannot simply build a fresh one and replace it at runtime,
     /// because something in cocoa get's unhappy and crashes shortly after.
     /// The strategy we have is to try to find the existing item with the
     /// same action and update it.
@@ -1005,7 +1007,7 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
         ActivateTab(n) => {
             let n = *n;
             let ordinal = english_ordinal(n + 1);
-            let keys = if n >= 0 && n <= 7 {
+            let keys = if (0..=7).contains(&n) {
                 vec![(Modifiers::SUPER, (n + 1).to_string())]
             } else {
                 vec![]
@@ -1032,11 +1034,9 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
             }
         }
         SetPaneZoomState(true) => CommandDef {
-            brief: format!("Zooms the current Pane").into(),
-            doc: format!(
-                "Places the current pane into the zoomed state, \
+            brief: "Zooms the current Pane".into(),
+            doc: "Places the current pane into the zoomed state, \
                              filling all of the space in the tab"
-            )
             .into(),
             keys: vec![],
             args: &[ArgType::ActiveWindow],
@@ -1044,8 +1044,8 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
             icon: Some("md_fullscreen"),
         },
         SetPaneZoomState(false) => CommandDef {
-            brief: format!("Un-Zooms the current Pane").into(),
-            doc: format!("Takes the current pane out of the zoomed state").into(),
+            brief: "Un-Zooms the current Pane".into(),
+            doc: "Takes the current pane out of the zoomed state".into(),
             keys: vec![],
             args: &[ArgType::ActiveWindow],
             menubar: &[],
@@ -1053,11 +1053,8 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
         },
         EmitEvent(name) => CommandDef {
             brief: format!("Emit event `{name}`").into(),
-            doc: format!(
-                "Emits the named event, causing any \
-                             associated event handler(s) to trigger"
-            )
-            .into(),
+            doc: "Emits the named event, causing any \
+                associated event handler(s) to trigger".into(),
             keys: vec![],
             args: &[ArgType::ActiveWindow],
             menubar: &[],
@@ -1853,15 +1850,11 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
             name: None,
             spawn: None,
         } => CommandDef {
-            brief: format!(
-                "Spawn the default program into a new \
+            brief: "Spawn the default program into a new \
                            workspace and switch to it"
-            )
             .into(),
-            doc: format!(
-                "Spawn the default program into a new \
+            doc: "Spawn the default program into a new \
                          workspace and switch to it"
-            )
             .into(),
             keys: vec![],
             args: &[],
@@ -2018,7 +2011,7 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
 /// included in the default key assignments and command palette.
 fn compute_default_actions() -> Vec<KeyAssignment> {
     // These are ordered by their position within the various menus
-    return vec![
+    vec![
         // ----------------- WezTerm
         ReloadConfiguration,
         #[cfg(target_os = "macos")]
@@ -2143,5 +2136,5 @@ fn compute_default_actions() -> Vec<KeyAssignment> {
         ShowDebugOverlay,
         // ----------------- Misc
         OpenLinkAtMouseCursor,
-    ];
+    ]
 }

@@ -68,11 +68,12 @@ where
 {
     let pane_id = pane.pane_id();
     let dims = pane.get_dimensions();
+    let metrics = term_window.font_render_metrics;
     let size = TerminalSize {
         cols: dims.cols,
         rows: dims.viewport_rows,
-        pixel_width: term_window.render_metrics.cell_size.width as usize * dims.cols,
-        pixel_height: term_window.render_metrics.cell_size.height as usize * dims.viewport_rows,
+        pixel_width: metrics.cell_size.width as usize * dims.cols,
+        pixel_height: metrics.cell_size.height as usize * dims.viewport_rows,
         dpi: dims.dpi,
     };
     let term_config: Arc<dyn TerminalConfiguration + Send + Sync> =

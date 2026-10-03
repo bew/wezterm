@@ -50,7 +50,7 @@ impl super::TermWindow {
         self.window_state = window_state;
         self.quad_generation += 1;
         if last_state != self.window_state {
-            self.load_os_parameters();
+            self.load_os_metrics();
         }
 
         if let Some(webgpu) = self.webgpu.as_mut() {
@@ -74,12 +74,12 @@ impl super::TermWindow {
         while self.resizes_pending == 0 {
             match self.pending_scale_changes.pop_front() {
                 Some(ScaleChange::Relative(change)) => {
-                    if let Some(window) = self.window.as_ref().map(|w| w.clone()) {
+                    if let Some(window) = self.window.clone() {
                         self.adjust_font_scale(self.fonts.get_font_scale() * change, &window);
                     }
                 }
                 Some(ScaleChange::Absolute(change)) => {
-                    if let Some(window) = self.window.as_ref().map(|w| w.clone()) {
+                    if let Some(window) = self.window.clone() {
                         self.adjust_font_scale(change, &window);
                     }
                 }
@@ -107,7 +107,7 @@ impl super::TermWindow {
         let (prior_font, prior_dpi) = self.fonts.change_scaling(font_scale, dimensions.dpi);
         match RenderMetrics::new(&self.fonts) {
             Ok(metrics) => {
-                self.render_metrics = metrics;
+                self.font_render_metrics = metrics;
             }
             Err(err) => {
                 log::error!(
@@ -177,8 +177,8 @@ impl super::TermWindow {
             let size = TerminalSize {
                 rows: cell_dims.rows,
                 cols: cell_dims.cols,
-                pixel_height: cell_dims.rows * self.render_metrics.cell_size.height as usize,
-                pixel_width: cell_dims.cols * self.render_metrics.cell_size.width as usize,
+                pixel_height: cell_dims.rows * self.font_render_metrics.cell_size.height as usize,
+                pixel_width: cell_dims.cols * self.font_render_metrics.cell_size.width as usize,
                 dpi: dimensions.dpi as u32,
             };
 
@@ -188,42 +188,42 @@ impl super::TermWindow {
             let h_context = DimensionContext {
                 dpi: dimensions.dpi as f32,
                 pixel_max: size.pixel_width as f32,
-                pixel_cell: self.render_metrics.cell_size.width as f32,
+                pixel_cell: self.font_render_metrics.cell_size.width as f32,
             };
             let v_context = DimensionContext {
                 dpi: dimensions.dpi as f32,
                 pixel_max: size.pixel_height as f32,
-                pixel_cell: self.render_metrics.cell_size.height as f32,
+                pixel_cell: self.font_render_metrics.cell_size.height as f32,
             };
             let padding_left = config.window_padding.left.evaluate_as_pixels(h_context) as usize;
             let padding_top = config.window_padding.top.evaluate_as_pixels(v_context) as usize;
             let padding_bottom =
                 config.window_padding.bottom.evaluate_as_pixels(v_context) as usize;
-            let padding_right = effective_right_padding(&config, h_context);
+            let padding_right = effective_right_padding(config, h_context);
 
-            let pixel_height = (rows * self.render_metrics.cell_size.height as usize)
+            let pixel_height = (rows * self.font_render_metrics.cell_size.height as usize)
                 + (padding_top + padding_bottom)
-                + (border.top + border.bottom).get() as usize
+                + (border.top + border.bottom).get()
                 + tab_bar_height as usize;
 
-            let pixel_width = (cols * self.render_metrics.cell_size.width as usize)
+            let pixel_width = (cols * self.font_render_metrics.cell_size.width as usize)
                 + (padding_left + padding_right)
-                + (border.left + border.right).get() as usize;
+                + (border.left + border.right).get();
 
             let dims = Dimensions {
-                pixel_width: pixel_width as usize,
-                pixel_height: pixel_height as usize,
+                pixel_width,
+                pixel_height,
                 dpi: dimensions.dpi,
             };
 
             let ri_calc = ResizeIncrementCalculator {
-                x: self.render_metrics.cell_size.width as u16,
-                y: self.render_metrics.cell_size.height as u16,
-                padding_left: padding_left,
-                padding_top: padding_top,
-                padding_right: padding_right,
-                padding_bottom: padding_bottom,
-                border: border,
+                x: self.font_render_metrics.cell_size.width as u16,
+                y: self.font_render_metrics.cell_size.height as u16,
+                padding_left,
+                padding_top,
+                padding_right,
+                padding_bottom,
+                border,
                 tab_bar_height: tab_bar_height as usize,
             };
 
@@ -233,34 +233,30 @@ impl super::TermWindow {
 
             let h_context = DimensionContext {
                 dpi: dimensions.dpi as f32,
-                pixel_max: self.terminal_size.pixel_width as f32,
-                pixel_cell: self.render_metrics.cell_size.width as f32,
+                pixel_max: self.window_terminal_size.pixel_width as f32,
+                pixel_cell: self.font_render_metrics.cell_size.width as f32,
             };
             let v_context = DimensionContext {
                 dpi: dimensions.dpi as f32,
-                pixel_max: self.terminal_size.pixel_height as f32,
-                pixel_cell: self.render_metrics.cell_size.height as f32,
+                pixel_max: self.window_terminal_size.pixel_height as f32,
+                pixel_cell: self.font_render_metrics.cell_size.height as f32,
             };
             let padding_left = config.window_padding.left.evaluate_as_pixels(h_context) as usize;
             let padding_top = config.window_padding.top.evaluate_as_pixels(v_context) as usize;
             let padding_bottom =
                 config.window_padding.bottom.evaluate_as_pixels(v_context) as usize;
-            let padding_right = effective_right_padding(&config, h_context);
+            let padding_right = effective_right_padding(config, h_context);
 
             let avail_width = dimensions.pixel_width.saturating_sub(
-                (padding_left + padding_right) as usize
-                    + (border.left + border.right).get() as usize,
+                (padding_left + padding_right) + (border.left + border.right).get(),
             );
             let avail_height = dimensions
                 .pixel_height
-                .saturating_sub(
-                    (padding_top + padding_bottom) as usize
-                        + (border.top + border.bottom).get() as usize,
-                )
+                .saturating_sub((padding_top + padding_bottom) + (border.top + border.bottom).get())
                 .saturating_sub(tab_bar_height as usize);
 
-            let rows = avail_height / self.render_metrics.cell_size.height as usize;
-            let cols = avail_width / self.render_metrics.cell_size.width as usize;
+            let rows = avail_height / self.font_render_metrics.cell_size.height as usize;
+            let cols = avail_width / self.font_render_metrics.cell_size.width as usize;
 
             let size = TerminalSize {
                 rows,
@@ -269,19 +265,19 @@ impl super::TermWindow {
                 // than the available space, so that apps that are sensitive to
                 // the pixels-per-cell have consistent values at a given font size.
                 // https://github.com/wezterm/wezterm/issues/535
-                pixel_height: rows * self.render_metrics.cell_size.height as usize,
-                pixel_width: cols * self.render_metrics.cell_size.width as usize,
+                pixel_height: rows * self.font_render_metrics.cell_size.height as usize,
+                pixel_width: cols * self.font_render_metrics.cell_size.width as usize,
                 dpi: dimensions.dpi as u32,
             };
 
             let ri_calc = ResizeIncrementCalculator {
-                x: self.render_metrics.cell_size.width as u16,
-                y: self.render_metrics.cell_size.height as u16,
-                padding_left: padding_left,
-                padding_top: padding_top,
-                padding_right: padding_right,
-                padding_bottom: padding_bottom,
-                border: border,
+                x: self.font_render_metrics.cell_size.width as u16,
+                y: self.font_render_metrics.cell_size.height as u16,
+                padding_left,
+                padding_top,
+                padding_right,
+                padding_bottom,
+                border,
                 tab_bar_height: tab_bar_height as usize,
             };
 
@@ -290,7 +286,7 @@ impl super::TermWindow {
 
         log::trace!("apply_dimensions computed size {:?}, dims {:?}", size, dims);
 
-        self.terminal_size = size;
+        self.window_terminal_size = size;
 
         let mux = Mux::get();
         if let Some(window) = mux.get_window(self.mux_window_id) {
@@ -344,8 +340,8 @@ impl super::TermWindow {
 
     pub fn current_cell_dimensions(&self) -> RowsAndCols {
         RowsAndCols {
-            rows: self.terminal_size.rows as usize,
-            cols: self.terminal_size.cols as usize,
+            rows: self.window_terminal_size.rows,
+            cols: self.window_terminal_size.cols,
         }
     }
 
@@ -510,12 +506,12 @@ impl super::TermWindow {
         let padding_bottom = config.window_padding.bottom.evaluate_as_pixels(v_context) as usize;
 
         let dimensions = Dimensions {
-            pixel_width: ((terminal_size.cols as usize * render_metrics.cell_size.width as usize)
+            pixel_width: ((terminal_size.cols * render_metrics.cell_size.width as usize)
                 + padding_left
-                + effective_right_padding(&config, h_context)),
-            pixel_height: ((terminal_size.rows as usize * render_metrics.cell_size.height as usize)
+                + effective_right_padding(config, h_context)),
+            pixel_height: ((terminal_size.rows * render_metrics.cell_size.height as usize)
                 + padding_top
-                + padding_bottom) as usize
+                + padding_bottom)
                 + tab_bar_height,
             dpi: self.dimensions.dpi,
         };
@@ -524,8 +520,8 @@ impl super::TermWindow {
         self.apply_dimensions(
             &dimensions,
             Some(RowsAndCols {
-                rows: size.rows as usize,
-                cols: size.cols as usize,
+                rows: size.rows,
+                cols: size.cols,
             }),
             window,
         );
@@ -547,7 +543,7 @@ impl super::TermWindow {
         effective_right_padding(
             config,
             DimensionContext {
-                pixel_cell: self.render_metrics.cell_size.width as f32,
+                pixel_cell: self.font_render_metrics.cell_size.width as f32,
                 dpi: self.dimensions.dpi as f32,
                 pixel_max: self.dimensions.pixel_width as f32,
             },

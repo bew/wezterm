@@ -121,6 +121,7 @@ impl RenderContext {
     }
 }
 
+#[allow(clippy::large_enum_variant)]
 pub enum IndexBuffer {
     Glium(GliumIndexBuffer<u32>),
     WebGpu(WebGpuIndexBuffer),
@@ -141,6 +142,7 @@ impl IndexBuffer {
     }
 }
 
+#[allow(clippy::large_enum_variant)]
 pub enum VertexBuffer {
     Glium(GliumVertexBuffer<Vertex>),
     WebGpu(WebGpuVertexBuffer),
@@ -167,6 +169,7 @@ impl VertexBuffer {
     }
 }
 
+#[allow(clippy::large_enum_variant)]
 enum MappedVertexBuffer {
     Glium(GliumMappedVertexBuffer),
     WebGpu(WebGpuMappedVertexBuffer),
@@ -521,8 +524,7 @@ impl RenderLayer {
             num_quads,
             verts.len() * std::mem::size_of::<Vertex>()
         );
-        let mut indices = vec![];
-        indices.reserve(num_quads * INDICES_PER_CELL);
+        let mut indices = Vec::with_capacity(num_quads * INDICES_PER_CELL);
 
         for q in 0..num_quads {
             let idx = (q * VERTICES_PER_CELL) as u32;
@@ -570,11 +572,22 @@ impl TripleLayerQuadAllocatorTrait for BorrowedLayers {
     }
 }
 
+/// Per-window rendering state owned by a [`crate::TermWindow`].
+///
+/// Bundles the GPU resources a window needs to draw, keeping the drawing code
+/// backend-agnostic.
+/// A window builds one when its backend initializes and reuses it for the rest
+/// of its lifetime, growing buffers and atlas space on demand.
 pub struct RenderState {
+    /// Backend handle used for allocation; either glium or wgpu.
     pub context: RenderContext,
+    /// Cache of rasterized glyphs, images and sprites in a texture atlas.
     pub glyph_cache: RefCell<GlyphCache>,
+    /// Sprites shared by all panes (whitespace and filled box).
     pub util_sprites: UtilSprites,
+    /// Compiled glyph shader program; `Some` only for the glium backend.
     pub glyph_prog: Option<glium::Program>,
+    /// Render layers, kept sorted by z-index.
     pub layers: RefCell<Vec<Rc<RenderLayer>>>,
 }
 
@@ -587,12 +600,12 @@ impl RenderState {
     ) -> anyhow::Result<Self> {
         loop {
             let glyph_cache = RefCell::new(GlyphCache::new_gl(&context, fonts, atlas_size)?);
-            let result = UtilSprites::new(&mut *glyph_cache.borrow_mut(), metrics);
+            let result = UtilSprites::new(&mut glyph_cache.borrow_mut(), metrics);
             match result {
                 Ok(util_sprites) => {
                     let glyph_prog = match &context {
                         RenderContext::Glium(context) => {
-                            Some(Self::compile_prog(&context, Self::glyph_shader)?)
+                            Some(Self::compile_prog(context, Self::glyph_shader)?)
                         }
                         RenderContext::WebGpu(_) => None,
                     };
@@ -636,7 +649,7 @@ impl RenderState {
 
         // Keep the layers sorted by zindex so that they are rendered in
         // the correct order when the layers array is iterated.
-        layers.sort_by(|a, b| a.zindex.cmp(&b.zindex));
+        layers.sort_by_key(|l| l.zindex);
 
         Ok(layer)
     }

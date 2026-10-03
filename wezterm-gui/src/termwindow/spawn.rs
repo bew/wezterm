@@ -11,7 +11,7 @@ impl super::TermWindow {
                 crate::cell_pixel_dims(&self.config, self.dimensions.dpi as f64).ok(),
             )
         } else {
-            self.terminal_size
+            self.window_terminal_size
         };
         let term_config = Arc::new(TermConfig::with_config(self.config.clone()));
 

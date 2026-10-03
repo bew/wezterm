@@ -83,14 +83,14 @@ impl super::TermWindow {
             .sub(padding_top as isize)
             .sub(first_line_offset)
             .max(0)
-            / self.render_metrics.cell_size.height) as i64;
+            / self.font_render_metrics.cell_size.height) as i64;
 
         let x = (event
             .coords
             .x
             .sub((padding_left + border.left.get() as f32) as isize)
             .max(0) as f32)
-            / self.render_metrics.cell_size.width as f32;
+            / self.font_render_metrics.cell_size.width as f32;
         let x = if !pane.is_mouse_grabbed() {
             // Round the x coordinate so that we're a bit more forgiving of
             // the horizontal position when selecting cells
@@ -106,7 +106,7 @@ impl super::TermWindow {
             .sub(padding_top as isize)
             .sub(first_line_offset);
         if y > 0 {
-            y_pixel_offset = y_pixel_offset.max(0) % self.render_metrics.cell_size.height;
+            y_pixel_offset = y_pixel_offset.max(0) % self.font_render_metrics.cell_size.height;
         }
 
         let mut x_pixel_offset = event
@@ -114,7 +114,7 @@ impl super::TermWindow {
             .x
             .sub((padding_left + border.left.get() as f32) as isize);
         if x > 0 {
-            x_pixel_offset = x_pixel_offset.max(0) % self.render_metrics.cell_size.width;
+            x_pixel_offset = x_pixel_offset.max(0) % self.font_render_metrics.cell_size.width;
         }
 
         self.last_mouse_coords = (x, y);
@@ -129,7 +129,7 @@ impl super::TermWindow {
                     // Completed a window drag
                     return;
                 }
-                if press == &MousePress::Left && self.dragging.take().is_some() {
+                if press == &MousePress::Left && self.ui_dragging.take().is_some() {
                     // Completed a drag
                     return;
                 }
@@ -179,7 +179,7 @@ impl super::TermWindow {
                     return;
                 }
 
-                if let Some((item, start_event)) = self.dragging.take() {
+                if let Some((item, start_event)) = self.ui_dragging.take() {
                     self.drag_ui_item(item, start_event, x, y, event, context);
                     return;
                 }
@@ -277,7 +277,7 @@ impl super::TermWindow {
                 context.invalidate();
             }
         }
-        self.dragging.replace((item, start_event));
+        self.ui_dragging.replace((item, start_event));
     }
 
     fn drag_scroll_thumb(
@@ -329,7 +329,7 @@ impl super::TermWindow {
         );
         self.set_viewport(pane.pane_id(), Some(row), dims);
         context.invalidate();
-        self.dragging.replace((item, start_event));
+        self.ui_dragging.replace((item, start_event));
     }
 
     fn drag_ui_item(
@@ -391,12 +391,9 @@ impl super::TermWindow {
         event: MouseEvent,
         context: &dyn WindowOps,
     ) {
-        match event.kind {
-            WMEK::Press(MousePress::Left) => {
-                log::debug!("Should close tab {}", idx);
-                self.close_specific_tab(idx, true);
-            }
-            _ => {}
+        if let WMEK::Press(MousePress::Left) = event.kind {
+            log::debug!("Should close tab {}", idx);
+            self.close_specific_tab(idx, true);
         }
         context.set_cursor(Some(CursorIcon::Default));
     }
@@ -464,7 +461,7 @@ impl super::TermWindow {
                 TabBarItem::Tab { tab_idx, .. } => {
                     self.activate_tab(tab_idx as isize).ok();
                 }
-                TabBarItem::NewTabButton { .. } => {
+                TabBarItem::NewTabButton => {
                     self.do_new_tab_button_click(MousePress::Left);
                 }
                 TabBarItem::None | TabBarItem::LeftStatus | TabBarItem::RightStatus => {
@@ -475,6 +472,7 @@ impl super::TermWindow {
                         if self.config.window_decorations
                             == WindowDecorations::INTEGRATED_BUTTONS | WindowDecorations::RESIZE
                         {
+                            // Window has title bar, check if mouse needs to maximize/restore
                             if self.last_mouse_click.as_ref().map(|c| c.streak) == Some(2) {
                                 if maximized {
                                     window.restore();
@@ -514,7 +512,7 @@ impl super::TermWindow {
                 TabBarItem::Tab { tab_idx, .. } => {
                     self.close_specific_tab(tab_idx, true);
                 }
-                TabBarItem::NewTabButton { .. } => {
+                TabBarItem::NewTabButton => {
                     self.do_new_tab_button_click(MousePress::Middle);
                 }
                 TabBarItem::None
@@ -526,7 +524,7 @@ impl super::TermWindow {
                 TabBarItem::Tab { .. } => {
                     self.show_tab_navigator();
                 }
-                TabBarItem::NewTabButton { .. } => {
+                TabBarItem::NewTabButton => {
                     self.do_new_tab_button_click(MousePress::Right);
                 }
                 TabBarItem::None
@@ -541,22 +539,19 @@ impl super::TermWindow {
                 TabBarItem::WindowButton(window::IntegratedTitleButton::Maximize) => {
                     let item = self.last_ui_item.clone().unwrap();
                     let bounds: ::window::ScreenRect = euclid::rect(
-                        item.x as isize - (event.coords.x as isize - event.screen_coords.x),
-                        item.y as isize - (event.coords.y as isize - event.screen_coords.y),
+                        item.x as isize - (event.coords.x - event.screen_coords.x),
+                        item.y as isize - (event.coords.y - event.screen_coords.y),
                         item.width as isize,
                         item.height as isize,
                     );
                     context.set_maximize_button_position(bounds);
                 }
-                TabBarItem::WindowButton(_)
-                | TabBarItem::Tab { .. }
-                | TabBarItem::NewTabButton { .. } => {}
-            },
-            WMEK::VertWheel(n) => {
-                if self.config.mouse_wheel_scrolls_tabs {
-                    self.activate_tab_relative(if n < 1 { 1 } else { -1 }, true)
-                        .ok();
+                TabBarItem::WindowButton(_) | TabBarItem::Tab { .. } | TabBarItem::NewTabButton => {
                 }
+            },
+            WMEK::VertWheel(n) if self.config.mouse_wheel_scrolls_tabs => {
+                self.activate_tab_relative(if n < 1 { 1 } else { -1 }, true)
+                    .ok();
             }
             _ => {}
         }
@@ -579,7 +574,7 @@ impl super::TermWindow {
                 Some(
                     current_viewport
                         .unwrap_or(dims.physical_top)
-                        .saturating_sub(self.terminal_size.rows.try_into().unwrap()),
+                        .saturating_sub(self.window_terminal_size.rows.try_into().unwrap()),
                 ),
                 dims,
             );
@@ -604,7 +599,7 @@ impl super::TermWindow {
                 Some(
                     current_viewport
                         .unwrap_or(dims.physical_top)
-                        .saturating_add(self.terminal_size.rows.try_into().unwrap()),
+                        .saturating_add(self.window_terminal_size.rows.try_into().unwrap()),
                 ),
                 dims,
             );
@@ -623,7 +618,7 @@ impl super::TermWindow {
         if let WMEK::Press(MousePress::Left) = event.kind {
             // Start a scroll drag
             // self.scroll_drag_start = Some(from_top);
-            self.dragging = Some((item, event));
+            self.ui_dragging = Some((item, event));
         }
         context.set_cursor(Some(CursorIcon::Default));
     }
@@ -641,7 +636,7 @@ impl super::TermWindow {
         }));
 
         if event.kind == WMEK::Press(MousePress::Left) {
-            self.dragging.replace((item, event));
+            self.ui_dragging.replace((item, event));
         }
     }
 
@@ -676,20 +671,21 @@ impl super::TermWindow {
             {
                 if pane.pane_id() != pos.pane.pane_id() {
                     // We're over a pane that isn't active
+                    let maybe_active_tab = Mux::get().get_active_tab_for_window(self.mux_window_id);
                     match &event.kind {
                         WMEK::Press(_) => {
-                            let mux = Mux::get();
-                            mux.get_active_tab_for_window(self.mux_window_id)
-                                .map(|tab| tab.set_active_idx(pos.index));
+                            if let Some(tab) = maybe_active_tab {
+                                tab.set_active_idx(pos.index)
+                            }
 
                             pane = Arc::clone(&pos.pane);
                             is_click_to_focus_pane = true;
                         }
                         WMEK::Move => {
                             if self.config.pane_focus_follows_mouse {
-                                let mux = Mux::get();
-                                mux.get_active_tab_for_window(self.mux_window_id)
-                                    .map(|tab| tab.set_active_idx(pos.index));
+                                if let Some(tab) = maybe_active_tab {
+                                    tab.set_active_idx(pos.index)
+                                }
 
                                 pane = Arc::clone(&pos.pane);
                                 context.invalidate();
@@ -712,11 +708,11 @@ impl super::TermWindow {
                 row = row.saturating_sub(pos.top as i64).max(0);
 
                 if position.column < pos.left {
-                    x_pixel_offset -= self.render_metrics.cell_size.width
+                    x_pixel_offset -= self.font_render_metrics.cell_size.width
                         * (pos.left as isize - position.column as isize);
                 }
                 if position.row < pos.top as i64 {
-                    y_pixel_offset -= self.render_metrics.cell_size.height
+                    y_pixel_offset -= self.font_render_metrics.cell_size.height
                         * (pos.top as isize - position.row as isize);
                 }
 
@@ -728,14 +724,15 @@ impl super::TermWindow {
             self.current_mouse_capture = Some(MouseCapture::TerminalPane(pane.pane_id()));
         }
 
-        let is_focused = if let Some(focused) = self.focused.as_ref() {
+        let is_focused = if let Some(focused_at) = self.focused_at.as_ref() {
             !self.config.swallow_mouse_click_on_window_focus
-                || (focused.elapsed() > Duration::from_millis(200))
+                || (focused_at.elapsed() > Duration::from_millis(200))
         } else {
             false
         };
 
-        if self.focused.is_some() && !is_focused {
+        if self.focused_at.is_some() && !is_focused {
+            // Window needs to be focused
             if matches!(&event.kind, WMEK::Press(_))
                 && self.config.swallow_mouse_click_on_window_focus
             {
@@ -796,7 +793,7 @@ impl super::TermWindow {
         impl WithPaneLines for FindCurrentLink {
             fn with_lines_mut(&mut self, stable_top: StableRowIndex, lines: &mut [&mut Line]) {
                 if stable_top == self.stable_row {
-                    if let Some(line) = lines.get(0) {
+                    if let Some(line) = lines.first() {
                         if let Some(cell) = line.get_cell(self.column) {
                             self.current = cell.attrs().hyperlink().cloned();
                         }
@@ -814,7 +811,7 @@ impl super::TermWindow {
         let new_highlight = find_link.current;
 
         match (self.current_highlight.as_ref(), new_highlight) {
-            (Some(old_link), Some(new_link)) if Arc::ptr_eq(&old_link, &new_link) => {
+            (Some(old_link), Some(new_link)) if Arc::ptr_eq(old_link, &new_link) => {
                 // Unchanged
             }
             (None, None) => {
@@ -927,9 +924,7 @@ impl super::TermWindow {
                         modifiers.remove(self.config.bypass_mouse_reporting_modifiers);
                         mouse_reporting = false;
                     }
-                }
 
-                if mouse_reporting {
                     // If they were scrolled back prior to launching an
                     // application that captures the mouse, then mouse based
                     // scrolling assignments won't have any effect.

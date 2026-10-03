@@ -517,7 +517,7 @@ impl CharSelector {
             }));
 
         let dimensions = term_window.dimensions;
-        let size = term_window.terminal_size;
+        let size = term_window.window_terminal_size;
 
         let computed = term_window.compute_element(
             &LayoutContext {
@@ -534,8 +534,8 @@ impl CharSelector {
                 bounds: euclid::rect(
                     padding_left,
                     top_pixel_y,
-                    size.cols as f32 * term_window.render_metrics.cell_size.width as f32,
-                    size.rows as f32 * term_window.render_metrics.cell_size.height as f32,
+                    size.cols as f32 * term_window.font_render_metrics.cell_size.width as f32,
+                    size.rows as f32 * term_window.font_render_metrics.cell_size.height as f32,
                 ),
                 metrics: &metrics,
                 gl_state: term_window.render_state.as_ref().unwrap(),

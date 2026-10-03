@@ -19,6 +19,8 @@ pub struct StableCursorPosition {
 }
 impl_lua_conversion_dynamic!(StableCursorPosition);
 
+/// Describes the dimensions and current viewport position of a pane's terminal,
+/// including its scrollback extent and the pixel geometry of the viewport.
 #[derive(
     Debug, Clone, Copy, PartialEq, Eq, Default, Deserialize, Serialize, FromDynamic, ToDynamic,
 )]

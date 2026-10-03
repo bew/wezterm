@@ -6,7 +6,7 @@ use crate::quad::{
     TripleLayerQuadAllocatorTrait,
 };
 use crate::shapecache::*;
-use crate::termwindow::render::paint::AllowImage;
+use crate::termwindow::render::paint::ImageRenderPolicy;
 use crate::termwindow::{BorrowedShapeCacheKey, RenderState, ShapedInfo, TermWindowNotif};
 use crate::utilsprites::RenderMetrics;
 use ::window::bitmaps::{TextureCoord, TextureRect, TextureSize};
@@ -225,7 +225,7 @@ pub struct ClusterStyleCache<'a> {
 impl crate::TermWindow {
     pub fn update_next_frame_time(&self, next_due: Option<Instant>) {
         if next_due.is_some() {
-            update_next_frame_time(&mut *self.has_animation.borrow_mut(), next_due);
+            update_next_frame_time(&mut self.animation_started_at.borrow_mut(), next_due);
         }
     }
 
@@ -235,8 +235,8 @@ impl crate::TermWindow {
         config: &ConfigHandle,
         target: VisualBellTarget,
     ) -> Option<f32> {
-        let mut per_pane = self.pane_state(pane.pane_id());
-        if let Some(ringing) = per_pane.bell_start {
+        let mut pane_state = self.pane_state(pane.pane_id());
+        if let Some(ringing) = pane_state.bell_started_at {
             if config.visual_bell.target == target {
                 let mut color_ease = ColorEase::new(
                     config.visual_bell.fade_in_duration_ms,
@@ -250,7 +250,7 @@ impl crate::TermWindow {
 
                 match intensity {
                     None => {
-                        per_pane.bell_start.take();
+                        pane_state.bell_started_at.take();
                     }
                     Some((intensity, next)) => {
                         self.update_next_frame_time(Some(next));
@@ -274,10 +274,10 @@ impl crate::TermWindow {
         let top_offset = self.dimensions.pixel_height as f32 / 2.;
         let gl_state = self.render_state.as_ref().unwrap();
         quad.set_position(
-            rect.min_x() as f32 - left_offset,
-            rect.min_y() as f32 - top_offset,
-            rect.max_x() as f32 - left_offset,
-            rect.max_y() as f32 - top_offset,
+            rect.min_x() - left_offset,
+            rect.min_y() - top_offset,
+            rect.max_x() - left_offset,
+            rect.max_y() - top_offset,
         );
         quad.set_texture(gl_state.util_sprites.filled_box.texture_coords());
         quad.set_is_background();
@@ -308,7 +308,7 @@ impl crate::TermWindow {
                     underline_height,
                     cell_size: euclid::size2(cell_size.width as isize, cell_size.height as isize),
                 },
-                &self.render_metrics,
+                &self.font_render_metrics,
             )?
             .texture_coords();
 
@@ -317,8 +317,8 @@ impl crate::TermWindow {
         quad.set_position(
             point.x - left_offset,
             point.y - top_offset,
-            (point.x + cell_size.width as f32) - left_offset,
-            (point.y + cell_size.height as f32) - top_offset,
+            (point.x + cell_size.width) - left_offset,
+            (point.y + cell_size.height) - top_offset,
         );
         quad.set_texture(sprite);
         quad.set_fg_color(color);
@@ -333,21 +333,21 @@ impl crate::TermWindow {
             .min_scroll_bar_height
             .evaluate_as_pixels(DimensionContext {
                 dpi: self.dimensions.dpi as f32,
-                pixel_max: self.terminal_size.pixel_height as f32,
-                pixel_cell: self.render_metrics.cell_size.height as f32,
+                pixel_max: self.window_terminal_size.pixel_height as f32,
+                pixel_cell: self.font_render_metrics.cell_size.height as f32,
             })
     }
 
     pub fn padding_left_top(&self) -> (f32, f32) {
         let h_context = DimensionContext {
             dpi: self.dimensions.dpi as f32,
-            pixel_max: self.terminal_size.pixel_width as f32,
-            pixel_cell: self.render_metrics.cell_size.width as f32,
+            pixel_max: self.window_terminal_size.pixel_width as f32,
+            pixel_cell: self.font_render_metrics.cell_size.width as f32,
         };
         let v_context = DimensionContext {
             dpi: self.dimensions.dpi as f32,
-            pixel_max: self.terminal_size.pixel_height as f32,
-            pixel_cell: self.render_metrics.cell_size.height as f32,
+            pixel_max: self.window_terminal_size.pixel_height as f32,
+            pixel_cell: self.font_render_metrics.cell_size.height as f32,
         };
 
         let padding_left = self
@@ -364,7 +364,7 @@ impl crate::TermWindow {
             .evaluate_as_pixels(v_context);
 
         let horizontal_gap = self.dimensions.pixel_width as f32
-            - self.terminal_size.pixel_width as f32
+            - self.window_terminal_size.pixel_width as f32
             - padding_left
             - if self.show_scroll_bar && padding_right.is_zero() {
                 h_context.pixel_cell
@@ -372,7 +372,7 @@ impl crate::TermWindow {
                 padding_right.evaluate_as_pixels(h_context)
             };
         let vertical_gap = self.dimensions.pixel_height as f32
-            - self.terminal_size.pixel_height as f32
+            - self.window_terminal_size.pixel_height as f32
             - padding_top
             - padding_bottom
             - if self.show_tab_bar {
@@ -449,12 +449,12 @@ impl crate::TermWindow {
         hsv: Option<config::HsbTransform>,
         glyph_color: LinearRgba,
     ) -> anyhow::Result<()> {
-        if self.allow_images == AllowImage::No {
+        if self.image_render_policy == ImageRenderPolicy::Disabled {
             return Ok(());
         }
 
         let padding = self
-            .render_metrics
+            .font_render_metrics
             .cell_size
             .height
             .max(params.render_metrics.cell_size.width) as usize;
@@ -467,7 +467,7 @@ impl crate::TermWindow {
         let (sprite, next_due, _load_state) = gl_state
             .glyph_cache
             .borrow_mut()
-            .cached_image(image.image_data(), Some(padding), self.allow_images)
+            .cached_image(image.image_data(), Some(padding), self.image_render_policy)
             .context("cached_image")?;
         self.update_next_frame_time(next_due);
         let width = sprite.coords.size.width;
@@ -611,7 +611,7 @@ impl crate::TermWindow {
             _ => (CursorShape::default(), CursorVisibility::Hidden),
         };
 
-        let focused_and_active = self.focused.is_some() && params.is_active_pane;
+        let focused_and_active = self.focused_at.is_some() && params.is_active_pane;
 
         let (fg_color, bg_color, cursor_bg) = match (
             params.selected,
@@ -667,7 +667,7 @@ impl crate::TermWindow {
             && params.is_active_pane
             && cursor_shape.is_blinking()
             && params.config.cursor_blink_rate != 0
-            && self.focused.is_some();
+            && self.focused_at.is_some();
 
         let mut fg_color_alt = fg_color;
         let bg_color_alt = bg_color;
@@ -678,7 +678,7 @@ impl crate::TermWindow {
 
         if blinking {
             let mut color_ease = self.cursor_blink_state.borrow_mut();
-            color_ease.update_start(self.prev_cursor.last_cursor_movement());
+            color_ease.update_start(self.prev_cursor_pos.when_cursor_moved());
             let (intensity, next) = color_ease.intensity_continuous();
 
             cursor_border_mix = intensity;
@@ -739,24 +739,24 @@ impl crate::TermWindow {
         let mut glyphs = Vec::with_capacity(infos.len());
         let mut iter = infos.iter().peekable();
         while let Some(info) = iter.next() {
-            if self.config.custom_block_glyphs {
-                if info.only_char.and_then(BlockKey::from_char).is_some() {
-                    // Don't bother rendering the glyph from the font, as it can
-                    // have incorrect advance metrics.
-                    // Instead, just use our pixel-perfect cell metrics
-                    glyphs.push(Rc::new(CachedGlyph {
-                        brightness_adjust: 1.0,
-                        has_color: false,
-                        texture: None,
-                        x_advance: PixelLength::new(metrics.cell_size.width as f64),
-                        x_offset: PixelLength::zero(),
-                        y_offset: PixelLength::zero(),
-                        bearing_x: PixelLength::zero(),
-                        bearing_y: PixelLength::zero(),
-                        scale: 1.0,
-                    }));
-                    continue;
-                }
+            if self.config.custom_block_glyphs
+                && info.only_char.and_then(BlockKey::from_char).is_some()
+            {
+                // Don't bother rendering the glyph from the font, as it can
+                // have incorrect advance metrics.
+                // Instead, just use our pixel-perfect cell metrics
+                glyphs.push(Rc::new(CachedGlyph {
+                    brightness_adjust: 1.0,
+                    has_color: false,
+                    texture: None,
+                    x_advance: PixelLength::new(metrics.cell_size.width as f64),
+                    x_offset: PixelLength::zero(),
+                    y_offset: PixelLength::zero(),
+                    bearing_x: PixelLength::zero(),
+                    bearing_y: PixelLength::zero(),
+                    scale: 1.0,
+                }));
+                continue;
             }
 
             let followed_by_space = match iter.peek() {
@@ -766,7 +766,7 @@ impl crate::TermWindow {
 
             glyphs.push(glyph_cache.cached_glyph(
                 info,
-                &style,
+                style,
                 followed_by_space,
                 font,
                 metrics,
@@ -800,7 +800,7 @@ impl crate::TermWindow {
                 };
                 let window = self.window.as_ref().unwrap().clone();
 
-                let presentation_width = PresentationWidth::with_cluster(&cluster);
+                let presentation_width = PresentationWidth::with_cluster(cluster);
 
                 match font.shape(
                     &cluster.text,
@@ -813,7 +813,7 @@ impl crate::TermWindow {
                 ) {
                     Ok(info) => {
                         let glyphs = self.glyph_infos_to_glyphs(
-                            &style,
+                            style,
                             &mut gl_state.glyph_cache.borrow_mut(),
                             &info,
                             &font,
@@ -863,7 +863,7 @@ impl crate::TermWindow {
         self.shape_cache.borrow_mut().clear();
         self.line_to_ele_shape_cache.borrow_mut().clear();
         if let Some(render_state) = self.render_state.as_mut() {
-            render_state.recreate_texture_atlas(&self.fonts, &self.render_metrics, size)?;
+            render_state.recreate_texture_atlas(&self.fonts, &self.font_render_metrics, size)?;
         }
         Ok(())
     }

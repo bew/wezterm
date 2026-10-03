@@ -103,6 +103,8 @@ impl DerefMut for Terminal {
     }
 }
 
+/// The size of a terminal's visible area, both as a text-cell grid
+/// and corresponding pixel dimensions, plus the DPI relating the two.
 #[derive(Clone, Copy, PartialEq, Eq, Debug, FromDynamic, ToDynamic)]
 #[cfg_attr(feature = "use_serde", derive(Serialize, Deserialize))]
 pub struct TerminalSize {

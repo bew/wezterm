@@ -6,7 +6,7 @@ use super::{from_yes_no, nsstring, nsstring_to_str, to_yes_no};
 use crate::clipboard::Clipboard as ClipboardContext;
 use crate::connection::ConnectionOps;
 use crate::os::macos::menu::{MenuItem, RepresentedItem};
-use crate::parameters::{Border, Parameters, TitleBar};
+use crate::os_metrics::{Border, OSMetrics, TitleBar};
 use crate::{
     Clipboard, Connection, CursorIcon, DeadKeyStatus, Dimensions, Handled, KeyCode, KeyEvent,
     Modifiers, MouseButtons, MouseEvent, MouseEventKind, MousePress, Point, RawKeyEvent, Rect,
@@ -885,11 +885,11 @@ impl WindowOps for Window {
         });
     }
 
-    fn get_os_parameters(
+    fn get_os_metrics(
         &self,
         config: &ConfigHandle,
         window_state: WindowState,
-    ) -> anyhow::Result<Option<Parameters>> {
+    ) -> anyhow::Result<Option<OSMetrics>> {
         // We implement this method primarily to provide Notch-avoidance for
         // systems with a notch.
         // We only need this for non-native full screen mode.
@@ -939,7 +939,7 @@ impl WindowOps for Window {
             None
         };
 
-        Ok(Some(Parameters {
+        Ok(Some(OSMetrics {
             title_bar: TitleBar {
                 padding_left: ULength::new(0),
                 padding_right: ULength::new(0),

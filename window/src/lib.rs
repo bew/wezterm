@@ -334,11 +334,11 @@ pub trait WindowOps {
     /// environment.
     fn set_resize_increments(&self, _incr: ResizeIncrement) {}
 
-    fn get_os_parameters(
+    fn get_os_metrics(
         &self,
         _config: &ConfigHandle,
         _window_state: WindowState,
-    ) -> anyhow::Result<Option<os::parameters::Parameters>> {
+    ) -> anyhow::Result<Option<os::os_metrics::OSMetrics>> {
         Ok(None)
     }
 }

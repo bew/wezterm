@@ -1,3 +1,11 @@
+//! Define [`TermWindow`], the per-window GUI state and event handling.
+//!
+//! This module covers:
+//! - window-event dispatch
+//! - key-action dispatch
+//! - overlay lifecycle
+//! - title/status handling
+
 #![allow(clippy::range_plus_one)]
 
 use super::renderstate::*;
@@ -21,7 +29,7 @@ use crate::termwindow::background::{
 };
 use crate::termwindow::keyevent::{KeyTableArgs, KeyTableState};
 use crate::termwindow::modal::Modal;
-use crate::termwindow::render::paint::AllowImage;
+use crate::termwindow::render::paint::ImageRenderPolicy;
 use crate::termwindow::render::{
     CachedLineState, LineQuadCacheKey, LineQuadCacheValue, LineToEleShapeCacheKey,
     LineToElementShapeItem,
@@ -63,7 +71,6 @@ use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 use termwiz::hyperlink::Hyperlink;
 use termwiz::surface::SequenceNo;
-use wezterm_dynamic::Value;
 use wezterm_font::FontConfiguration;
 use wezterm_term::color::ColorPalette;
 use wezterm_term::input::LastMouseClick;
@@ -114,42 +121,63 @@ pub enum MouseCapture {
     TerminalPane(PaneId),
 }
 
-/// Type used together with Window::notify to do something in the
-/// context of the window-specific event loop
+/// Message type used to do anything on the context of a specific [`TermWindow`]'s
+/// event loop from another thread.
 pub enum TermWindowNotif {
+    /// Clear the shape cache so that glyphs are re-shaped.
+    /// (e.g. after the palette changed)
     InvalidateShapeCache,
+    /// Apply a key assignment to a pane.
+    /// Responds on the given channel if any.
     PerformAssignment {
         pane_id: PaneId,
         assignment: KeyAssignment,
         tx: Option<Sender<anyhow::Result<()>>>,
     },
+    /// Set the left status text shown in the tab bar.
     SetLeftStatus(String),
+    /// Set the right status text shown in the tab bar.
     SetRightStatus(String),
+    /// Request the current window dimensions and state.
+    /// Responds on the given channel.
     GetDimensions(Sender<(Dimensions, WindowState)>),
-    GetSelectionForPane {
-        pane_id: PaneId,
-        tx: Sender<String>,
-    },
+    /// Request the selected text of a pane.
+    /// Responds on the given channel.
+    GetSelectionForPane { pane_id: PaneId, tx: Sender<String> },
+    /// Request the window's effective (override-applied) config.
+    /// Responds on the given channel.
     GetEffectiveConfig(Sender<ConfigHandle>),
+    /// Report that a Lua window event finished.
     FinishWindowEvent {
+        /// Name of the finished window event.
         name: String,
+        /// If true, a queued event is scheduled again; if false, it is dropped.
         again: bool,
     },
+    /// Request the window's config overrides.
+    /// Responds on the given channel.
     GetConfigOverrides(Sender<wezterm_dynamic::Value>),
+    /// Replace the window's config overrides and reload its config.
     SetConfigOverrides(wezterm_dynamic::Value),
+    /// Cancel the overlay associated with the given pane, if any.
     CancelOverlayForPane(PaneId),
+    /// Cancel the overlay for a tab.
+    /// If `pane_id` is set, cancel only when tab current overlay's pane id matches.
     CancelOverlayForTab {
         tab_id: TabId,
         pane_id: Option<PaneId>,
     },
+    /// A mux notification that is relevant to this window, to be handled on
+    /// the window's event loop.
     MuxNotification(MuxNotification),
+    /// Re-run the `update-status` and `update-right-status` events.
     EmitStatusUpdate,
+    /// Run an arbitrary closure with `&mut TermWindow` on the window's event loop.
     Apply(Box<dyn FnOnce(&mut TermWindow) + Send + Sync>),
+    /// Re-target this window at a different mux window.
     SwitchToMuxWindow(MuxWindowId),
-    SetInnerSize {
-        width: usize,
-        height: usize,
-    },
+    /// Request an inner-size change of the OS window, in pixels.
+    SetInnerSize { width_px: usize, height_px: usize },
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -186,36 +214,50 @@ pub struct SemanticZoneCache {
     zones: Vec<StableRowIndex>,
 }
 
+/// State for an overlay: an in-window pseudo-terminal (copy mode, search,
+/// quick-select, launcher, ...) shown in place of a pane or tab.
 pub struct OverlayState {
+    /// The overlay's terminal, aliased to the pane or tab it overlays.
     pub pane: Arc<dyn Pane>,
+    /// Key-table state while the overlay is shown.
     pub key_table_state: KeyTableState,
 }
 
+/// Per-pane state tracked by a window.
 #[derive(Default)]
 pub struct PaneState {
-    /// If is_some(), the top row of the visible screen.
-    /// Otherwise, the viewport is at the bottom of the
-    /// scrollback.
+    /// If Some(…), the top row of the visible screen.
+    /// Otherwise, the viewport is at the bottom of the scrollback.
     viewport: Option<StableRowIndex>,
+    /// Text selection state for this pane.
     selection: Selection,
-    /// If is_some(), rather than display the actual tab
-    /// contents, we're overlaying a little internal application
-    /// tab.  We'll also route input to it.
+    /// If Some(…), an overlay app is displayed on top of the normal pane content.
+    /// Inputs are routed to it.
     pub overlay: Option<OverlayState>,
 
-    bell_start: Option<Instant>,
+    /// If Some(…), when the bell was triggered for this pane, pending visual display.
+    /// None once the visual bell animamtion ends.
+    bell_started_at: Option<Instant>,
+    /// Last mouse position resolved into this pane's terminal coordinates.
     pub mouse_terminal_coords: Option<(ClickPosition, StableRowIndex)>,
 }
 
-/// Data used when synchronously formatting pane and window titles
+/// Data used in Lua configs when synchronously formatting pane and window titles
 #[derive(Debug, Clone)]
 pub struct TabInformation {
+    /// Stable id of this tab.
     pub tab_id: TabId,
+    /// Position of this tab within its window.
     pub tab_index: usize,
+    /// True if this is the window's active tab.
     pub is_active: bool,
+    /// True if this is the most recently active tab.
     pub is_last_active: bool,
+    /// Active pane of this tab, if any.
     pub active_pane: Option<PaneInformation>,
+    /// Mux window containing this tab.
     pub window_id: MuxWindowId,
+    /// Current tab title.
     pub tab_title: String,
 }
 
@@ -259,19 +301,33 @@ impl UserData for TabInformation {
 /// Data used when synchronously formatting pane and window titles
 #[derive(Debug, Clone)]
 pub struct PaneInformation {
+    /// Stable id of this pane.
     pub pane_id: PaneId,
+    /// Position of this pane within its tab.
     pub pane_index: usize,
+    /// True if this is the tab's active pane.
     pub is_active: bool,
+    /// True if this pane is zoomed to fill the tab.
     pub is_zoomed: bool,
+    /// True if the pane has produced output the user has not seen.
     pub has_unseen_output: bool,
+    /// The offset from the left side of the containing tab to the left side this pane, in cells.
     pub left: usize,
+    /// The offset from the top side of the containing tab to the top side of this pane, in cells.
     pub top: usize,
+    /// Pane width, in cells.
     pub width: usize,
+    /// Pane height, in cells.
     pub height: usize,
+    /// Pane width, in pixels.
     pub pixel_width: usize,
+    /// Pane height, in pixels.
     pub pixel_height: usize,
+    /// Current pane title.
     pub title: String,
+    /// User variables set on the pane via `SetUserVar`.
     pub user_vars: HashMap<String, String>,
+    /// Content-agnostic progress report for the pane.
     pub progress: Progress,
 }
 
@@ -340,6 +396,7 @@ impl UserData for PaneInformation {
     }
 }
 
+/// Per-tab state tracked by a window.
 #[derive(Default)]
 pub struct TabState {
     /// If is_some(), rather than display the actual tab
@@ -363,119 +420,234 @@ enum EventState {
     InProgressWithQueued(Option<PaneId>),
 }
 
+/// The per-window GUI state object that maps to a single mux window.
+///
+/// It owns:
+/// - the OS-specific [`Window`] handle
+/// - the effective config
+/// - fonts & font configuration
+/// - geometry
+/// - GPU render state and caches
+/// - per-tab/per-pane/overlay state
+/// - input dispatch
+///
+/// [`TermWindow`] is not [`Send`], other threads and other windows need to use
+/// [`TermWindowNotif`] messages to send events to its event-loop.
+#[rustfmt::skip]
 pub struct TermWindow {
+    // ------ Fields group: Window identity, OS & config
+
+    /// The native OS window, once it has been created.
     pub window: Option<Window>,
-    pub config: ConfigHandle,
-    pub config_overrides: wezterm_dynamic::Value,
-    os_parameters: Option<parameters::Parameters>,
-    /// When we most recently received keyboard focus
-    pub focused: Option<Instant>,
-    fonts: Rc<FontConfiguration>,
-    /// Window dimensions and dpi
-    pub dimensions: Dimensions,
+    /// Name of the windowing-system connection in use.
+    connection_name: String,
+    /// When this window was created.
+    created_at: Instant,
+    /// When the window last gained keyboard focus.
+    /// `None` while unfocused or before the first focus event.
+    pub focused_at: Option<Instant>,
+    /// Current state of the OS window (maximized, fullscreen, ...).
     pub window_state: WindowState,
-    pub resizes_pending: usize,
-    is_repaint_pending: bool,
-    pending_scale_changes: LinkedList<resize::ScaleChange>,
-    /// Terminal dimensions
-    terminal_size: TerminalSize,
+    /// OS-supplied title-bar and border metrics for this window.
+    /// `None` if the backend doesn't provide them.
+    /// Refreshed on focus/window-state/config change.
+    os_metrics: Option<os_metrics::OSMetrics>,
+
+    /// The mux window ID this [`TermWindow`] displays.
     pub mux_window_id: MuxWindowId,
+    /// Mirrors the mux window ID like `mux_window_id`, but can be shared with
+    /// mux subscription callbacks so they can observes workspace-switch updates
+    /// live without borrowing `self`.
     pub mux_window_id_for_subscriptions: Arc<Mutex<MuxWindowId>>,
     /// `true` when the mux subscription must be unsubscribed from.
     /// This is done asynchronously to avoid races between mux events.
     mux_subscription_dead: Arc<AtomicBool>,
-    pub render_metrics: RenderMetrics,
-    render_state: Option<RenderState>,
+
+    /// Window-scoped config: global config with this window's overrides applied.
+    pub config: ConfigHandle,
+    /// Per-window config overrides, set in Lua via `window:set_config_overrides`.
+    pub config_overrides: wezterm_dynamic::Value,
+    /// Handle to this window's config-reload subscription.
+    ///
+    /// While held, config reloads are delivered to this window; dropping it
+    /// unsubscribes.
+    config_subscription: Option<config::ConfigSubscription>,
+    /// Cached color palette derived from the effective config.
+    cached_palette: Option<ColorPalette>,
+
+    // ------ Fields group: Geometry, fonts & metrics
+
+    /// OS window dimensions and dpi
+    pub dimensions: Dimensions,
+    /// The terminal cell dimensions available to this window's content.
+    ///
+    /// This is the window-level grid shared by every tab which subdivides it for pane splits.
+    /// It also sizes overlays, the non-fancy tab bar, and provides the viewport geometry used
+    /// when rendering.
+    window_terminal_size: TerminalSize,
+    /// Number of inner-size requests the OS has not completed yet.
+    pub resizes_pending: usize,
+    /// Whether a repaint is requested while `resizes_pending > 0`,
+    /// so that it can be replayed once the resize completes.
+    is_repaint_pending: bool,
+    /// Queued DPI/scale changes waiting to be applied once resized.
+    pending_scale_changes: LinkedList<resize::ScaleChange>,
+
+    /// Font configuration and metrics provider.
+    fonts: Rc<FontConfiguration>,
+    /// Cached font cell metrics.
+    /// Updated on resize/scale changes.
+    pub font_render_metrics: RenderMetrics,
+
+    // ------ Fields group: Input dispatch (keyboard + mouse)
+
+    /// Key bindings and key-table definitions built from config.
     input_map: InputMap,
     /// If is_some, the LEADER modifier is active until the specified instant.
     leader_is_down: Option<std::time::Instant>,
+    /// Current dead-key composition status.
     dead_key_status: DeadKeyStatus,
+    /// Currently active key tables (leader, modal, ...).
     key_table_state: KeyTableState,
-    show_tab_bar: bool,
-    show_scroll_bar: bool,
-    tab_bar: TabBarState,
-    fancy_tab_bar: Option<box_model::ComputedElement>,
-    pub right_status: String,
-    pub left_status: String,
+    /// Last modifier and LED state reported by the OS.
+    current_modifier_and_leds: (Modifiers, KeyboardLedStatus),
+
+    /// UI item under the mouse at the last mouse event, for hover feedback.
+    /// Reset to None once mouse event is processed.
     last_ui_item: Option<UIItem>,
     /// Tracks whether the current mouse-down event is part of click-focus.
-    /// If so, we ignore mouse events until released
+    /// If so, we ignore mouse events until switched off (on release).
     is_click_to_focus_window: bool,
+    /// Last mouse coordinates (in cells) reported by the window.
+    /// The coordinates are local to the entire terminal-cells area of the window
+    /// (not per pane or tab).
     last_mouse_coords: (usize, i64),
+    /// If a window move/resize drag is in progress, the initiating event.
     window_drag_position: Option<MouseEvent>,
+    /// The most recent mouse event, used to drive hover state.
     current_mouse_event: Option<MouseEvent>,
-    prev_cursor: PrevCursorPos,
-    last_scroll_info: RenderableDimensions,
-
-    tab_state: RefCell<HashMap<TabId, TabState>>,
-    pane_state: RefCell<HashMap<PaneId, PaneState>>,
-    semantic_zones: HashMap<PaneId, SemanticZoneCache>,
-
-    window_background: Vec<LoadedBackgroundLayer>,
-
-    current_modifier_and_leds: (Modifiers, KeyboardLedStatus),
+    /// Mouse buttons currently held down.
     current_mouse_buttons: Vec<MousePress>,
+    /// What currently owns the mouse: the UI or a terminal pane.
     current_mouse_capture: Option<MouseCapture>,
-
-    opengl_info: Option<String>,
-
     /// Keeps track of double and triple clicks
     last_mouse_click: Option<LastMouseClick>,
-
     /// The URL over which we are currently hovering
     current_highlight: Option<Arc<Hyperlink>>,
 
+    // ------ Fields group: Chrome & UI
+
+    /// Whether the tab bar is shown for this window.
+    show_tab_bar: bool,
+    /// Whether the scrollbar is shown for this window.
+    show_scroll_bar: bool,
+    /// Computed tab-bar layout state.
+    tab_bar_state: TabBarState,
+    /// Cached box-model element hierarchy for the "fancy" tab bar.
+    cached_fancy_tab_bar: Option<box_model::ComputedElement>,
+    /// Right-aligned status text shown in the tab bar.
+    pub right_status: String,
+    /// Left-aligned status text shown in the tab bar.
+    pub left_status: String,
+    /// When the last status update was run (or when win was created).
+    /// Used to rate-limit `update-status`.
+    last_status_called_at: Instant,
+
+    /// Last scrollback dimensions reported to the scrollbar.
+    /// Used to skip redundant updates.
+    last_scroll_info: RenderableDimensions,
+
+    /// Hit-testable UI items: tab bar entries, scrollbar parts, split dividers.
+    ui_items: Vec<UIItem>,
+    /// If a UI item is being dragged, the item and the originating mouse event.
+    ui_dragging: Option<(UIItem, MouseEvent)>,
+    /// Currently active modal layer, if any.
+    ui_modal: RefCell<Option<Rc<dyn Modal>>>,
+
+    /// Background image layers painted behind the terminal.
+    window_background: Vec<LoadedBackgroundLayer>,
+
+    /// Per-event-name state of Lua event dispatch.
+    /// Used to coalesce queued runs.
+    lua_event_states: HashMap<String, EventState>,
+    /// Event trigger for the currently-dispatching Lua event.
+    /// Exposed to Lua via `window:current_event()`.
+    pub current_event: Option<wezterm_dynamic::Value>,
+
+    // ------ Fields group: Per-tab/pane states
+
+    /// Per-tab state, keyed by tab id.
+    tab_state: RefCell<HashMap<TabId, TabState>>,
+    /// Per-pane state, keyed by pane id.
+    pane_state: RefCell<HashMap<PaneId, PaneState>>,
+    /// Cached semantic (prompt/command/output) zones per pane.
+    cached_semantic_zones: HashMap<PaneId, SemanticZoneCache>,
+
+    // ------ Fields group: GPU backend & render caches
+
+    /// The wgpu state; `Some` only when using the WebGpu backend.
+    webgpu: Option<Rc<WebGpuState>>,
+    /// The OpenGL (glium) context; `Some` only when using the GL backend.
+    gl: Option<Rc<glium::backend::Context>>,
+    /// Description of the active OpenGL renderer, for diagnostics.
+    opengl_info: Option<String>,
+    /// GPU Backend-agnostic rendering state for drawing in the window.
+    /// `None` until the window is initialized.
+    render_state: Option<RenderState>,
+
+    /// Bumped whenever the cached GPU quads must be invalidated.
     quad_generation: usize,
+    /// Bumped whenever the shape cache is invalidated.
     shape_generation: usize,
+    /// Cache of shaped glyph runs.
     shape_cache: RefCell<LfuCache<ShapeCacheKey, anyhow::Result<Rc<Vec<ShapedInfo>>>>>,
+    /// Cache mapping a line to the shapes it expands into.
     line_to_ele_shape_cache: RefCell<LfuCache<LineToEleShapeCacheKey, LineToElementShapeItem>>,
 
+    /// Cache of per-line render state.
     line_state_cache: RefCell<LfuCacheU64<Arc<CachedLineState>>>,
+    /// Next id to assign to a cached line state.
     next_line_state_id: u64,
 
+    /// Cache of rendered GPU quads for a line.
     line_quad_cache: RefCell<LfuCache<LineQuadCacheKey, LineQuadCacheValue>>,
 
-    last_status_call: Instant,
+    /// How images should be rendered, given available texture atlas space.
+    image_render_policy: ImageRenderPolicy,
+
+    // ------ Fields group: Animation, blink & FPS
+
+    /// Previous cursor position, used to decide when the cursor needs repainting.
+    prev_cursor_pos: PrevCursorPos,
+    /// Blink phase state/config for the terminal cursor.
     cursor_blink_state: RefCell<ColorEase>,
-    blink_state: RefCell<ColorEase>,
-    rapid_blink_state: RefCell<ColorEase>,
+    /// Blink phase state/config for blinking text.
+    text_blink_state: RefCell<ColorEase>,
+    /// Blink phase state/config for rapidly-blinking text.
+    rapid_text_blink_state: RefCell<ColorEase>,
 
-    palette: Option<ColorPalette>,
+    /// When Some, the last render detected an animation and the window should repaint.
+    animation_started_at: RefCell<Option<Instant>>,
+    /// When Some, the next animation frame is scheduled for this instant.
+    animation_scheduled_at: RefCell<Option<Instant>>,
 
-    ui_items: Vec<UIItem>,
-    dragging: Option<(UIItem, MouseEvent)>,
-
-    modal: RefCell<Option<Rc<dyn Modal>>>,
-
-    event_states: HashMap<String, EventState>,
-    pub current_event: Option<Value>,
-    has_animation: RefCell<Option<Instant>>,
-    /// We use this to attempt to do something reasonable
-    /// if we run out of texture space
-    allow_images: AllowImage,
-    scheduled_animation: RefCell<Option<Instant>>,
-
-    created: Instant,
-
+    /// Duration of the last rendered frame.
     pub last_frame_duration: Duration,
-    last_fps_check_time: Instant,
-    num_frames: usize,
+    /// When the FPS counter was last updated.
+    last_fps_updated_at: Instant,
+    /// Number of frames rendered since `last_fps_updated_at`.
+    num_new_frames: usize,
+    /// Smoothed frames-per-second estimate.
     pub fps: f32,
-
-    connection_name: String,
-
-    gl: Option<Rc<glium::backend::Context>>,
-    webgpu: Option<Rc<WebGpuState>>,
-    config_subscription: Option<config::ConfigSubscription>,
 }
 
 impl TermWindow {
-    fn load_os_parameters(&mut self) {
+    fn load_os_metrics(&mut self) {
         if let Some(ref window) = self.window {
-            self.os_parameters = match window.get_os_parameters(&self.config, self.window_state) {
-                Ok(os_parameters) => os_parameters,
+            self.os_metrics = match window.get_os_metrics(&self.config, self.window_state) {
+                Ok(os_metrics) => os_metrics,
                 Err(err) => {
-                    log::warn!("Error while getting OS parameters: {:#}", err);
+                    log::warn!("Error while getting OS metrics: {:#}", err);
                     None
                 }
             };
@@ -528,11 +700,11 @@ impl TermWindow {
 
     fn focus_changed(&mut self, focused: bool, window: &Window) {
         log::trace!("Setting focus to {:?}", focused);
-        self.focused = if focused { Some(Instant::now()) } else { None };
+        self.focused_at = if focused { Some(Instant::now()) } else { None };
         self.quad_generation += 1;
-        self.load_os_parameters();
+        self.load_os_metrics();
 
-        if self.focused.is_none() {
+        if self.focused_at.is_none() {
             self.last_mouse_click = None;
             self.current_mouse_buttons.clear();
             self.current_mouse_capture = None;
@@ -544,7 +716,7 @@ impl TermWindow {
         }
 
         // Reset the cursor blink phase
-        self.prev_cursor.bump();
+        self.prev_cursor_pos.bump();
 
         // force cursor to be repainted
         window.invalidate();
@@ -563,7 +735,7 @@ impl TermWindow {
         let render_info = ctx.renderer_info();
         self.opengl_info.replace(render_info.clone());
 
-        match RenderState::new(ctx, &self.fonts, &self.render_metrics, ATLAS_SIZE) {
+        match RenderState::new(ctx, &self.fonts, &self.font_render_metrics, ATLAS_SIZE) {
             Ok(render_state) => {
                 log::debug!(
                     "OpenGL initialized! {} wezterm version: {}",
@@ -682,61 +854,79 @@ impl TermWindow {
         let connection_name = Connection::get().unwrap().name();
 
         let myself = Self {
-            created: Instant::now(),
-            connection_name,
-            last_fps_check_time: Instant::now(),
-            num_frames: 0,
-            last_frame_duration: Duration::ZERO,
-            fps: 0.,
-            config_subscription: None,
-            os_parameters: None,
-            gl: None,
-            webgpu: None,
+            // Fields group: Window identity, OS & config
             window: None,
-            window_background,
-            config: config.clone(),
-            config_overrides: wezterm_dynamic::Value::default(),
-            palette: None,
-            focused: None,
+            connection_name,
+            created_at: Instant::now(),
+            focused_at: None,
+            window_state: WindowState::default(),
+            os_metrics: None,
             mux_window_id,
             mux_window_id_for_subscriptions: Arc::new(Mutex::new(mux_window_id)),
             mux_subscription_dead: Arc::new(AtomicBool::new(false)),
-            fonts: Rc::clone(&fontconfig),
-            render_metrics,
+            config: config.clone(),
+            config_overrides: wezterm_dynamic::Value::default(),
+            config_subscription: None,
+            cached_palette: None,
+            // Fields group: Geometry, fonts & metrics
             dimensions,
-            window_state: WindowState::default(),
+            window_terminal_size: terminal_size,
             resizes_pending: 0,
             is_repaint_pending: false,
             pending_scale_changes: LinkedList::new(),
-            terminal_size,
-            render_state,
+            fonts: Rc::clone(&fontconfig),
+            font_render_metrics: render_metrics,
+            // Fields group: Input dispatch (keyboard + mouse)
             input_map: InputMap::new(&config),
             leader_is_down: None,
             dead_key_status: DeadKeyStatus::None,
-            show_tab_bar,
-            show_scroll_bar: config.enable_scroll_bar,
-            tab_bar: TabBarState::default(),
-            fancy_tab_bar: None,
-            right_status: String::new(),
-            left_status: String::new(),
+            key_table_state: KeyTableState::default(),
+            current_modifier_and_leds: Default::default(),
+            last_ui_item: None,
+            is_click_to_focus_window: false,
             last_mouse_coords: (0, -1),
             window_drag_position: None,
             current_mouse_event: None,
-            current_modifier_and_leds: Default::default(),
-            prev_cursor: PrevCursorPos::new(),
-            last_scroll_info: RenderableDimensions::default(),
-            tab_state: RefCell::new(HashMap::new()),
-            pane_state: RefCell::new(HashMap::new()),
             current_mouse_buttons: vec![],
             current_mouse_capture: None,
             last_mouse_click: None,
             current_highlight: None,
+            // Fields group: Chrome & UI
+            show_tab_bar,
+            show_scroll_bar: config.enable_scroll_bar,
+            tab_bar_state: TabBarState::default(),
+            cached_fancy_tab_bar: None,
+            right_status: String::new(),
+            left_status: String::new(),
+            last_status_called_at: Instant::now(),
+            last_scroll_info: RenderableDimensions::default(),
+            ui_items: vec![],
+            ui_dragging: None,
+            ui_modal: RefCell::new(None),
+            window_background,
+            lua_event_states: HashMap::new(),
+            current_event: None,
+            // Fields group: Per-tab / per-pane state
+            tab_state: RefCell::new(HashMap::new()),
+            pane_state: RefCell::new(HashMap::new()),
+            cached_semantic_zones: HashMap::new(),
+            // Fields group: GPU backend & render caches
+            webgpu: None,
+            gl: None,
+            opengl_info: None,
+            render_state,
             quad_generation: 0,
             shape_generation: 0,
             shape_cache: RefCell::new(LfuCache::new(
                 "shape_cache.hit.rate",
                 "shape_cache.miss.rate",
                 |config| config.shape_cache_size,
+                &config,
+            )),
+            line_to_ele_shape_cache: RefCell::new(LfuCache::new(
+                "line_to_ele_shape_cache.hit.rate",
+                "line_to_ele_shape_cache.miss.rate",
+                |config| config.line_to_ele_shape_cache_size,
                 &config,
             )),
             line_state_cache: RefCell::new(LfuCacheU64::new(
@@ -752,13 +942,9 @@ impl TermWindow {
                 |config| config.line_quad_cache_size,
                 &config,
             )),
-            line_to_ele_shape_cache: RefCell::new(LfuCache::new(
-                "line_to_ele_shape_cache.hit.rate",
-                "line_to_ele_shape_cache.miss.rate",
-                |config| config.line_to_ele_shape_cache_size,
-                &config,
-            )),
-            last_status_call: Instant::now(),
+            image_render_policy: ImageRenderPolicy::Full,
+            // Fields group: Animation, blink & FPS
+            prev_cursor_pos: PrevCursorPos::new(),
             cursor_blink_state: RefCell::new(ColorEase::new(
                 config.cursor_blink_rate,
                 config.cursor_blink_ease_in,
@@ -766,33 +952,26 @@ impl TermWindow {
                 config.cursor_blink_ease_out,
                 None,
             )),
-            blink_state: RefCell::new(ColorEase::new(
+            text_blink_state: RefCell::new(ColorEase::new(
                 config.text_blink_rate,
                 config.text_blink_ease_in,
                 config.text_blink_rate,
                 config.text_blink_ease_out,
                 None,
             )),
-            rapid_blink_state: RefCell::new(ColorEase::new(
+            rapid_text_blink_state: RefCell::new(ColorEase::new(
                 config.text_blink_rate_rapid,
                 config.text_blink_rapid_ease_in,
                 config.text_blink_rate_rapid,
                 config.text_blink_rapid_ease_out,
                 None,
             )),
-            event_states: HashMap::new(),
-            current_event: None,
-            has_animation: RefCell::new(None),
-            scheduled_animation: RefCell::new(None),
-            allow_images: AllowImage::Yes,
-            semantic_zones: HashMap::new(),
-            ui_items: vec![],
-            dragging: None,
-            last_ui_item: None,
-            is_click_to_focus_window: false,
-            key_table_state: KeyTableState::default(),
-            modal: RefCell::new(None),
-            opengl_info: None,
+            animation_started_at: RefCell::new(None),
+            animation_scheduled_at: RefCell::new(None),
+            last_frame_duration: Duration::ZERO,
+            last_fps_updated_at: Instant::now(),
+            num_new_frames: 0,
+            fps: 0.,
         };
 
         let tw = Rc::new(RefCell::new(myself));
@@ -855,19 +1034,19 @@ impl TermWindow {
         };
 
         {
-            let mut myself = tw.borrow_mut();
             let webgpu = match config.front_end {
                 FrontEndSelection::WebGpu => Some(Rc::new(
                     WebGpuState::new(&window, dimensions, &config).await?,
                 )),
                 _ => None,
             };
+            let mut myself = tw.borrow_mut();
             myself.config_subscription.replace(config_subscription);
             if config.use_resize_increments {
                 window.set_resize_increments(
                     ResizeIncrementCalculator {
-                        x: myself.render_metrics.cell_size.width as u16,
-                        y: myself.render_metrics.cell_size.height as u16,
+                        x: myself.font_render_metrics.cell_size.width as u16,
+                        y: myself.font_render_metrics.cell_size.height as u16,
                         padding_left,
                         padding_top,
                         padding_right,
@@ -887,7 +1066,7 @@ impl TermWindow {
                 myself.webgpu.replace(Rc::clone(&webgpu));
                 myself.created(RenderContext::WebGpu(Rc::clone(&webgpu)))?;
             }
-            myself.load_os_parameters();
+            myself.load_os_metrics();
             window.show();
             myself.subscribe_to_pane_updates();
             myself.emit_window_event("window-config-reloaded", None);
@@ -1126,8 +1305,7 @@ impl TermWindow {
                 assignment,
                 tx,
             } => {
-                let mux = Mux::get();
-                let result = || -> anyhow::Result<()> {
+                let result = {
                     // The CopyMode overlay doesn't exist in the mux, but aliases
                     // itself with the overlaid pane's pane_id.
                     // So we do a bit of fancy footwork here to resolve the overlay
@@ -1140,13 +1318,14 @@ impl TermWindow {
                     let pane = if active_pane.pane_id() == pane_id {
                         active_pane
                     } else {
-                        mux.get_pane(pane_id)
+                        Mux::get()
+                            .get_pane(pane_id)
                             .ok_or_else(|| anyhow!("pane id {} is not valid", pane_id))?
                     };
                     self.perform_key_assignment(&pane, &assignment)
                         .context("perform_key_assignment")?;
                     Ok(())
-                }();
+                };
                 window.invalidate();
                 if let Some(tx) = tx {
                     tx.try_send(result).ok();
@@ -1246,8 +1425,8 @@ impl TermWindow {
                     log::trace!("Ding! (this is the bell) in pane {}", pane_id);
                     self.emit_window_event("bell", Some(pane_id));
 
-                    let mut per_pane = self.pane_state(pane_id);
-                    per_pane.bell_start.replace(Instant::now());
+                    let mut pane_state = self.pane_state(pane_id);
+                    pane_state.bell_started_at.replace(Instant::now());
                     window.invalidate();
                 }
                 MuxNotification::Alert {
@@ -1259,7 +1438,7 @@ impl TermWindow {
                     tab_id,
                 } => {
                     let mux = Mux::get();
-                    let mut size = self.terminal_size;
+                    let mut size = self.window_terminal_size;
                     if let Some(tab) = mux.get_tab(tab_id) {
                         // If we attached to a remote domain and loaded in
                         // a tab async, we need to fixup its size, either
@@ -1273,15 +1452,15 @@ impl TermWindow {
                         size.rows = size.rows.max(tab_size.rows);
                         size.cols = size.cols.max(tab_size.cols);
 
-                        if size.rows != self.terminal_size.rows
-                            || size.cols != self.terminal_size.cols
-                            || size.pixel_width != self.terminal_size.pixel_width
-                            || size.pixel_height != self.terminal_size.pixel_height
+                        if size.rows != self.window_terminal_size.rows
+                            || size.cols != self.window_terminal_size.cols
+                            || size.pixel_width != self.window_terminal_size.pixel_width
+                            || size.pixel_height != self.window_terminal_size.pixel_height
                         {
                             self.set_window_size(size, window)?;
                         } else if tab_size.dpi == 0 {
                             log::debug!("fixup dpi in newly added tab");
-                            tab.resize(self.terminal_size);
+                            tab.resize(self.window_terminal_size);
                         }
                     }
                 }
@@ -1345,17 +1524,19 @@ impl TermWindow {
                 self.invalidate_fancy_tab_bar();
                 self.invalidate_modal();
 
-                let mux = Mux::get();
-                if let Some(window) = mux.get_window(self.mux_window_id) {
+                if let Some(window) = Mux::get().get_window(self.mux_window_id) {
                     for tab in window.iter_tabs() {
-                        tab.resize(self.terminal_size);
+                        tab.resize(self.window_terminal_size);
                     }
                 };
                 self.update_title();
                 window.invalidate();
             }
-            TermWindowNotif::SetInnerSize { width, height } => {
-                self.set_inner_size(window, width, height);
+            TermWindowNotif::SetInnerSize {
+                width_px,
+                height_px,
+            } => {
+                self.set_inner_size(window, width_px, height_px);
             }
         }
 
@@ -1540,6 +1721,9 @@ impl TermWindow {
 
     fn subscribe_to_pane_updates(&self) {
         let window = self.window.clone().expect("window to be valid on startup");
+        // Callback is registered once, and reads the shared variant of `mux_window_id`,
+        // so it always reads the live value during a workspace switch, not a snapshot.
+        // (see b908e2dd8cd27c613c8d76e9e6abc5245e500d7d for more info)
         let mux_window_id = Arc::clone(&self.mux_window_id_for_subscriptions);
         let mux = Mux::get();
         let dead = Arc::clone(&self.mux_subscription_dead);
@@ -1616,7 +1800,7 @@ impl TermWindow {
     /// Otherwise, if there is a queued item, schedule it now.
     fn finish_window_event(&mut self, name: &str, again: bool) {
         let state = self
-            .event_states
+            .lua_event_states
             .entry(name.to_string())
             .or_insert(EventState::None);
         if again {
@@ -1642,7 +1826,7 @@ impl TermWindow {
         }
 
         let state = self
-            .event_states
+            .lua_event_states
             .entry(name.to_string())
             .or_insert(EventState::None);
         match state {
@@ -1714,11 +1898,11 @@ impl TermWindow {
 
 impl TermWindow {
     fn palette(&mut self) -> &ColorPalette {
-        if self.palette.is_none() {
-            self.palette
+        if self.cached_palette.is_none() {
+            self.cached_palette
                 .replace(config::TermConfig::new().color_palette());
         }
-        self.palette.as_ref().unwrap()
+        self.cached_palette.as_ref().unwrap()
     }
 
     pub fn config_was_reloaded(&mut self) {
@@ -1740,7 +1924,7 @@ impl TermWindow {
             }
         };
         self.config = config.clone();
-        self.palette.take();
+        self.cached_palette.take();
 
         let mux = Mux::get();
         let window = match mux.get_window(self.mux_window_id) {
@@ -1759,14 +1943,14 @@ impl TermWindow {
             config.cursor_blink_ease_out,
             None,
         );
-        *self.blink_state.borrow_mut() = ColorEase::new(
+        *self.text_blink_state.borrow_mut() = ColorEase::new(
             config.text_blink_rate,
             config.text_blink_ease_in,
             config.text_blink_rate,
             config.text_blink_ease_out,
             None,
         );
-        *self.rapid_blink_state.borrow_mut() = ColorEase::new(
+        *self.rapid_text_blink_state.borrow_mut() = ColorEase::new(
             config.text_blink_rate_rapid,
             config.text_blink_rapid_ease_in,
             config.text_blink_rate_rapid,
@@ -1786,7 +1970,7 @@ impl TermWindow {
         self.line_to_ele_shape_cache
             .borrow_mut()
             .update_config(&config);
-        self.fancy_tab_bar.take();
+        self.cached_fancy_tab_bar.take();
         self.invalidate_fancy_tab_bar();
         self.invalidate_modal();
         self.input_map = InputMap::new(&config);
@@ -1821,7 +2005,7 @@ impl TermWindow {
         }
 
         if let Some(window) = self.window.clone() {
-            self.load_os_parameters();
+            self.load_os_metrics();
             self.apply_scale_change(&dimensions, self.fonts.get_font_scale());
             self.apply_dimensions(&dimensions, None, &window);
             window.config_did_change(&config);
@@ -1834,7 +2018,7 @@ impl TermWindow {
             &config,
             &self.window_background,
             &self.dimensions,
-            &self.render_metrics,
+            &self.font_render_metrics,
         );
 
         self.invalidate_modal();
@@ -1851,21 +2035,21 @@ impl TermWindow {
     }
 
     pub fn cancel_modal(&self) {
-        self.modal.borrow_mut().take();
+        self.ui_modal.borrow_mut().take();
         if let Some(window) = self.window.as_ref() {
             window.invalidate();
         }
     }
 
     pub fn set_modal(&self, modal: Rc<dyn Modal>) {
-        self.modal.borrow_mut().replace(modal);
+        self.ui_modal.borrow_mut().replace(modal);
         if let Some(window) = self.window.as_ref() {
             window.invalidate();
         }
     }
 
     fn get_modal(&self) -> Option<Rc<dyn Modal>> {
-        self.modal.borrow().as_ref().map(Rc::clone)
+        self.ui_modal.borrow().as_ref().map(Rc::clone)
     }
 
     fn update_scrollbar(&mut self) {
@@ -1988,8 +2172,8 @@ impl TermWindow {
             None => false,
         };
 
-        let new_tab_bar = TabBarState::new(
-            self.dimensions.pixel_width / self.render_metrics.cell_size.width as usize,
+        let new_tab_bar_state = TabBarState::new(
+            self.dimensions.pixel_width / self.font_render_metrics.cell_size.width as usize,
             if hovering_in_tab_bar {
                 Some(self.last_mouse_coords.0)
             } else {
@@ -2002,8 +2186,8 @@ impl TermWindow {
             &self.left_status,
             &self.right_status,
         );
-        if new_tab_bar != self.tab_bar {
-            self.tab_bar = new_tab_bar;
+        if new_tab_bar_state != self.tab_bar_state {
+            self.tab_bar_state = new_tab_bar_state;
             self.invalidate_fancy_tab_bar();
             self.invalidate_modal();
             if let Some(window) = self.window.as_ref() {
@@ -2094,10 +2278,10 @@ impl TermWindow {
     fn schedule_next_status_update(&mut self) {
         if let Some(window) = self.window.as_ref() {
             let now = Instant::now();
-            if self.last_status_call <= now {
+            if self.last_status_called_at <= now {
                 let interval = Duration::from_millis(self.config.status_update_interval);
                 let target = now + interval;
-                self.last_status_call = target;
+                self.last_status_called_at = target;
 
                 let window = window.clone();
                 promise::spawn::spawn(async move {
@@ -2120,16 +2304,16 @@ impl TermWindow {
             };
             let (padding_left, padding_top) = self.padding_left_top();
 
+            let metrics = self.font_render_metrics;
             let r = Rect::new(
                 Point::new(
-                    (((cursor.x + pos.left) as isize).max(0) * self.render_metrics.cell_size.width)
+                    (((cursor.x + pos.left) as isize).max(0) * metrics.cell_size.width)
                         .add(padding_left as isize),
-                    ((cursor.y + pos.top as isize - top).max(0)
-                        * self.render_metrics.cell_size.height)
+                    ((cursor.y + pos.top as isize - top).max(0) * metrics.cell_size.height)
                         .add(tab_bar_height as isize)
                         .add(padding_top as isize),
                 ),
-                self.render_metrics.cell_size,
+                metrics.cell_size,
             );
             win.set_text_cursor_position(r);
         }
@@ -2468,7 +2652,10 @@ impl TermWindow {
 
     /// Returns the Prompt semantic zones
     fn get_semantic_prompt_zones(&mut self, pane: &Arc<dyn Pane>) -> &[StableRowIndex] {
-        let cache = self.semantic_zones.entry(pane.pane_id()).or_default();
+        let cache = self
+            .cached_semantic_zones
+            .entry(pane.pane_id())
+            .or_default();
 
         let seqno = pane.get_current_seqno();
         if cache.seqno != seqno {
@@ -3021,7 +3208,7 @@ impl TermWindow {
 
                 if mux.iter_windows_in_workspace(&name).is_empty() {
                     let spawn = spawn.clone().unwrap_or_default();
-                    let size = self.terminal_size;
+                    let size = self.window_terminal_size;
                     let term_config = Arc::new(TermConfig::with_config(self.config.clone()));
                     let src_window_id = self.mux_window_id;
 
@@ -3293,22 +3480,22 @@ impl TermWindow {
         let mux = Mux::get();
         for (_, state) in self.tab_state.borrow().iter() {
             if let Some(overlay) = state.overlay.as_ref().map(|o| &o.pane) {
-                overlay.resize(self.terminal_size).ok();
+                overlay.resize(self.window_terminal_size).ok();
             }
         }
         for (pane_id, state) in self.pane_state.borrow().iter() {
             if let Some(overlay) = state.overlay.as_ref().map(|o| &o.pane) {
                 if let Some(pane) = mux.get_pane(*pane_id) {
                     let dims = pane.get_dimensions();
+                    let win_term_size = self.window_terminal_size;
                     overlay
                         .resize(TerminalSize {
                             cols: dims.cols,
                             rows: dims.viewport_rows,
-                            dpi: self.terminal_size.dpi,
-                            pixel_height: (self.terminal_size.pixel_height
-                                / self.terminal_size.rows)
+                            dpi: win_term_size.dpi,
+                            pixel_height: (win_term_size.pixel_height / win_term_size.rows)
                                 * dims.viewport_rows,
-                            pixel_width: (self.terminal_size.pixel_width / self.terminal_size.cols)
+                            pixel_width: (win_term_size.pixel_width / win_term_size.cols)
                                 * dims.cols,
                         })
                         .ok();
@@ -3500,8 +3687,8 @@ impl TermWindow {
                 top: 0,
                 width: size.cols as _,
                 height: size.rows as _,
-                pixel_width: size.cols * self.render_metrics.cell_size.width as usize,
-                pixel_height: size.rows * self.render_metrics.cell_size.height as usize,
+                pixel_width: size.cols * self.font_render_metrics.cell_size.width as usize,
+                pixel_height: size.rows * self.font_render_metrics.cell_size.height as usize,
                 pane,
             }]
         } else {

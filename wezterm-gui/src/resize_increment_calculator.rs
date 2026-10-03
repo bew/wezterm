@@ -1,4 +1,4 @@
-use ::window::parameters::Border;
+use ::window::os_metrics::Border;
 use ::window::ResizeIncrement;
 
 pub struct ResizeIncrementCalculator {

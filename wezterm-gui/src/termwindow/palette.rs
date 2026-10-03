@@ -442,26 +442,20 @@ impl CommandPalette {
         }
 
         let dimensions = term_window.dimensions;
-        let size = term_window.terminal_size;
+        let size = term_window.window_terminal_size;
 
         // Avoid covering the entire width
         let desired_width = (size.cols / 3).max(120).min(size.cols);
 
         // Center it
         let avail_pixel_width =
-            size.cols as f32 * term_window.render_metrics.cell_size.width as f32;
+            size.cols as f32 * term_window.font_render_metrics.cell_size.width as f32;
         let desired_pixel_width =
-            desired_width as f32 * term_window.render_metrics.cell_size.width as f32;
+            desired_width as f32 * term_window.font_render_metrics.cell_size.width as f32;
 
         let element = Element::new(&font, ElementContent::Children(elements))
             .colors(ElementColors {
-                border: BorderColor::new(
-                    term_window
-                        .config
-                        .command_palette_bg_color
-                        .to_linear()
-                        .into(),
-                ),
+                border: BorderColor::new(term_window.config.command_palette_bg_color.to_linear()),
                 bg: term_window
                     .config
                     .command_palette_bg_color
@@ -528,7 +522,7 @@ impl CommandPalette {
                     padding_left + x_adjust,
                     top_pixel_y,
                     desired_pixel_width,
-                    size.rows as f32 * term_window.render_metrics.cell_size.height as f32,
+                    size.rows as f32 * term_window.font_render_metrics.cell_size.height as f32,
                 ),
                 metrics: &metrics,
                 gl_state: term_window.render_state.as_ref().unwrap(),

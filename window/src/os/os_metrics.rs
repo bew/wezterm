@@ -23,7 +23,7 @@ pub struct Border {
 }
 
 #[derive(Default, Clone, Debug)]
-pub struct Parameters {
+pub struct OSMetrics {
     pub title_bar: TitleBar,
     /// If present, the application should draw it
     pub border_dimensions: Option<Border>,
