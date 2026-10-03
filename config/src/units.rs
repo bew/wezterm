@@ -1,6 +1,9 @@
 use std::str::FromStr;
 use wezterm_dynamic::{FromDynamic, FromDynamicOptions, ToDynamic, Value};
 
+/// Config-level optional pixel dimension.
+/// Deserializes a `Dimension` with the *Pixels* default unit, steering unit-less
+/// values to pixels; a null value is preserved as `None`.
 #[derive(Debug, Copy, Clone)]
 pub struct OptPixelUnit(Option<Dimension>);
 
@@ -22,6 +25,9 @@ impl From<OptPixelUnit> for Option<Dimension> {
     }
 }
 
+/// Config-level pixel dimension.
+/// Deserializes a `Dimension` with the *Pixels* default unit, steering unit-less
+/// values to pixels.
 #[derive(Debug, Copy, Clone)]
 pub struct PixelUnit(Dimension);
 

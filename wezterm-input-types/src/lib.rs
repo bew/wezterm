@@ -20,10 +20,22 @@ use alloc::{format, vec};
 #[cfg(feature = "std")]
 use std::collections::HashMap;
 
+/// Phantom unit tag for lengths in a window's client-area pixel space.
+/// Parameterizes `euclid` types so that lengths from different coordinate
+/// spaces (for example window-relative and screen-relative) are not
+/// interchangeable.
 pub struct PixelUnit;
+
+/// Phantom unit tag for lengths in the global screen/desktop coordinate space.
+/// Distinct from [`PixelUnit`] so window-relative and desktop coordinates are
+/// not interchangeable.
 pub struct ScreenPixelUnit;
+
+/// A point in a window's client-area pixel space, with whole-pixel resolution.
 pub type Point = euclid::Point2D<isize, PixelUnit>;
+/// A point in a window's client-area pixel space, with subpixel (`f32`) resolution.
 pub type PointF = euclid::Point2D<f32, PixelUnit>;
+/// A point in the global screen/desktop coordinate space.
 pub type ScreenPoint = euclid::Point2D<isize, ScreenPixelUnit>;
 
 /// Which key is pressed.  Not all of these are probable to appear

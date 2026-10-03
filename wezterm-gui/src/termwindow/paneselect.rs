@@ -137,14 +137,13 @@ impl PaneSelector {
                     bounds: euclid::rect(
                         padding_left
                             + ((pos.left as f32 + pane_dims.cols as f32 / 2.)
-                                * term_window.font_render_metrics.cell_size.width as f32),
+                                * term_window.render_metrics.cell_size.width as f32),
                         top_pixel_y
                             + ((pos.top as f32 + pane_dims.viewport_rows as f32 / 2.)
-                                * term_window.font_render_metrics.cell_size.height as f32),
-                        pane_dims.cols as f32
-                            * term_window.font_render_metrics.cell_size.width as f32,
+                                * term_window.render_metrics.cell_size.height as f32),
+                        pane_dims.cols as f32 * term_window.render_metrics.cell_size.width as f32,
                         pane_dims.viewport_rows as f32
-                            * term_window.font_render_metrics.cell_size.height as f32,
+                            * term_window.render_metrics.cell_size.height as f32,
                     ),
                     metrics: &metrics,
                     gl_state: term_window.render_state.as_ref().unwrap(),

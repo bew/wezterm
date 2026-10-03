@@ -447,12 +447,12 @@ impl crate::TermWindow {
         let h_context = DimensionContext {
             dpi: self.dimensions.dpi as f32,
             pixel_max: pixel_width,
-            pixel_cell: self.font_render_metrics.cell_size.width as f32,
+            pixel_cell: self.render_metrics.cell_size.width as f32,
         };
         let v_context = DimensionContext {
             dpi: self.dimensions.dpi as f32,
             pixel_max: pixel_height,
-            pixel_cell: self.font_render_metrics.cell_size.height as f32,
+            pixel_cell: self.render_metrics.cell_size.height as f32,
         };
 
         // log::info!("tex {tex_width}x{tex_height} aspect={aspect}");
@@ -532,7 +532,7 @@ impl crate::TermWindow {
 
         let mut start_tile = 0;
         if let Some(factor) = layer.def.attachment.scroll_factor() {
-            let distance = top as f32 * self.font_render_metrics.cell_size.height as f32 * factor;
+            let distance = top as f32 * self.render_metrics.cell_size.height as f32 * factor;
             let num_tiles = distance / repeat_y;
             origin_y -= (num_tiles.fract() * repeat_y).floor();
             start_tile = num_tiles.floor() as usize;

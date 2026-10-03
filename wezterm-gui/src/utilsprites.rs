@@ -9,17 +9,37 @@ use std::rc::Rc;
 use wezterm_font::units::*;
 use wezterm_font::{FontConfiguration, FontMetrics};
 
+/// Pixel geometry for a terminal cell, derived from font metrics + config.
+///
+/// Used to convert between the cell grid and pixels, and to position text and
+/// its decorations.
 #[derive(Copy, Clone, Debug)]
 pub struct RenderMetrics {
+    /// Negative offset _added_ to the cell's bottom edge to compute the text baseline.
+    /// note: `baseline = cell_height + descender`.
+    ///
+    /// Stored as a fractional pixel distance so subpixel precision can survives subsequent
+    /// scaling applied by [`RenderMetrics::scale_line_height`].
     pub descender: PixelLength,
+    /// Row within a cell at which an underline is drawn, counted from top edge.
     pub descender_row: IntPixelLength,
+    /// Row at which the second stroke of a double underline is drawn, counted from top edge.
     pub descender_plus_two: IntPixelLength,
+    /// Thickness of underline and strikethrough strokes, in physical pixels.
+    /// At least 1.
     pub underline_height: IntPixelLength,
+    /// Row at which a strikethrough is drawn, counted from top edge.
     pub strike_row: IntPixelLength,
+    /// Width and height of a single terminal cell, in physical pixels.
+    /// Rounded up to whole pixels.
     pub cell_size: Size,
 }
 
 impl RenderMetrics {
+    /// Builds metrics from raw font metrics.
+    ///
+    /// Unlike [`RenderMetrics::new`], no overrides like line-height / cell-width scaling
+    /// from config are applied.
     pub fn with_font_metrics(metrics: &FontMetrics) -> Self {
         let (cell_height, cell_width) = (
             metrics.cell_height.get().ceil() as usize,
@@ -44,6 +64,10 @@ impl RenderMetrics {
         }
     }
 
+    /// Returns a copy scaled by a line-height factor.
+    ///
+    /// The cell grows or shrinks and the decoration rows shift to keep the text
+    /// vertically centered.
     pub fn scale_line_height(&self, line_height: f64) -> Self {
         let size = euclid::size2(
             self.cell_size.width,
@@ -62,12 +86,19 @@ impl RenderMetrics {
         }
     }
 
+    /// Returns a copy with the cell width multiplied by `scale`.
     pub fn scale_cell_width(&self, scale: f64) -> Self {
         let mut scaled = *self; // make a copy
         scaled.cell_size.width = (self.cell_size.width as f64 * scale) as isize;
         scaled
     }
 
+    /// Builds the window's font metrics from the configuration's default font.
+    ///
+    /// Applies the config `line_height` and `cell_width` scaling, plus any
+    /// config overrides for underline thickness, underline position and
+    /// strikethrough position.
+    /// Can fail if the font metrics are unavailable.
     pub fn new(fonts: &Rc<FontConfiguration>) -> anyhow::Result<Self> {
         let metrics = fonts
             .default_font_metrics()
@@ -81,8 +112,8 @@ impl RenderMetrics {
             (metrics.cell_width.get() * cell_width).ceil() as usize,
         );
 
-        // When line_height != 1.0, we want to adjust the baseline position
-        // such that we are horizontally centered.
+        // When line_height != 1.0, we adjust the text baseline position so the text stays
+        // vertically centered.
         let line_height_y_adjust = (cell_height as f64 - metrics.cell_height.get().ceil()) / 2.;
 
         let config = fonts.config();

@@ -308,7 +308,7 @@ impl crate::TermWindow {
                     underline_height,
                     cell_size: euclid::size2(cell_size.width as isize, cell_size.height as isize),
                 },
-                &self.font_render_metrics,
+                &self.render_metrics,
             )?
             .texture_coords();
 
@@ -334,7 +334,7 @@ impl crate::TermWindow {
             .evaluate_as_pixels(DimensionContext {
                 dpi: self.dimensions.dpi as f32,
                 pixel_max: self.window_terminal_size.pixel_height as f32,
-                pixel_cell: self.font_render_metrics.cell_size.height as f32,
+                pixel_cell: self.render_metrics.cell_size.height as f32,
             })
     }
 
@@ -342,12 +342,12 @@ impl crate::TermWindow {
         let h_context = DimensionContext {
             dpi: self.dimensions.dpi as f32,
             pixel_max: self.window_terminal_size.pixel_width as f32,
-            pixel_cell: self.font_render_metrics.cell_size.width as f32,
+            pixel_cell: self.render_metrics.cell_size.width as f32,
         };
         let v_context = DimensionContext {
             dpi: self.dimensions.dpi as f32,
             pixel_max: self.window_terminal_size.pixel_height as f32,
-            pixel_cell: self.font_render_metrics.cell_size.height as f32,
+            pixel_cell: self.render_metrics.cell_size.height as f32,
         };
 
         let padding_left = self
@@ -454,7 +454,7 @@ impl crate::TermWindow {
         }
 
         let padding = self
-            .font_render_metrics
+            .render_metrics
             .cell_size
             .height
             .max(params.render_metrics.cell_size.width) as usize;
@@ -863,7 +863,7 @@ impl crate::TermWindow {
         self.shape_cache.borrow_mut().clear();
         self.line_to_ele_shape_cache.borrow_mut().clear();
         if let Some(render_state) = self.render_state.as_mut() {
-            render_state.recreate_texture_atlas(&self.fonts, &self.font_render_metrics, size)?;
+            render_state.recreate_texture_atlas(&self.fonts, &self.render_metrics, size)?;
         }
         Ok(())
     }

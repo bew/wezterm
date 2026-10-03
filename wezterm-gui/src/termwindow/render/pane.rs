@@ -105,8 +105,8 @@ impl crate::TermWindow {
                 config.text_background_opacity
             });
 
-        let cell_width = self.font_render_metrics.cell_size.width as f32;
-        let cell_height = self.font_render_metrics.cell_size.height as f32;
+        let cell_width = self.render_metrics.cell_size.width as f32;
+        let cell_height = self.render_metrics.cell_size.height as f32;
         let background_rect = {
             // We want to fill out to the edges of the splits
             let (x, width_delta) = if pos.left == 0 {
@@ -339,7 +339,7 @@ impl crate::TermWindow {
 
             let left_pixel_x = padding_left
                 + border.left.get() as f32
-                + (pos.left as f32 * self.font_render_metrics.cell_size.width as f32);
+                + (pos.left as f32 * self.render_metrics.cell_size.width as f32);
 
             let mut render = LineRender {
                 term_window: self,
@@ -436,7 +436,7 @@ impl crate::TermWindow {
                         shape_hash,
                         top_pixel_y: NotNan::new(self.top_pixel_y).unwrap()
                             + (line_idx + self.pos.top) as f32
-                                * self.term_window.font_render_metrics.cell_size.height as f32,
+                                * self.term_window.render_metrics.cell_size.height as f32,
                         left_pixel_x: NotNan::new(self.left_pixel_x).unwrap(),
                         phys_line_idx: line_idx,
                         reverse_video: self.dims.reverse_video,
@@ -493,7 +493,7 @@ impl crate::TermWindow {
                                 top_pixel_y: *quad_key.top_pixel_y,
                                 left_pixel_x: self.left_pixel_x,
                                 pixel_width: self.dims.cols as f32
-                                    * self.term_window.font_render_metrics.cell_size.width as f32,
+                                    * self.term_window.render_metrics.cell_size.width as f32,
                                 stable_line_idx: Some(stable_row),
                                 line: &line,
                                 selection: selrange.clone(),
@@ -520,7 +520,7 @@ impl crate::TermWindow {
                                     .term_window
                                     .config
                                     .experimental_pixel_positioning,
-                                render_metrics: self.term_window.font_render_metrics,
+                                render_metrics: self.term_window.render_metrics,
                                 shape_key: Some(shape_key),
                                 password_input,
                             },
@@ -590,8 +590,8 @@ impl crate::TermWindow {
     pub fn build_pane(&mut self, pos: &PositionedPane) -> anyhow::Result<ComputedElement> {
         // First compute the bounds for the pane background
 
-        let cell_width = self.font_render_metrics.cell_size.width as f32;
-        let cell_height = self.font_render_metrics.cell_size.height as f32;
+        let cell_width = self.render_metrics.cell_size.width as f32;
+        let cell_height = self.render_metrics.cell_size.height as f32;
         let (padding_left, padding_top) = self.padding_left_top();
         let tab_bar_height = if self.show_tab_bar {
             self.tab_bar_pixel_height()?

@@ -83,14 +83,14 @@ impl super::TermWindow {
             .sub(padding_top as isize)
             .sub(first_line_offset)
             .max(0)
-            / self.font_render_metrics.cell_size.height) as i64;
+            / self.render_metrics.cell_size.height) as i64;
 
         let x = (event
             .coords
             .x
             .sub((padding_left + border.left.get() as f32) as isize)
             .max(0) as f32)
-            / self.font_render_metrics.cell_size.width as f32;
+            / self.render_metrics.cell_size.width as f32;
         let x = if !pane.is_mouse_grabbed() {
             // Round the x coordinate so that we're a bit more forgiving of
             // the horizontal position when selecting cells
@@ -106,7 +106,7 @@ impl super::TermWindow {
             .sub(padding_top as isize)
             .sub(first_line_offset);
         if y > 0 {
-            y_pixel_offset = y_pixel_offset.max(0) % self.font_render_metrics.cell_size.height;
+            y_pixel_offset = y_pixel_offset.max(0) % self.render_metrics.cell_size.height;
         }
 
         let mut x_pixel_offset = event
@@ -114,7 +114,7 @@ impl super::TermWindow {
             .x
             .sub((padding_left + border.left.get() as f32) as isize);
         if x > 0 {
-            x_pixel_offset = x_pixel_offset.max(0) % self.font_render_metrics.cell_size.width;
+            x_pixel_offset = x_pixel_offset.max(0) % self.render_metrics.cell_size.width;
         }
 
         self.last_mouse_coords = (x, y);
@@ -708,11 +708,11 @@ impl super::TermWindow {
                 row = row.saturating_sub(pos.top as i64).max(0);
 
                 if position.column < pos.left {
-                    x_pixel_offset -= self.font_render_metrics.cell_size.width
+                    x_pixel_offset -= self.render_metrics.cell_size.width
                         * (pos.left as isize - position.column as isize);
                 }
                 if position.row < pos.top as i64 {
-                    y_pixel_offset -= self.font_render_metrics.cell_size.height
+                    y_pixel_offset -= self.render_metrics.cell_size.height
                         * (pos.top as isize - position.row as isize);
                 }
 

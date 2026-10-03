@@ -13,8 +13,8 @@ impl crate::TermWindow {
     ) -> anyhow::Result<()> {
         let palette = pane.palette();
         let foreground = palette.split.to_linear();
-        let cell_width = self.font_render_metrics.cell_size.width as f32;
-        let cell_height = self.font_render_metrics.cell_size.height as f32;
+        let cell_width = self.render_metrics.cell_size.width as f32;
+        let cell_height = self.render_metrics.cell_size.height as f32;
 
         let border = self.get_os_border();
         let first_row_offset = if self.show_tab_bar && !self.config.tab_bar_at_bottom {
@@ -35,7 +35,7 @@ impl crate::TermWindow {
                 euclid::rect(
                     pos_x + (cell_width / 2.0),
                     pos_y - (cell_height / 2.0),
-                    self.font_render_metrics.underline_height as f32,
+                    self.render_metrics.underline_height as f32,
                     (1. + split.size as f32) * cell_height,
                 ),
                 foreground,
@@ -59,7 +59,7 @@ impl crate::TermWindow {
                     pos_x - (cell_width / 2.0),
                     pos_y + (cell_height / 2.0),
                     (1.0 + split.size as f32) * cell_width,
-                    self.font_render_metrics.underline_height as f32,
+                    self.render_metrics.underline_height as f32,
                 ),
                 foreground,
             )?;

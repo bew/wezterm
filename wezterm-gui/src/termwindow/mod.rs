@@ -495,9 +495,10 @@ pub struct TermWindow {
 
     /// Font configuration and metrics provider.
     fonts: Rc<FontConfiguration>,
-    /// Cached font cell metrics.
-    /// Updated on resize/scale changes.
-    pub font_render_metrics: RenderMetrics,
+    /// Pixel metrics for the configured font, used to convert between the cell
+    /// grid and pixels and to place the baseline and text decorations.
+    /// Recomputed from `fonts` on resize/scale changes.
+    pub render_metrics: RenderMetrics,
 
     // ------ Fields group: Input dispatch (keyboard + mouse)
 
@@ -735,7 +736,7 @@ impl TermWindow {
         let render_info = ctx.renderer_info();
         self.opengl_info.replace(render_info.clone());
 
-        match RenderState::new(ctx, &self.fonts, &self.font_render_metrics, ATLAS_SIZE) {
+        match RenderState::new(ctx, &self.fonts, &self.render_metrics, ATLAS_SIZE) {
             Ok(render_state) => {
                 log::debug!(
                     "OpenGL initialized! {} wezterm version: {}",
@@ -875,7 +876,7 @@ impl TermWindow {
             is_repaint_pending: false,
             pending_scale_changes: LinkedList::new(),
             fonts: Rc::clone(&fontconfig),
-            font_render_metrics: render_metrics,
+            render_metrics,
             // Fields group: Input dispatch (keyboard + mouse)
             input_map: InputMap::new(&config),
             leader_is_down: None,
@@ -1045,8 +1046,8 @@ impl TermWindow {
             if config.use_resize_increments {
                 window.set_resize_increments(
                     ResizeIncrementCalculator {
-                        x: myself.font_render_metrics.cell_size.width as u16,
-                        y: myself.font_render_metrics.cell_size.height as u16,
+                        x: myself.render_metrics.cell_size.width as u16,
+                        y: myself.render_metrics.cell_size.height as u16,
                         padding_left,
                         padding_top,
                         padding_right,
@@ -2018,7 +2019,7 @@ impl TermWindow {
             &config,
             &self.window_background,
             &self.dimensions,
-            &self.font_render_metrics,
+            &self.render_metrics,
         );
 
         self.invalidate_modal();
@@ -2173,7 +2174,7 @@ impl TermWindow {
         };
 
         let new_tab_bar_state = TabBarState::new(
-            self.dimensions.pixel_width / self.font_render_metrics.cell_size.width as usize,
+            self.dimensions.pixel_width / self.render_metrics.cell_size.width as usize,
             if hovering_in_tab_bar {
                 Some(self.last_mouse_coords.0)
             } else {
@@ -2304,7 +2305,7 @@ impl TermWindow {
             };
             let (padding_left, padding_top) = self.padding_left_top();
 
-            let metrics = self.font_render_metrics;
+            let metrics = self.render_metrics;
             let r = Rect::new(
                 Point::new(
                     (((cursor.x + pos.left) as isize).max(0) * metrics.cell_size.width)
@@ -3687,8 +3688,8 @@ impl TermWindow {
                 top: 0,
                 width: size.cols as _,
                 height: size.rows as _,
-                pixel_width: size.cols * self.font_render_metrics.cell_size.width as usize,
-                pixel_height: size.rows * self.font_render_metrics.cell_size.height as usize,
+                pixel_width: size.cols * self.render_metrics.cell_size.width as usize,
+                pixel_height: size.rows * self.render_metrics.cell_size.height as usize,
                 pane,
             }]
         } else {

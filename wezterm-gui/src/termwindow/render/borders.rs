@@ -142,7 +142,7 @@ impl crate::TermWindow {
             &self.os_metrics,
             &self.config,
             &self.dimensions,
-            &self.font_render_metrics,
+            &self.render_metrics,
         )
     }
 }

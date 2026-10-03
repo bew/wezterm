@@ -40,8 +40,8 @@ impl crate::TermWindow {
         self.ui_items
             .append(&mut self.tab_bar_state.compute_ui_items(
                 tab_bar_y as usize,
-                self.font_render_metrics.cell_size.height as usize,
-                self.font_render_metrics.cell_size.width as usize,
+                self.render_metrics.cell_size.height as usize,
+                self.render_metrics.cell_size.width as usize,
             ));
 
         let window_is_transparent =
@@ -70,13 +70,13 @@ impl crate::TermWindow {
                 palette: &palette,
                 dims: &RenderableDimensions {
                     cols: self.dimensions.pixel_width
-                        / self.font_render_metrics.cell_size.width as usize,
+                        / self.render_metrics.cell_size.width as usize,
                     physical_top: 0,
                     scrollback_rows: 0,
                     scrollback_top: 0,
                     viewport_rows: 1,
                     dpi: self.window_terminal_size.dpi,
-                    pixel_height: self.font_render_metrics.cell_size.height as usize,
+                    pixel_height: self.render_metrics.cell_size.height as usize,
                     pixel_width: self.window_terminal_size.pixel_width,
                     reverse_video: false,
                 },
@@ -97,7 +97,7 @@ impl crate::TermWindow {
                 style: None,
                 font: None,
                 use_pixel_positioning: self.config.experimental_pixel_positioning,
-                render_metrics: self.font_render_metrics,
+                render_metrics: self.render_metrics,
                 shape_key: None,
                 password_input: false,
             },
@@ -121,6 +121,6 @@ impl crate::TermWindow {
     }
 
     pub fn tab_bar_pixel_height(&self) -> anyhow::Result<f32> {
-        Self::tab_bar_pixel_height_impl(&self.config, &self.fonts, &self.font_render_metrics)
+        Self::tab_bar_pixel_height_impl(&self.config, &self.fonts, &self.render_metrics)
     }
 }

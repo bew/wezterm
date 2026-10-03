@@ -449,9 +449,9 @@ impl CommandPalette {
 
         // Center it
         let avail_pixel_width =
-            size.cols as f32 * term_window.font_render_metrics.cell_size.width as f32;
+            size.cols as f32 * term_window.render_metrics.cell_size.width as f32;
         let desired_pixel_width =
-            desired_width as f32 * term_window.font_render_metrics.cell_size.width as f32;
+            desired_width as f32 * term_window.render_metrics.cell_size.width as f32;
 
         let element = Element::new(&font, ElementContent::Children(elements))
             .colors(ElementColors {
@@ -522,7 +522,7 @@ impl CommandPalette {
                     padding_left + x_adjust,
                     top_pixel_y,
                     desired_pixel_width,
-                    size.rows as f32 * term_window.font_render_metrics.cell_size.height as f32,
+                    size.rows as f32 * term_window.render_metrics.cell_size.height as f32,
                 ),
                 metrics: &metrics,
                 gl_state: term_window.render_state.as_ref().unwrap(),

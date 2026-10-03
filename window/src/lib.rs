@@ -58,11 +58,17 @@ pub struct Dimensions {
     pub dpi: usize,
 }
 
+/// A length in a window's client-area pixel space, with whole-pixel resolution.
 pub type ULength = euclid::Length<usize, PixelUnit>;
+/// A rectangle in a window's client-area pixel space, with whole-pixel resolution.
 pub type Rect = euclid::Rect<isize, PixelUnit>;
+/// A rectangle in a window's client-area pixel space, with subpixel (`f32`) resolution.
 pub type RectF = euclid::Rect<f32, PixelUnit>;
+/// A size in a window's client-area pixel space, with whole-pixel resolution.
 pub type Size = euclid::Size2D<isize, PixelUnit>;
+/// A size in a window's client-area pixel space, with subpixel (`f32`) resolution.
 pub type SizeF = euclid::Size2D<f32, PixelUnit>;
+/// A rectangle in the global screen/desktop coordinate space.
 pub type ScreenRect = euclid::Rect<isize, ScreenPixelUnit>;
 
 /// Represents the preferred appearance of the windowing

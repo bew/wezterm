@@ -769,7 +769,7 @@ impl crate::TermWindow {
                         attrs.strikethrough(),
                         attrs.underline(),
                         attrs.overline(),
-                        &self.font_render_metrics,
+                        &self.render_metrics,
                     )?
                     .texture_coords();
                 let bg_is_default = attrs.background() == ColorAttribute::Default;
@@ -864,7 +864,7 @@ impl crate::TermWindow {
                 &cluster,
                 &gl_state,
                 None,
-                &self.font_render_metrics,
+                &self.render_metrics,
             )?;
             let pixel_width = glyph_info
                 .iter()

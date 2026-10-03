@@ -68,7 +68,7 @@ where
 {
     let pane_id = pane.pane_id();
     let dims = pane.get_dimensions();
-    let metrics = term_window.font_render_metrics;
+    let metrics = term_window.render_metrics;
     let size = TerminalSize {
         cols: dims.cols,
         rows: dims.viewport_rows,
