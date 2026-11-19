@@ -1,3 +1,7 @@
+---
+created-at: 20261001T0948
+---
+
 # [READY] Tracked Spawns
 
 ## Introduction
@@ -219,7 +223,7 @@ The in-process restricted window reaches the same exit semantics with no cross-p
 ## Related artifacts
 
 - PR 8203: implements `start --wait-exit`, initial-pane tracking, a pane-ID wait RPC, and a stdout-based new-GUI report path; this spec replaces those mechanisms.
-- Restricted windows: a separate spec at `_WIP_SPECS/restricted-window/`; still DRAFT, and the no-GUI host of `wezterm start --wait-pane-exit` depends on the subset pinned here.
+- Restricted windows: a separate spec at `<spec:restricted-window>`; still DRAFT, and the no-GUI host of `wezterm start --wait-pane-exit` depends on the subset pinned here.
 
 ## Global Open Questions
 
