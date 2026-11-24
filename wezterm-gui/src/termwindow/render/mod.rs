@@ -292,7 +292,7 @@ impl crate::TermWindow {
         layer_num: usize,
         point: PointF,
         polys: &'static [Poly],
-        underline_height: IntPixelLength,
+        base_line_thickness: IntPixelLength,
         cell_size: SizeF,
         color: LinearRgba,
     ) -> anyhow::Result<QuadImpl<'a>> {
@@ -305,7 +305,7 @@ impl crate::TermWindow {
             .cached_block(
                 BlockKey::PolyWithCustomMetrics {
                     polys,
-                    underline_height,
+                    base_line_thickness,
                     cell_size: euclid::size2(cell_size.width as isize, cell_size.height as isize),
                 },
                 &self.render_metrics,

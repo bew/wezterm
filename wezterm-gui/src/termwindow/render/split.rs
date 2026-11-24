@@ -35,7 +35,7 @@ impl crate::TermWindow {
                 euclid::rect(
                     pos_x + (cell_width / 2.0),
                     pos_y - (cell_height / 2.0),
-                    self.render_metrics.underline_height as f32,
+                    self.render_metrics.font_line_thickness as f32,
                     (1. + split.size as f32) * cell_height,
                 ),
                 foreground,
@@ -59,7 +59,7 @@ impl crate::TermWindow {
                     pos_x - (cell_width / 2.0),
                     pos_y + (cell_height / 2.0),
                     (1.0 + split.size as f32) * cell_width,
-                    self.render_metrics.underline_height as f32,
+                    self.render_metrics.font_line_thickness as f32,
                 ),
                 foreground,
             )?;

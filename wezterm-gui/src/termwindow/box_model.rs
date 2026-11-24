@@ -572,7 +572,7 @@ impl super::TermWindow {
         let style = element.font.style();
         let border = element.border.to_pixels(context);
         let padding = element.padding.to_pixels(context);
-        let baseline = context.height.pixel_cell + context.metrics.descender.get() as f32;
+        let baseline = context.height.pixel_cell + context.metrics.font_descender.get() as f32;
         let min_width = match element.min_width {
             Some(w) => w.evaluate_as_pixels(context.width),
             None => 0.0,

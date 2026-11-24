@@ -132,7 +132,7 @@ impl crate::TermWindow {
                 TabBarItem::NewTabButton => Element::new(
                     &font,
                     ElementContent::Poly {
-                        line_width: metrics.underline_height.max(2),
+                        line_width: metrics.font_line_thickness.max(2),
                         poly: SizedPoly {
                             poly: PLUS_BUTTON,
                             width: Dimension::Pixels(metrics.cell_size.height as f32 / 2.),
@@ -481,7 +481,7 @@ fn make_x_button(
     Element::new(
         &font,
         ElementContent::Poly {
-            line_width: metrics.underline_height.max(2),
+            line_width: metrics.font_line_thickness.max(2),
             poly: SizedPoly {
                 poly: X_BUTTON,
                 width: Dimension::Pixels(metrics.cell_size.height as f32 / 2.),

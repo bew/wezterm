@@ -16,21 +16,21 @@ use wezterm_font::{FontConfiguration, FontMetrics};
 #[derive(Copy, Clone, Debug)]
 pub struct RenderMetrics {
     /// Negative offset _added_ to the cell's bottom edge to compute the text baseline.
-    /// note: `baseline = cell_height + descender`.
+    /// note: `text_baseline = cell_height + font_descender`.
     ///
-    /// Stored as a fractional pixel distance so subpixel precision can survives subsequent
+    /// Stored as a fractional pixel distance so subpixel precision can survive subsequent
     /// scaling applied by [`RenderMetrics::scale_line_height`].
-    pub descender: PixelLength,
-    /// Row within a cell at which an underline is drawn, counted from top edge.
-    pub descender_row: IntPixelLength,
-    /// Row at which the second stroke of a double underline is drawn, counted from top edge.
-    pub descender_plus_two: IntPixelLength,
+    pub font_descender: PixelLength,
     /// Thickness of underline and strikethrough strokes, in physical pixels.
     /// At least 1.
-    pub underline_height: IntPixelLength,
+    pub font_line_thickness: IntPixelLength,
+    /// Row within a cell at which an underline is drawn, counted from top edge.
+    pub underline_row: IntPixelLength,
+    /// Row at which the second stroke of a double underline is drawn, counted from top edge.
+    pub underline_2nd_row: IntPixelLength,
     /// Row at which a strikethrough is drawn, counted from top edge.
-    pub strike_row: IntPixelLength,
-    /// Width and height of a single terminal cell, in physical pixels.
+    pub strikethrough_row: IntPixelLength,
+    /// Width and height size of a single terminal cell, in physical pixels.
     /// Rounded up to whole pixels.
     pub cell_size: Size,
 }
@@ -46,21 +46,21 @@ impl RenderMetrics {
             metrics.cell_width.get().ceil() as usize,
         );
 
-        let underline_height = metrics.underline_thickness.get().round().max(1.) as isize;
+        let font_line_thickness = metrics.underline_thickness.get().round().max(1.) as isize;
 
-        let descender_row =
+        let underline_row =
             (cell_height as f64 + (metrics.descender - metrics.underline_position).get()) as isize;
-        let descender_plus_two =
-            (2 * underline_height + descender_row).min(cell_height as isize - underline_height);
-        let strike_row = descender_row / 2;
+        let underline_2nd_row = (2 * font_line_thickness + underline_row)
+            .min(cell_height as isize - font_line_thickness);
+        let strikethrough_row = underline_row / 2;
 
         Self {
-            descender: metrics.descender,
-            descender_row,
-            descender_plus_two,
-            strike_row,
+            font_descender: metrics.descender,
+            underline_row,
+            underline_2nd_row,
+            strikethrough_row,
             cell_size: Size::new(cell_width as isize, cell_height as isize),
-            underline_height,
+            font_line_thickness,
         }
     }
 
@@ -74,14 +74,14 @@ impl RenderMetrics {
             (self.cell_size.height as f64 * line_height) as isize,
         );
 
-        let adjust = (((self.descender_row as f64 * line_height) - self.descender_row as f64) / 2.0)
+        let adjust = (((self.underline_row as f64 * line_height) - self.underline_row as f64) / 2.0)
             as isize;
         Self {
-            descender: self.descender - PixelLength::new(adjust as f64),
-            descender_row: self.descender_row - adjust,
-            descender_plus_two: self.descender_plus_two - adjust,
-            underline_height: self.underline_height,
-            strike_row: self.strike_row,
+            font_descender: self.font_descender - PixelLength::new(adjust as f64),
+            underline_row: self.underline_row - adjust,
+            underline_2nd_row: self.underline_2nd_row - adjust,
+            font_line_thickness: self.font_line_thickness,
+            strikethrough_row: self.strikethrough_row,
             cell_size: size,
         }
     }
@@ -117,7 +117,7 @@ impl RenderMetrics {
         let line_height_y_adjust = (cell_height as f64 - metrics.cell_height.get().ceil()) / 2.;
 
         let config = fonts.config();
-        let underline_height = match &config.underline_thickness {
+        let font_line_thickness = match &config.underline_thickness {
             None => metrics.underline_thickness.get().round().max(1.) as isize,
             Some(d) => d
                 .evaluate_as_pixels(DimensionContext {
@@ -137,11 +137,11 @@ impl RenderMetrics {
             }) as f64,
         };
 
-        let descender_row = (cell_height as f64 + (metrics.descender.get() - underline_position)
+        let underline_row = (cell_height as f64 + (metrics.descender.get() - underline_position)
             - line_height_y_adjust) as isize;
-        let descender_plus_two =
-            (2 * underline_height + descender_row).min(cell_height as isize - underline_height);
-        let strike_row = match &config.strikethrough_position {
+        let underline_2nd_row = (2 * font_line_thickness + underline_row)
+            .min(cell_height as isize - font_line_thickness);
+        let strikethrough_row = match &config.strikethrough_position {
             None => {
                 ((cell_height as f64 + (metrics.descender.get() - underline_position)) / 2.)
                     as isize
@@ -149,19 +149,19 @@ impl RenderMetrics {
             Some(d) => d
                 .evaluate_as_pixels(DimensionContext {
                     dpi: fonts.get_dpi() as f32,
-                    pixel_max: descender_row as f32 / 2.,
+                    pixel_max: underline_row as f32 / 2.,
                     pixel_cell: cell_height as f32,
                 })
                 .round() as isize,
         };
 
         Ok(Self {
-            descender: metrics.descender - PixelLength::new(line_height_y_adjust),
-            descender_row,
-            descender_plus_two,
-            strike_row,
+            font_descender: metrics.descender - PixelLength::new(line_height_y_adjust),
+            underline_row,
+            underline_2nd_row,
+            strikethrough_row,
             cell_size: Size::new(cell_width as isize, cell_height as isize),
-            underline_height,
+            font_line_thickness,
         })
     }
 }

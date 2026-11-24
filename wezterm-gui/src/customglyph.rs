@@ -103,8 +103,8 @@ impl BlockAlpha {
     }
 }
 
-/// Represents a scaled width of the underline thickness.
-/// Can either multiple or divide by the specified amount
+/// Represents a scaled width of the base line thickness.
+/// Can either multiply or divide by the specified amount
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
 pub enum LineScale {
     Mul(i8),
@@ -134,7 +134,7 @@ pub enum BlockCoord {
     Frac(i8, i8),
 
     /// Like Frac() above, but also specifies a scale to use
-    /// together with the underline height to adjust the position.
+    /// together with the base line thickness to adjust the position.
     /// This is helpful because the line drawing routines stroke
     /// along the center of the line in the direction of the line,
     /// but don't pad the end of the line out by the width automatically.
@@ -154,7 +154,7 @@ pub enum BlockCoord {
 
 impl BlockCoord {
     /// Compute the actual pixel value given the max dimension.
-    pub fn to_pixel(self, max: usize, underline_height: f32, max_square: usize) -> f32 {
+    pub fn to_pixel(self, max: usize, base_line_thickness: f32, max_square: usize) -> f32 {
         /// For interior points, adjust so that we get the middle of the row;
         /// in AA modes with 1px wide strokes this gives better results.
         fn hint(v: f32) -> f32 {
@@ -168,9 +168,9 @@ impl BlockCoord {
             Self::Zero => 0.,
             Self::One => max as f32,
             Self::Frac(num, den) => hint(max as f32 * num as f32 / den as f32),
-            Self::FracWithOffset(num, den, under) => {
-                hint((max as f32 * num as f32 / den as f32) + (underline_height * under.to_scale()))
-            }
+            Self::FracWithOffset(num, den, line_scale) => hint(
+                (max as f32 * num as f32 / den as f32) + (base_line_thickness * line_scale.to_scale()),
+            ),
             Self::SquareZero => 0. + (max - max_square) as f32 / 2.0,
             Self::SquareOne => max as f32 - (max - max_square) as f32 / 2.0,
             Self::SquareFrac(num, den) => {
@@ -236,7 +236,7 @@ pub enum BlockKey {
 
     PolyWithCustomMetrics {
         polys: &'static [Poly],
-        underline_height: IntPixelLength,
+        base_line_thickness: IntPixelLength,
         cell_size: Size,
     },
 }
@@ -590,33 +590,33 @@ pub enum PolyCommand {
 }
 
 impl PolyCommand {
-    fn to_skia(&self, width: usize, height: usize, underline_height: f32, pb: &mut PathBuilder) {
+    fn to_skia(&self, width: usize, height: usize, base_line_thickness: f32, pb: &mut PathBuilder) {
         match self {
             Self::MoveTo(x, y) => pb.move_to(
-                x.to_pixel(width, underline_height, width.min(height)),
-                y.to_pixel(height, underline_height, width.min(height)),
+                x.to_pixel(width, base_line_thickness, width.min(height)),
+                y.to_pixel(height, base_line_thickness, width.min(height)),
             ),
             Self::LineTo(x, y) => pb.line_to(
-                x.to_pixel(width, underline_height, width.min(height)),
-                y.to_pixel(height, underline_height, width.min(height)),
+                x.to_pixel(width, base_line_thickness, width.min(height)),
+                y.to_pixel(height, base_line_thickness, width.min(height)),
             ),
             Self::QuadTo {
                 control: (x1, y1),
                 to: (x, y),
             } => pb.quad_to(
-                x1.to_pixel(width, underline_height, width.min(height)),
-                y1.to_pixel(height, underline_height, width.min(height)),
-                x.to_pixel(width, underline_height, width.min(height)),
-                y.to_pixel(height, underline_height, width.min(height)),
+                x1.to_pixel(width, base_line_thickness, width.min(height)),
+                y1.to_pixel(height, base_line_thickness, width.min(height)),
+                x.to_pixel(width, base_line_thickness, width.min(height)),
+                y.to_pixel(height, base_line_thickness, width.min(height)),
             ),
             Self::Oval {
                 center: (x, y),
                 radiuses: (w, h),
             } => {
-                let x = x.to_pixel(width, underline_height, width.min(height)) - width as f32;
-                let y = y.to_pixel(height, underline_height, width.min(height)) - height as f32;
-                let w = w.to_pixel(width, underline_height, width.min(height)) * 2.0;
-                let h = h.to_pixel(height, underline_height, width.min(height)) * 2.0;
+                let x = x.to_pixel(width, base_line_thickness, width.min(height)) - width as f32;
+                let y = y.to_pixel(height, base_line_thickness, width.min(height)) - height as f32;
+                let w = w.to_pixel(width, base_line_thickness, width.min(height)) * 2.0;
+                let h = h.to_pixel(height, base_line_thickness, width.min(height)) * 2.0;
 
                 if let Some(oval) = tiny_skia::Rect::from_xywh(x, y, w, h) {
                     pb.push_oval(oval);
@@ -628,9 +628,9 @@ impl PolyCommand {
                 center: (x, y),
                 radius: r,
             } => {
-                let x = x.to_pixel(width, underline_height, width.min(height));
-                let y = y.to_pixel(height, underline_height, width.min(height));
-                let r = r.to_pixel(width.min(height), underline_height, width.min(height));
+                let x = x.to_pixel(width, base_line_thickness, width.min(height));
+                let y = y.to_pixel(height, base_line_thickness, width.min(height));
+                let r = r.to_pixel(width.min(height), base_line_thickness, width.min(height));
 
                 pb.push_circle(x, y, r);
             }
@@ -5041,10 +5041,15 @@ impl GlyphCache {
             paint.force_hq_pipeline = true;
             let mut pb = PathBuilder::new();
             for item in path.iter() {
-                item.to_skia(width, height, metrics.underline_height as f32, &mut pb);
+                item.to_skia(width, height, metrics.font_line_thickness as f32, &mut pb);
             }
             let path = pb.finish().expect("poly path to be valid");
-            style.apply(metrics.underline_height as f32, &paint, &path, &mut pixmap);
+            style.apply(
+                metrics.font_line_thickness as f32,
+                &paint,
+                &path,
+                &mut pixmap,
+            );
         }
     }
 
@@ -5060,9 +5065,9 @@ impl GlyphCache {
 
         let mut metrics = metrics.scale_cell_width(width as f64);
         if let Some(d) = &self.fonts.config().cursor_thickness {
-            metrics.underline_height = d.evaluate_as_pixels(DimensionContext {
+            metrics.font_line_thickness = d.evaluate_as_pixels(DimensionContext {
                 dpi: self.fonts.get_dpi() as f32,
-                pixel_max: metrics.underline_height as f32,
+                pixel_max: metrics.font_line_thickness as f32,
                 pixel_cell: metrics.cell_size.height as f32,
             }) as isize;
         }
@@ -5145,15 +5150,15 @@ impl GlyphCache {
     ) -> anyhow::Result<Sprite> {
         let metrics = match &key.block {
             BlockKey::PolyWithCustomMetrics {
-                underline_height,
+                base_line_thickness,
                 cell_size,
                 ..
             } => RenderMetrics {
-                descender: PixelLength::new(0.),
-                descender_row: 0,
-                descender_plus_two: 0,
-                underline_height: *underline_height,
-                strike_row: 0,
+                font_descender: PixelLength::new(0.),
+                underline_row: 0,
+                underline_2nd_row: 0,
+                font_line_thickness: *base_line_thickness,
+                strikethrough_row: 0,
                 cell_size: cell_size.clone(),
             },
             _ => render_metrics.clone(),

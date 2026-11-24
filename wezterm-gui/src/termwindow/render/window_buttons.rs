@@ -261,7 +261,7 @@ pub fn window_button_element(
     let element = Element::new(
         &font,
         ElementContent::Poly {
-            line_width: metrics.underline_height.max(2),
+            line_width: metrics.font_line_thickness.max(2),
             poly,
         },
     );

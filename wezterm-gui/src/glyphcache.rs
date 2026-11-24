@@ -1156,15 +1156,15 @@ impl GlyphCache {
         let cell_rect = Rect::new(Point::new(0, 0), metrics.cell_size);
 
         let draw_single = |buffer: &mut Image| {
-            for row in 0..metrics.underline_height {
+            for row in 0..metrics.font_line_thickness {
                 buffer.draw_line(
                     Point::new(
                         cell_rect.origin.x,
-                        cell_rect.origin.y + metrics.descender_row + row,
+                        cell_rect.origin.y + metrics.underline_row + row,
                     ),
                     Point::new(
                         cell_rect.origin.x + metrics.cell_size.width,
-                        cell_rect.origin.y + metrics.descender_row + row,
+                        cell_rect.origin.y + metrics.underline_row + row,
                     ),
                     white,
                 );
@@ -1172,8 +1172,8 @@ impl GlyphCache {
         };
 
         let draw_dotted = |buffer: &mut Image| {
-            for row in 0..metrics.underline_height {
-                let y = (cell_rect.origin.y + metrics.descender_row + row) as usize;
+            for row in 0..metrics.font_line_thickness {
+                let y = (cell_rect.origin.y + metrics.underline_row + row) as usize;
                 if y >= metrics.cell_size.height as usize {
                     break;
                 }
@@ -1195,8 +1195,8 @@ impl GlyphCache {
         };
 
         let draw_dashed = |buffer: &mut Image| {
-            for row in 0..metrics.underline_height {
-                let y = (cell_rect.origin.y + metrics.descender_row + row) as usize;
+            for row in 0..metrics.font_line_thickness {
+                let y = (cell_rect.origin.y + metrics.underline_row + row) as usize;
                 if y >= metrics.cell_size.height as usize {
                     break;
                 }
@@ -1220,12 +1220,14 @@ impl GlyphCache {
             let max_y = metrics.cell_size.height as usize - 1;
             let x_factor = (2. * std::f32::consts::PI) / metrics.cell_size.width as f32;
 
-            // Have the wave go from the descender to the bottom of the cell
+            // The wave goes from the first underline row (usually the font descender row) to the
+            // bottom of the cell.
             let wave_height =
-                metrics.cell_size.height - (cell_rect.origin.y + metrics.descender_row);
+                metrics.cell_size.height - (cell_rect.origin.y + metrics.underline_row);
 
             let half_height = (wave_height as f32 / 4.).max(1.);
-            let y = ((cell_rect.origin.y + metrics.descender_row) as usize)
+            // Compute the starting Y coordinate of the wave
+            let y = ((cell_rect.origin.y + metrics.underline_row) as usize)
                 .saturating_sub(half_height as usize);
 
             fn add(x: usize, y: usize, val: u8, max_y: usize, buffer: &mut Image) {
@@ -1241,7 +1243,7 @@ impl GlyphCache {
                 let v1 = vertical.floor();
                 let v2 = vertical.ceil();
 
-                for row in 0..metrics.underline_height as usize {
+                for row in 0..metrics.font_line_thickness as usize {
                     let value = (255. * (vertical - v1).abs()) as u8;
                     add(
                         x,
@@ -1263,10 +1265,10 @@ impl GlyphCache {
 
         let draw_double = |buffer: &mut Image| {
             let first_line = metrics
-                .descender_row
-                .min(metrics.descender_plus_two - 2 * metrics.underline_height);
+                .underline_row
+                .min(metrics.underline_2nd_row - 2 * metrics.font_line_thickness);
 
-            for row in 0..metrics.underline_height {
+            for row in 0..metrics.font_line_thickness {
                 buffer.draw_line(
                     Point::new(cell_rect.origin.x, cell_rect.origin.y + first_line + row),
                     Point::new(
@@ -1278,11 +1280,11 @@ impl GlyphCache {
                 buffer.draw_line(
                     Point::new(
                         cell_rect.origin.x,
-                        cell_rect.origin.y + metrics.descender_plus_two + row,
+                        cell_rect.origin.y + metrics.underline_2nd_row + row,
                     ),
                     Point::new(
                         cell_rect.origin.x + metrics.cell_size.width,
-                        cell_rect.origin.y + metrics.descender_plus_two + row,
+                        cell_rect.origin.y + metrics.underline_2nd_row + row,
                     ),
                     white,
                 );
@@ -1290,15 +1292,15 @@ impl GlyphCache {
         };
 
         let draw_strike = |buffer: &mut Image| {
-            for row in 0..metrics.underline_height {
+            for row in 0..metrics.font_line_thickness {
                 buffer.draw_line(
                     Point::new(
                         cell_rect.origin.x,
-                        cell_rect.origin.y + metrics.strike_row + row,
+                        cell_rect.origin.y + metrics.strikethrough_row + row,
                     ),
                     Point::new(
                         cell_rect.origin.x + metrics.cell_size.width,
-                        cell_rect.origin.y + metrics.strike_row + row,
+                        cell_rect.origin.y + metrics.strikethrough_row + row,
                     ),
                     white,
                 );
@@ -1306,7 +1308,7 @@ impl GlyphCache {
         };
 
         let draw_overline = |buffer: &mut Image| {
-            for row in 0..metrics.underline_height {
+            for row in 0..metrics.font_line_thickness {
                 buffer.draw_line(
                     Point::new(cell_rect.origin.x, cell_rect.origin.y + row),
                     Point::new(

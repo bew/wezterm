@@ -384,7 +384,7 @@ impl crate::TermWindow {
 
                         let pos_y = pos_y
                             + cell_height
-                            + (params.render_metrics.descender.get() as f32
+                            + (params.render_metrics.font_descender.get() as f32
                                 - (glyph.y_offset + glyph.bearing_y).get() as f32)
                                 * height_scale;
 
@@ -490,7 +490,7 @@ impl crate::TermWindow {
                     let mut texture = glyph.texture.as_ref().cloned();
 
                     let mut top = cell_height
-                        + (params.render_metrics.descender.get() as f32 + valign_adjust
+                        + (params.render_metrics.font_descender.get() as f32 + valign_adjust
                             - (glyph.y_offset + glyph.bearing_y).get() as f32)
                             * height_scale;
 
