@@ -169,7 +169,8 @@ impl BlockCoord {
             Self::One => max as f32,
             Self::Frac(num, den) => hint(max as f32 * num as f32 / den as f32),
             Self::FracWithOffset(num, den, line_scale) => hint(
-                (max as f32 * num as f32 / den as f32) + (base_line_thickness * line_scale.to_scale()),
+                (max as f32 * num as f32 / den as f32)
+                    + (base_line_thickness * line_scale.to_scale()),
             ),
             Self::SquareZero => 0. + (max - max_square) as f32 / 2.0,
             Self::SquareOne => max as f32 - (max - max_square) as f32 / 2.0,
@@ -5154,7 +5155,7 @@ impl GlyphCache {
                 cell_size,
                 ..
             } => RenderMetrics {
-                font_descender: PixelLength::new(0.),
+                font_descender_offset: PixelLength::new(0.),
                 underline_row: 0,
                 underline_2nd_row: 0,
                 font_line_thickness: *base_line_thickness,

@@ -630,7 +630,7 @@ impl FontShaper for HarfbuzzShaper {
             cell_width: PixelLength::new(selected_size.width),
             // Note: face.face.descender is useless, we have to go through
             // face.face.size.metrics to get to the real descender!
-            descender: PixelLength::new(unsafe {
+            descender_offset: PixelLength::new(unsafe {
                 (*(*pair.face.face).size).metrics.descender.f26d6().to_num()
             }),
             underline_thickness: PixelLength::new(
@@ -650,7 +650,7 @@ impl FontShaper for HarfbuzzShaper {
         // so that the glyphs are better vertically aligned
         // <https://github.com/wezterm/wezterm/issues/1803>
         if scale != 1.0 && metrics.is_scaled {
-            let diff = metrics.descender - (metrics.descender / scale);
+            let diff = metrics.descender_offset - (metrics.descender_offset / scale);
             metrics.force_y_adjust = diff;
         }
 

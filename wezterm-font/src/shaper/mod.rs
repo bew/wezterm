@@ -54,7 +54,7 @@ pub struct FontMetrics {
     pub cell_height: PixelLength,
     /// Added to the bottom y coord to find the baseline.
     /// descender is typically negative.
-    pub descender: PixelLength,
+    pub descender_offset: PixelLength,
 
     /// Vertical size of underline/strikethrough in pixels
     pub underline_thickness: PixelLength,
